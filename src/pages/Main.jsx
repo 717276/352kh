@@ -5,7 +5,11 @@ const Main=()=>{
             <div className="search">
                 <input className="search_box" type="text" placeholder="검색어 입력"></input>
             </div>
-            <div className="slider"></div>
+            <div className='wrapper'>
+                <div className="slide">
+                    <div className=""></div>
+                </div>
+            </div>
             <div className="list"></div>
         </div>
     );
