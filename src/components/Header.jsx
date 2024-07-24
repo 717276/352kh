@@ -13,7 +13,7 @@ const Header=()=>{
                     </li>
                     <li>Post
                         <ul className="sub_list">
-                            <li><Link to="/reviews">여행후기</Link></li>
+                            <li><Link to="/review">여행후기</Link></li>
                             <li><Link to="/notices">공지사항</Link></li>
                         </ul>
                     </li>
