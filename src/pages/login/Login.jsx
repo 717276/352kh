@@ -1,7 +1,7 @@
 import { GoogleLogin } from '@react-oauth/google';
 import { GoogleOAuthProvider } from '@react-oauth/google';
 import { Link } from 'react-router-dom';
-import '../components/css/Login.css';
+import '../../components/css/login/Login.css';
 
 const Login = () => {
     const clientId = 'clientID';

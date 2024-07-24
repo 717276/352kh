@@ -1,7 +1,7 @@
-import '../components/css/Trip.css'
-import place1 from '../assets/image/place1.png'
-import place2 from '../assets/image/place2.png'
-import place3 from '../assets/image/place3.png'
+import '../../components/css/tour/Trip.css'
+import place1 from '../../images/place/place1.png'
+import place2 from '../../images/place/place2.png'
+import place3 from '../../images/place/place3.png'
 
 const Trip=()=>{
   return(

@@ -1,4 +1,4 @@
-import './css/ReviewWrite.css';
+import '../../components/css/review/ReviewWrite.css';
 
 const ReviewWrite = ()=> {
   return (
