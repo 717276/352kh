@@ -1,0 +1,32 @@
+.ReviewList {
+  width: 80%;
+  margin: 20px auto;
+}
+
+.ReviewListTable {
+  width: 100%;
+  border-collapse: collapse;
+  border: 1px solid #ddd;
+  cursor: pointer;
+}
+
+.ReviewListTable th {
+  padding: 8px;
+  text-align: center;
+  border: 1px solid #ddd;
+  width: 10%;
+}
+
+.ReviewListTable th:nth-child(2) {
+  width: 30%;
+}
+
+.ReviewListTable td {
+  padding: 8px;
+  text-align: left;
+  border: 1px solid #ddd;
+}
+
+.ReviewListTable th {
+  background-color: #f2f2f2;
+}

@@ -1,0 +1,39 @@
+
+.TourList {
+  width: 100%;
+  margin: 120px auto;
+  display: flex;
+  justify-content: center;
+  gap: 100px;
+}
+
+.listItem {
+  width: 270px;
+  background-color: rgb(250, 248, 248);
+  border-radius: 15px;
+}
+
+.listItem > img {
+  width: 100%;
+  border-top-left-radius: 15px; /* 왼쪽 위 모서리 */
+  border-top-right-radius: 15px; /* 오른쪽 위 모서리 */
+} 
+
+.placeDescription {
+  margin: 15px 0px 15px 5px;
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.placeName {
+  font-size: 25px;
+  font-weight: bold;
+  color: rgb(29, 28, 28);
+}
+
+.placeLocation {
+  font-size: 17px;
+  font-weight: 600;
+  color: rgb(99, 95, 95);
+}
