@@ -1,5 +1,6 @@
 import { Link } from 'react-router-dom';
 import './css/Header.css';
+import logo from '../assets/image/logo.png'
 const Header=()=>{
     return (
         <div className="Header">
@@ -24,7 +25,7 @@ const Header=()=>{
                     </li>
                 </ul>
                 <div className="logo">
-                    <img src="default"></img>
+                    <img src={logo}></img>
                 </div>            
                 <div className="login">
                     <Link to="/login"><button className='login_btn'>Login</button></Link>                
