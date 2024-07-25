@@ -3,6 +3,7 @@ import '../../components/css/review/ReviewWrite.css';
 const ReviewWrite = ()=> {
   return (
     <div className='ReviewWrite'>
+      <input type="hidden" name="userId" id="userId" />
       <h3>투어선택</h3>
       <select>
         <option value="tour1">투어 1</option>
