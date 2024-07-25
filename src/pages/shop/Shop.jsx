@@ -1,12 +1,12 @@
 import React, { useEffect } from 'react';
-import '../components/css/Shop.css';
+import '../../components/css/shop/Shop.css';
 
 const Shop = () => {
     const productImages = [
-        'src/images/doggoods00.png',
-        'src/images/doggoods01.png',
-        'src/images/doggoods02.png',
-        'src/images/doggoods03.png',
+        'images/shop/doggoods00.png',
+        'images/shop/doggoods01.png',
+        'images/shop/doggoods02.png',
+        'images/shop/doggoods03.png',
     ];
 
     useEffect(() => {

@@ -4,15 +4,15 @@ import './App.css'
 import Header from './components/Header';
 import Footer from './components/Footer';
 import Main from './pages/Main';
-import Trip from './pages/Trip';
-import Build from './pages/Build';
-import Review from './pages/Review';
-import Notice from './pages/Notice';
-import Shop from './pages/Shop';
-import Login from './pages/Login';
-import Register from './pages/Register';
-import ReviewWrite from './components/ReviewWrite'
-import ReviewModify from './components/ReviewModify'
+import Trip from './pages/tour/Trip';
+import Build from './pages/tour/Build';
+import Review from './pages/review/Review';
+import ReviewWrite from './pages/review/ReviewWrite'
+import ReviewModify from './pages/review/ReviewModify'
+import Notice from './pages/notice/Notice';
+import Shop from './pages/shop/Shop';
+import Login from './pages/login/Login';
+import Register from './pages/login/Register';
 function App() {  
   return (
     <>    

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import '../components/css/Register.css';
+import '../../components/css/login/Register.css';
 
 const Register = () => {
     const [zonecode, setZonecode] = useState('');

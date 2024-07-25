@@ -1,5 +1,5 @@
 import React from "react";
-import './css/ReviewList.css';
+import '../../components/css/review/ReviewList.css';
 import { useNavigate } from "react-router-dom";
 
 // 예시 데이터

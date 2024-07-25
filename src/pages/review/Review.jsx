@@ -1,6 +1,6 @@
-import ReviewList from "../components/ReviewList";
+import ReviewList from "./ReviewList";
 import { useNavigate } from "react-router-dom";
-import '../components/css/Review.css';
+import '../../components/css/review/Review.css';
 
 const Review = ()=> {
   const nav = useNavigate();
