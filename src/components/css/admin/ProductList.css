@@ -1,0 +1,40 @@
+.ProductList {
+  width: 100%;
+  margin: 50px auto;
+}
+
+.ProductList h3 {
+  text-align: center;
+  margin-bottom: 50px;
+}
+
+.ProductListTable {
+  width: 90%;
+  border-collapse: collapse;
+  border-bottom: 1px solid #ddd;
+  margin: 0 auto;
+}
+
+.ProductListTable th {
+  padding: 8px;
+  text-align: center;
+  border-bottom: 1px solid #ddd;
+  width: 10%;
+}
+
+.ProductListTable td {
+  padding: 8px;
+  text-align: center;
+  border-bottom: 1px solid #ddd;
+  height: 80px;
+}
+
+.ProductListTable th {
+  background-color: #f2f2f2;
+}
+
+.productListButton {
+  margin-bottom: 50px;
+  text-align: right;
+  margin-right: 100px;
+}

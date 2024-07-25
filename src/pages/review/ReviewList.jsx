@@ -28,7 +28,7 @@ const ReviewList = ()=> {
           {tableData.map((row) => (
             <tr key={row.id}>
               <td hidden>{row.id}</td>
-              <td onClick={()=>{nav(`/reviewModify/${row.id}`)}}>{row.title}</td>
+              <td onClick={()=>{nav(`/ReviewComment/${row.id}`)}}>{row.title}</td>
               <td>{row.userId}</td>
               <td>{row.like}</td>
               <td>{row.readCount}</td>

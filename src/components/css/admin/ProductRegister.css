@@ -1,0 +1,65 @@
+.ProductRegister img {
+  width: 100px;
+}
+
+.ProductRegister {
+  width: 800px;
+  margin: 0 auto;
+  margin-bottom: 30px;
+  padding: 20px;
+}
+
+.ProductRegister h3 {
+  text-align: center;
+  margin-bottom: 20px;
+  font-size: 24px;
+  color: #333;
+}
+
+.ProductRegisterTable {
+  width: 100%;  
+}
+
+.ProductRegisterTable table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.ProductRegisterTable td {
+  padding: 10px;
+  border: 1px solid #ccc;
+}
+
+.ProductRegisterTable img {
+  width: 150px;
+  height: auto;
+  display: block;
+  margin: 0 auto;
+}
+
+.ProductRegisterTable input[type="text"],
+.ProductRegisterTable textarea,
+.ProductRegisterTable input[type="file"] {
+  width: 100%;
+  padding: 8px;
+  box-sizing: border-box;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+.ProductRegisterTable textarea {
+  resize: none;
+  height: 200px;
+}
+
+.ProductRegisterTable td:nth-child(2) {
+  width: 20%;
+}
+
+.ProductRegisterTable td:nth-child(3) {
+  width: 60%;
+}
+
+input[type="file"] {
+  padding: 3px;
+}
