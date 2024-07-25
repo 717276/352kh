@@ -9,13 +9,13 @@ import TripDetail from './pages/tour/TripDetail';
 import Build from './pages/tour/Build';
 import Review from './pages/review/Review';
 import ReviewWrite from './pages/review/ReviewWrite'
-import ReviewComment from './pages/review/ReviewComment'
+import ReviewComment from './pages/review/ReviewComment';
 import Notice from './pages/notice/Notice';
 import Shop from './pages/shop/Shop';
 import Login from './pages/login/Login';
 import Register from './pages/login/Register';
-import ProductList from "./pages/admin/ProductList";
-import ProductRegister from "./pages/admin/ProductRegister";
+import ProductList from './pages/admin/ProductList';
+import ProductRegister from './pages/admin/ProductRegister';
 function App() {  
   return (
     <>    
@@ -34,13 +34,12 @@ function App() {
           <Route path="/login" element={<Login />} />      
           <Route path="/register" element={<Register />} />   
           <Route path="/admin/productList" element={<ProductList />} />    
-          <Route path="/admin/ProductRegister" element={<ProductRegister />} />      
+          <Route path="/admin/ProductRegister" element={<ProductRegister />} /> 
         </Routes>          
       <Footer></Footer>
     </div>
     </>
   )
 }
-
 
 export default App;
