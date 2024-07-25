@@ -11,10 +11,8 @@ const Review = ()=> {
     <>
     <div className="Review1">
       <div className="Review">  
-        <h3>후기게시판</h3>   
-        <div>
-          <ReviewList/>
-        </div>           
+        <h3>후기게시판</h3> 
+        <ReviewList/>    
       </div>
       <div className="ReviewButton">
         <div className="ReviewSearch">
