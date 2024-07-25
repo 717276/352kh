@@ -17,7 +17,7 @@ form {
 
 .myinfo {
   display: flex;
-  align-items: stretch;
+  align-items: stretch; /* 섹션의 높이를 동일하게 설정 */
   justify-content: center;
   gap: 30px;
   padding: 10px 20px;
@@ -26,7 +26,7 @@ form {
 .info-section, .image-section {
   display: flex;
   flex-direction: column;
-  justify-content: center;
+  justify-content: center; /* 섹션의 내용물을 중앙에 배치 */
   height: 100%;
 }
 
@@ -72,11 +72,11 @@ form {
   background-color: #1E90FF;
   color: white;
   cursor: pointer;
-  transition: background-color 0.3s ease;
+  transition: background-color 0.3s ease; /* 부드러운 전환 효과 추가 */
 }
 
 .mypage-table td button:hover {
-  background-color: #1C86EE;
+  background-color: #1C86EE; /* hover 상태에서 더 밝은 색상으로 변경 */
 }
 
 .edit-field {
@@ -105,11 +105,11 @@ form {
   background-color: #1E90FF;
   color: white;
   cursor: pointer;
-  transition: background-color 0.3s ease;
+  transition: background-color 0.3s ease; /* 부드러운 전환 효과 추가 */
 }
 
 .edit-buttons button:hover {
-  background-color: #1C86EE;
+  background-color: #1C86EE; /* hover 상태에서 더 밝은 색상으로 변경 */
 }
 
 .my-info {
@@ -138,11 +138,11 @@ form {
   cursor: pointer;
   width: 80px;
   height: 50px;
-  transition: background-color 0.3s ease;
+  transition: background-color 0.3s ease; /* 부드러운 전환 효과 추가 */
 }
 
 .zip-code-button:hover {
-  background-color: #FF4500;
+  background-color: #FF4500; /* hover 상태에서 더 밝은 색상으로 변경 */
 }
 
 .edit-field:last-child > .edit-buttons {
@@ -186,11 +186,11 @@ form {
   color: white;
   cursor: pointer;
   display: inline-block;
-  transition: background-color 0.3s ease;
+  transition: background-color 0.3s ease; /* 부드러운 전환 효과 추가 */
 }
 
 .image-change:hover {
-  background-color: #777;
+  background-color: #777; /* hover 상태에서 더 밝은 색상으로 변경 */
 }
 
 .MyPageTrip, .MyPageProducts {
@@ -212,7 +212,7 @@ form {
   cursor: pointer;
 }
 
-.sort-type li:first-child {
+.sort-type li:not(:last-child) {
   border-right: 1px solid rgb(190, 189, 189);
   padding-right: 20px;
 }
@@ -242,7 +242,6 @@ form {
   display: flex;
   flex-direction: column;
   gap: 5px;
-  flex: 1;
 }
 
 .trip-name, .product-name {
@@ -255,32 +254,44 @@ form {
   color: #666;
 }
 
-.trip-date, .product-date {
+.trip-date, .product-price {
   font-size: 12px;
   color: #888;
 }
 
-.trip-price, .product-price {
+.trip-price {
   font-size: 16px;
   color: #000;
   font-weight: bold;
 }
 
-.product-status {
-  font-size: 14px;
-  font-weight: bold;
+
+.product-item {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  width: 98%;
+  gap: 8px;
 }
 
-.product-status.상품준비중 {
-  color: #FFA500;
+.product-info {
+  display: flex;
+  gap: 20px;
+  width: 100%;
+}
+
+.product-status {
+  font-size: 16px;
+  font-weight: bold;
+  color: green;
 }
 
 .product-status.배송중 {
-  color: #1E90FF;
+  color: orange;
 }
 
-.product-status.배송완료 {
-  color: #32CD32;
+.product-status.상품준비중 {
+  color: red;
 }
 
 .pagination {
@@ -292,16 +303,17 @@ form {
 .page-span {
   padding: 5px 10px;
   margin: 0 5px;
-  border-bottom: 2px solid transparent;
+  border: 1px solid transparent;
   cursor: pointer;
+  color: #000;
 }
 
 .page-span.active {
-  color: #1E90FF;
   border-bottom: 2px solid #1E90FF;
+  color: #1E90FF;
 }
 
 .page-span:hover {
-  color: #1C86EE;
-  border-bottom: 2px solid #1C86EE;
+  color: #1E90FF;
 }
+
