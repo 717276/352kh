@@ -8,7 +8,7 @@ import Trip from './pages/tour/Trip';
 import Build from './pages/tour/Build';
 import Review from './pages/review/Review';
 import ReviewWrite from './pages/review/ReviewWrite'
-import ReviewModify from './pages/review/ReviewModify'
+import ReviewComment from './pages/review/ReviewComment'
 import Notice from './pages/notice/Notice';
 import Shop from './pages/shop/Shop';
 import Login from './pages/login/Login';
@@ -24,7 +24,7 @@ function App() {
           <Route path="/build" element={<Build />} />
           <Route path="/review" element={<Review />} />
           <Route path="/reviewWrite" element={<ReviewWrite/>}/> 
-          <Route path="/reviewModify/:id" element={<ReviewModify/>}/>
+          <Route path="/ReviewComment/:id" element={<ReviewComment/>}/>
           <Route path="/notice" element={<Notice />} />
           <Route path="/shop" element={<Shop />} />      
           <Route path="/login" element={<Login />} />      

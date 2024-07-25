@@ -1,3 +1,7 @@
+.Review table {
+  width: 100%;
+}
+
 .ReviewButton {
   display: flex; 
   align-items: center; 
@@ -39,4 +43,5 @@
 
 .ReviewButton button.primary {
   background-color: #4EC0E9; 
+  color: white;
 }

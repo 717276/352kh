@@ -1,0 +1,83 @@
+/* 공통 스타일 */
+.ReviewComment {
+  margin-bottom: 20px;
+  margin-top: 20px;
+}
+
+.ReviewComment table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: 20px;
+}
+
+.ReviewComment table td {
+  padding: 10px;
+  border: 1px solid #ccc;
+}
+
+.ReviewComment textarea {
+  width: calc(100% - 22px); 
+  padding: 10px;
+  font-size: 14px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  margin-bottom: 10px;
+  resize: none;
+  height: 400px;
+}
+
+.comment-form {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  text-align: center;
+  justify-content: center; 
+}
+
+.comment-form textarea {
+  width: 60%;
+  padding: 10px;
+  font-size: 14px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  margin-bottom: 10px;
+  resize: none;
+}
+
+.comment-form button {
+  background-color: #4acfae;
+  color: white;
+  padding: 5px;
+  border: none;
+  border-radius: 5px;
+  margin-bottom: 10px;
+}
+
+.ReviewComment td:nth-child(2) {
+  width: 40%;
+}
+
+/*댓글*/
+.comment-list {
+  margin-top: 20px;
+  margin-bottom: 50px;
+}
+
+.comment-list table {
+  width: 100%;
+  border-spacing: 0;
+}
+
+.comment-list td {
+  padding: 10px 0;
+  border-bottom: 1px solid #ccc;
+}
+
+.comment-list td:first-child {
+  font-weight: bold;
+  width: 100px;
+}
+
+.comment-list td:last-child {
+  text-align: left;
+}
