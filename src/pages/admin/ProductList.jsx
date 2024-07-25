@@ -33,16 +33,15 @@ const ProductList = () => {
             <td>{row.mount}</td>
             <td>{row.price}</td>
             <td>{row.discount}</td>
-            <td><button onClick={()=>{nav(`/admin/productRegister/${row.no}`)}}>수정</button></td>
+            <td><button>수정</button></td>
             <td><button>삭제</button></td>
           </tr>
         ))}
       </table>
-      <div className='productListButton'>
-        <button onClick={()=>{nav('/admin/productRegister')}}>상품등록</button>
-      </div>
     </div>
-   
+    <div className='productListButton'>
+      <button onClick={()=>{nav('/admin/productRegister')}}>상품등록</button>
+    </div>
     </>
   );
 };

@@ -1,6 +1,7 @@
 import { useNavigate, useParams } from "react-router-dom";
 import '../../components/css/review/ReviewComment.css';
 import { useState } from "react";
+import productImage from '../admin/test.jpg';
 
 const ReviewComment = ()=> {
   const params = useParams();
@@ -24,7 +25,6 @@ const ReviewComment = ()=> {
       });
     });
   };
-<<<<<<< HEAD
 
   const onSaveEdit = (id, newContent) => {
     // 수정된 내용을 저장하는 로직 (실제 서버로 전송 등)
@@ -41,14 +41,11 @@ const ReviewComment = ()=> {
     });
   };
 
-=======
->>>>>>> Y
   return (
     <>
     <div className='ReviewComment'>
       {/* 리뷰 정보 표시 */}
       <table>
-<<<<<<< HEAD
         <tbody>
           <tr>
             <td>투어</td>
@@ -80,30 +77,6 @@ const ReviewComment = ()=> {
             </td>          
           </tr>
         </tbody>
-=======
-        <tr>
-          <td>투어</td>
-          <td>투어1</td>
-          <td>작성자</td>
-          <td>홍길동</td>
-        </tr>
-        <tr>
-          <td>제목</td>
-          <td colSpan={3}>바다가자 솔직투어입니다</td>
-        </tr>
-        <tr>
-          <td colSpan={4}>
-            <textarea>
-              djskdsjhdfkdsjsdkdjsfkdsjfkdjfkjfljfldsjfldsjfldjslf
-            </textarea>
-          </td>
-        </tr>
-        <tr>
-          <td colSpan={4}>
-            <input type="file" name="myfile"/>
-          </td>          
-        </tr>
->>>>>>> Y
       </table>
     </div>
 
@@ -114,7 +87,6 @@ const ReviewComment = ()=> {
         <button>댓글 작성</button>
       </div>
       <div className="comment-list">
-<<<<<<< HEAD
         <table className="commentTable">
           <tbody>
             {comments.map(comment => (
@@ -146,26 +118,12 @@ const ReviewComment = ()=> {
               </tr>
             ))}
           </tbody>
-=======
-        <table>
-          <tr>
-            <td>김길동</td>
-            <td>후기좋아요</td>
-          </tr>
-          <tr>
-            <td>이길동</td>
-            <td>후기싫어요</td>
-          </tr>
-          <tr>
-            <td>이길동</td>
-            <td>후기좋아요</td>
-          </tr>
->>>>>>> Y
         </table>
       </div>
       <div className="modifyButton">
         <button onClick={()=>{nav(`/reviewModify/${params.no}`)}}>수정</button>
         <button onClick={()=>{nav(-1)}}>취소</button>
+        <button>삭제</button>
       </div>
     </div>
     </>
