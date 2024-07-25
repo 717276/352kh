@@ -46,7 +46,7 @@ function App() {
           <Route path="/shop" element={<Shop />} />
           <Route path="/shoplist/:category" element={<ShopList />} />
           <Route path="/mypage" element={<MyPage />} />
-
+          <Route path="/qna" element={<QnA/>}/>
         </Routes>          
       <Footer></Footer>
     </div>
