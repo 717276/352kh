@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import '../../components/css/mypage/MyPage.css';
 import profileImg from '../../images/profile/profile.png';
 import place1 from '../../images/place/place1.png';
@@ -7,10 +7,13 @@ import place3 from '../../images/place/place3.png';
 
 const MyPage = () => {
   const [editField, setEditField] = useState('');
-  const [currentPage, setCurrentPage] = useState(1);
+  const [tripCurrentPage, setTripCurrentPage] = useState(1);
+  const [productCurrentPage, setProductCurrentPage] = useState(1);
+  const [tripSortType, setTripSortType] = useState('latest');
+  const [productSortType, setProductSortType] = useState('latest');
   const itemsPerPage = 5;
 
-  const mockData = Array.from({ length: 15 }, (_, index) => ({
+  const mockTripData = Array.from({ length: 15 }, (_, index) => ({
     id: index + 1,
     img: [place1, place2, place3][index % 3],
     name: ['투어 A', '투어 B', '투어 C'][index % 3],
@@ -20,18 +23,63 @@ const MyPage = () => {
     price: `${(index + 1) * 10000}원`
   }));
 
-  const totalPages = Math.ceil(mockData.length / itemsPerPage);
+  const mockProductData = Array.from({ length: 15 }, (_, index) => ({
+    id: index + 1,
+    img: [place1, place2, place3][index % 3],
+    name: ['상품 A', '상품 B', '상품 C'][index % 3],
+    purchaseDate: '2023-01-01',
+    quantity: Math.floor(Math.random() * 10) + 1,
+    price: `${(index + 1) * 5000}원`,
+    status: ['상품준비중', '배송중', '배송완료'][index % 3]
+  }));
 
-  const handleChangePage = (page) => {
-    setCurrentPage(page);
+  const [sortedTripData, setSortedTripData] = useState([...mockTripData]);
+  const [sortedProductData, setSortedProductData] = useState([...mockProductData]);
+
+  useEffect(() => {
+    const sortedTrips = [...mockTripData].sort((a, b) => {
+      if (tripSortType === 'latest') {
+        return b.id - a.id;
+      } else {
+        return a.id - b.id;
+      }
+    });
+    setSortedTripData(sortedTrips);
+  }, [tripSortType]);
+
+  useEffect(() => {
+    const sortedProducts = [...mockProductData].sort((a, b) => {
+      if (productSortType === 'latest') {
+        return b.id - a.id;
+      } else if (productSortType === 'oldest') {
+        return a.id - b.id;
+      } else {
+        return a.status.localeCompare(b.status);
+      }
+    });
+    setSortedProductData(sortedProducts);
+  }, [productSortType]);
+
+  const tripTotalPages = Math.ceil(sortedTripData.length / itemsPerPage);
+  const productTotalPages = Math.ceil(sortedProductData.length / itemsPerPage);
+
+  const handleChangeTripPage = (page) => {
+    setTripCurrentPage(page);
+  };
+
+  const handleChangeProductPage = (page) => {
+    setProductCurrentPage(page);
   };
 
   const toggleEditField = (field) => {
     setEditField(editField === field ? '' : field);
   };
 
-  const startIndex = (currentPage - 1) * itemsPerPage;
-  const selectedItems = mockData.slice(startIndex, startIndex + itemsPerPage);
+  const tripStartIndex = (tripCurrentPage - 1) * itemsPerPage;
+  const selectedTrips = sortedTripData.slice(tripStartIndex, tripStartIndex + itemsPerPage);
+
+  const productStartIndex = (productCurrentPage - 1) * itemsPerPage;
+  const selectedProducts = sortedProductData.slice(productStartIndex, productStartIndex + itemsPerPage);
 
   return (
     <>
@@ -202,7 +250,11 @@ const MyPage = () => {
         <div className='MyPageTrip'>
           <h1>나의 투어리스트</h1>
           <div className="trip-list">
-            {selectedItems.map((item) => (
+            <ul className='sort-type'>
+              <li onClick={() => setTripSortType('latest')}>최신순</li>
+              <li onClick={() => setTripSortType('oldest')}>오래된 순</li>
+            </ul>
+            {selectedTrips.map((item) => (
               <div key={item.id} className="trip-item">
                 <img src={item.img} alt={item.name} />
                 <div className="trip-details">
@@ -215,14 +267,47 @@ const MyPage = () => {
             ))}
           </div>
           <div className="pagination">
-            {Array.from({ length: totalPages }, (_, index) => (
-              <button
+            {Array.from({ length: tripTotalPages }, (_, index) => (
+              <span
                 key={index + 1}
-                className={`page-button ${currentPage === index + 1 ? 'active' : ''}`}
-                onClick={() => handleChangePage(index + 1)}
+                className={`page-span ${tripCurrentPage === index + 1 ? 'active' : ''}`}
+                onClick={() => handleChangeTripPage(index + 1)}
               >
                 {index + 1}
-              </button>
+              </span>
+            ))}
+          </div>
+        </div>
+        <div className='MyPageProducts'>
+          <h1>나의 상품 목록</h1>
+          <ul className='sort-type'>
+            <li onClick={() => setProductSortType('latest')}>최신순</li>
+            <li onClick={() => setProductSortType('oldest')}>오래된 순</li>
+            <li onClick={() => setProductSortType('status')}>배송상태</li>
+          </ul>
+          <div className="product-list">
+            {selectedProducts.map((item) => (
+              <div key={item.id} className="product-item">
+                <div className="product-date">{item.purchaseDate}</div>
+                <img src={item.img} alt={item.name} />
+                <div className="product-details">
+                  <div className="product-name">{item.name}</div>
+                  <div className="product-quantity">수량: {item.quantity}</div>
+                  <div className="product-price">결제금액: {item.price}</div>
+                  <div className={`product-status ${item.status}`}>{item.status}</div>
+                </div>
+              </div>
+            ))}
+          </div>
+          <div className="pagination">
+            {Array.from({ length: productTotalPages }, (_, index) => (
+              <span
+                key={index + 1}
+                className={`page-span ${productCurrentPage === index + 1 ? 'active' : ''}`}
+                onClick={() => handleChangeProductPage(index + 1)}
+              >
+                {index + 1}
+              </span>
             ))}
           </div>
         </div>
