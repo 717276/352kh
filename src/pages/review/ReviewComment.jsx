@@ -1,6 +1,7 @@
 import { useNavigate, useParams } from "react-router-dom";
 import '../../components/css/review/ReviewComment.css';
 import { useState } from "react";
+import productImage from '../admin/test.jpg';
 
 const ReviewComment = ()=> {
   const params = useParams();
@@ -9,6 +10,11 @@ const ReviewComment = ()=> {
   const handleLike = () => {
     setLike(!like);
   };
+
+  const onChangeComment = (e) => {
+
+  };
+
   return (
     <>
     <div className='ReviewComment'>
@@ -18,22 +24,29 @@ const ReviewComment = ()=> {
           <td>투어</td>
           <td>투어1</td>
           <td>작성자</td>
-          <td>홍길동</td>
+          <td colSpan={2}>홍길동</td>
         </tr>
         <tr>
           <td>제목</td>
-          <td colSpan={3}>바다가자 솔직투어입니다</td>
+          <td>바다가자 솔직투어입니다</td>
+          <td>조회/좋아요수</td>
+          <td>100</td>
+          <td>12</td>
         </tr>
         <tr>
-          <td colSpan={4}>
+          <td colSpan={5}>
             <textarea>
               djskdsjhdfkdsjsdkdjsfkdsjfkdjfkjfljfldsjfldsjfldjslf
             </textarea>
           </td>
         </tr>
         <tr>
-          <td colSpan={4}>
-            <input type="file" name="myfile"/>
+          <td colSpan={5}>
+            <img src={productImage} alt="" />  
+            <img src={productImage} alt="" />
+            <img src={productImage} alt="" />
+            <img src={productImage} alt="" />
+            <img src={productImage} alt="" />    
           </td>          
         </tr>
       </table>
@@ -56,24 +69,55 @@ const ReviewComment = ()=> {
         <button>댓글 작성</button>
       </div>
       <div className="comment-list">
-        <table>
+        <table className="commentTable">
           <tr>
             <td>김길동</td>
-            <td>후기좋아요</td>
+            <td><input type="text" value="후기좋아요"/></td>
+            <td>2024.07.25</td>
+            <td><button>수정</button></td>
+            <td><button>삭제</button></td>
+            <td><button>답글</button></td>
+            <td>
+              <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" fill="currentColor" viewBox="0 0 16 16">
+                <path d="m8 2.748-.717-.737C5.6.281 2.514.878 1.4 3.053c-.523 1.023-.641 2.5.314 4.385.92 1.815 2.834 3.989 6.286 6.357 3.452-2.368 5.365-4.542 6.286-6.357.955-1.886.838-3.362.314-4.385C13.486.878 10.4.28 8.717 2.01zM8 15C-7.333 4.868 3.279-3.04 7.824 1.143q.09.083.176.171a3 3 0 0 1 .176-.17C12.72-3.042 23.333 4.867 8 15"/>
+              </svg>
+            </td>
+            <td>3</td>
           </tr>
           <tr>
             <td>이길동</td>
-            <td>후기싫어요</td>
+            <td><input type="text" value="후기좋아요" /></td>
+            <td>2024.07.25</td>
+            <td><button>수정</button></td>
+            <td><button>삭제</button></td>
+            <td><button>답글</button></td>
+            <td>
+              <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" fill="currentColor" viewBox="0 0 16 16">
+                <path d="m8 2.748-.717-.737C5.6.281 2.514.878 1.4 3.053c-.523 1.023-.641 2.5.314 4.385.92 1.815 2.834 3.989 6.286 6.357 3.452-2.368 5.365-4.542 6.286-6.357.955-1.886.838-3.362.314-4.385C13.486.878 10.4.28 8.717 2.01zM8 15C-7.333 4.868 3.279-3.04 7.824 1.143q.09.083.176.171a3 3 0 0 1 .176-.17C12.72-3.042 23.333 4.867 8 15"/>
+              </svg>
+            </td>
+            <td>3</td>
           </tr>
           <tr>
             <td>이길동</td>
-            <td>후기좋아요</td>
+            <td><input type="text" value="후기좋아요" /></td>
+            <td>2024.07.25</td>
+            <td><button>수정</button></td>
+            <td><button>삭제</button></td>
+            <td><button>답글</button></td>
+            <td>
+              <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" fill="currentColor" viewBox="0 0 16 16">
+                <path d="m8 2.748-.717-.737C5.6.281 2.514.878 1.4 3.053c-.523 1.023-.641 2.5.314 4.385.92 1.815 2.834 3.989 6.286 6.357 3.452-2.368 5.365-4.542 6.286-6.357.955-1.886.838-3.362.314-4.385C13.486.878 10.4.28 8.717 2.01zM8 15C-7.333 4.868 3.279-3.04 7.824 1.143q.09.083.176.171a3 3 0 0 1 .176-.17C12.72-3.042 23.333 4.867 8 15"/>
+              </svg>
+            </td>
+            <td>3</td>
           </tr>
         </table>
       </div>
       <div className="modifyButton">
         <button onClick={()=>{nav(`/reviewModify/${params.no}`)}}>수정</button>
         <button onClick={()=>{nav(-1)}}>취소</button>
+        <button>삭제</button>
       </div>
     </div>
     </>
