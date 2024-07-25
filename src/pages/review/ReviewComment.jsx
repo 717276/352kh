@@ -1,9 +1,10 @@
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import '../../components/css/review/ReviewComment.css';
 import { useState } from "react";
 
 const ReviewComment = ()=> {
   const params = useParams();
+  const nav = useNavigate();
   const [like, setLike] = useState(false);
   const handleLike = () => {
     setLike(!like);
@@ -11,6 +12,7 @@ const ReviewComment = ()=> {
   return (
     <>
     <div className='ReviewComment'>
+      <input type="hidden" id="no" name="no" />
       <table>
         <tr>
           <td>투어</td>
@@ -68,6 +70,10 @@ const ReviewComment = ()=> {
             <td>후기좋아요</td>
           </tr>
         </table>
+      </div>
+      <div className="modifyButton">
+        <button onClick={()=>{nav(`/reviewModify/${params.no}`)}}>수정</button>
+        <button onClick={()=>{nav(-1)}}>취소</button>
       </div>
     </div>
     </>
