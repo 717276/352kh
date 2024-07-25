@@ -31,7 +31,8 @@ ul{
     padding: 0;
     position:absolute;    
     top:100%;
-    left: 13px;  
+    left: 13px;
+    margin-left:4px;
 }
 .sub_list > li{
     padding: 10px 6px;       

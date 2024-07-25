@@ -23,9 +23,14 @@ const Header=()=>{
                             <li><Link to="/shop">여행용품</Link></li>
                         </ul>
                     </li>
-                </ul>
+                    <li>QnA
+                        <ul className="sub_list">
+                            <li><Link to="/qna">&nbsp;QnA</Link></li>
+                        </ul>
+                    </li>
+                </ul>                
                 <div className="logo">
-                    <img src={logo}></img>
+                    <Link to="/"><img src={logo}></img></Link>
                 </div>            
                 <div className="login">
                     <Link to="/login"><button className='login_btn'>Login</button></Link>                
