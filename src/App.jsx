@@ -16,6 +16,12 @@ import Login from './pages/login/Login';
 import Register from './pages/login/Register';
 import ProductList from './pages/admin/ProductList';
 import ProductRegister from './pages/admin/ProductRegister';
+import ReviewModify from './pages/review/ReviewModify';
+import MyPage from './pages/mypage/MyPage';
+import Product from './pages/shop/Product';
+import ShopList from './pages/shop/ShopList';
+import QnA from './pages/csr/QnA';
+
 function App() {  
   return (
     <>    
@@ -35,6 +41,12 @@ function App() {
           <Route path="/register" element={<Register />} />   
           <Route path="/admin/productList" element={<ProductList />} />    
           <Route path="/admin/ProductRegister" element={<ProductRegister />} /> 
+          <Route path="/reviewComment/:id" element={<ReviewComment/>}/>
+          <Route path="/reviewModify/:id" element={<ReviewModify/>}/>
+          <Route path="/shop" element={<Shop />} />
+          <Route path="/shoplist/:category" element={<ShopList />} />
+          <Route path="/mypage" element={<MyPage />} />
+
         </Routes>          
       <Footer></Footer>
     </div>
