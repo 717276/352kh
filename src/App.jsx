@@ -9,11 +9,13 @@ import TripDetail from './pages/tour/TripDetail';
 import Build from './pages/tour/Build';
 import Review from './pages/review/Review';
 import ReviewWrite from './pages/review/ReviewWrite'
-import ReviewModify from './pages/review/ReviewModify'
+import ReviewComment from './pages/review/ReviewComment'
 import Notice from './pages/notice/Notice';
 import Shop from './pages/shop/Shop';
 import Login from './pages/login/Login';
 import Register from './pages/login/Register';
+import ProductList from "./pages/admin/ProductList";
+import ProductRegister from "./pages/admin/ProductRegister";
 function App() {  
   return (
     <>    
@@ -26,11 +28,21 @@ function App() {
           <Route path="/build" element={<Build />} />
           <Route path="/review" element={<Review />} />
           <Route path="/reviewWrite" element={<ReviewWrite/>}/> 
+<<<<<<< HEAD
           <Route path="/reviewModify/:no" element={<ReviewModify/>}/>
           <Route path="/notice" element={<Notice />} />
           <Route path="/shop" element={<Shop />} />      
           <Route path="/login" element={<Login />} />      
           <Route path="/register" element={<Register />} /> 
+=======
+          <Route path="/ReviewComment/:id" element={<ReviewComment/>}/>
+          <Route path="/notice" element={<Notice />} />
+          <Route path="/shop" element={<Shop />} />      
+          <Route path="/login" element={<Login />} />      
+          <Route path="/register" element={<Register />} />   
+          <Route path="/admin/productList" element={<ProductList />} />    
+          <Route path="/admin/ProductRegister" element={<ProductRegister />} />      
+>>>>>>> 7548adffaddec9a9e3010a16f925e668f08133dd
         </Routes>          
       <Footer></Footer>
     </div>
