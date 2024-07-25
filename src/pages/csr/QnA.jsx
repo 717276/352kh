@@ -12,14 +12,14 @@ const QnA = () => {
             views: 100,
             recommendations: 20,
         },
-        { id: 2, title: '0번 굿즈에 대하여 문의', author: 'jyjyjy5', date: '23/05/28', views: 44, recommendations: 0 },
-        { id: 3, title: '0번 굿즈에 대하여 문의', author: 'jyjyjy5', date: '23/05/28', views: 44, recommendations: 0 },
-        { id: 4, title: '0번 굿즈에 대하여 문의', author: 'jyjyjy5', date: '23/05/28', views: 44, recommendations: 0 },
-        { id: 5, title: '0번 굿즈에 대하여 문의', author: 'jyjyjy5', date: '23/05/28', views: 44, recommendations: 0 },
-        { id: 6, title: '0번 굿즈에 대하여 문의', author: 'jyjyjy5', date: '23/05/28', views: 44, recommendations: 0 },
-        { id: 7, title: '0번 굿즈에 대하여 문의', author: 'jyjyjy5', date: '23/05/28', views: 44, recommendations: 0 },
-        { id: 8, title: '0번 굿즈에 대하여 문의', author: 'jyjyjy5', date: '23/05/28', views: 44, recommendations: 0 },
-        { id: 9, title: '0번 굿즈에 대하여 문의', author: 'jyjyjy5', date: '23/05/28', views: 44, recommendations: 0 },
+        { id: 2, title: '0번 굿즈에 대하여 문의', author: 'jyjyjy5', date: '23/05/28', views: 44 },
+        { id: 3, title: '0번 굿즈에 대하여 문의', author: 'jyjyjy5', date: '23/05/28', views: 44 },
+        { id: 4, title: '0번 굿즈에 대하여 문의', author: 'jyjyjy5', date: '23/05/28', views: 44 },
+        { id: 5, title: '0번 굿즈에 대하여 문의', author: 'jyjyjy5', date: '23/05/28', views: 44 },
+        { id: 6, title: '0번 굿즈에 대하여 문의', author: 'jyjyjy5', date: '23/05/28', views: 44 },
+        { id: 7, title: '0번 굿즈에 대하여 문의', author: 'jyjyjy5', date: '23/05/28', views: 44 },
+        { id: 8, title: '0번 굿즈에 대하여 문의', author: 'jyjyjy5', date: '23/05/28', views: 44 },
+        { id: 9, title: '0번 굿즈에 대하여 문의', author: 'jyjyjy5', date: '23/05/28', views: 44 },
     ];
 
     const handlePostsPerPageChange = (event) => {
@@ -45,7 +45,6 @@ const QnA = () => {
                         <th>작성자</th>
                         <th>작성일</th>
                         <th>조회수</th>
-                        <th>추천수</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -56,7 +55,6 @@ const QnA = () => {
                             <td>{post.author}</td>
                             <td>{post.date}</td>
                             <td>{post.views}</td>
-                            <td>{post.recommendations}</td>
                         </tr>
                     ))}
                 </tbody>
