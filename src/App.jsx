@@ -5,6 +5,7 @@ import Header from './components/Header';
 import Footer from './components/Footer';
 import Main from './pages/Main';
 import Trip from './pages/tour/Trip';
+import TripDetail from './pages/tour/TripDetail';
 import Build from './pages/tour/Build';
 import Review from './pages/review/Review';
 import ReviewWrite from './pages/review/ReviewWrite'
@@ -21,14 +22,15 @@ function App() {
         <Routes>
           <Route path="/" element={<Main />} />
           <Route path="/trip" element={<Trip />} />
+          <Route path="/tripDetail/:no" element={<TripDetail />} />
           <Route path="/build" element={<Build />} />
           <Route path="/review" element={<Review />} />
           <Route path="/reviewWrite" element={<ReviewWrite/>}/> 
-          <Route path="/reviewModify/:id" element={<ReviewModify/>}/>
+          <Route path="/reviewModify/:no" element={<ReviewModify/>}/>
           <Route path="/notice" element={<Notice />} />
           <Route path="/shop" element={<Shop />} />      
           <Route path="/login" element={<Login />} />      
-          <Route path="/register" element={<Register />} />      
+          <Route path="/register" element={<Register />} /> 
         </Routes>          
       <Footer></Footer>
     </div>

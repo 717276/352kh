@@ -3,3 +3,12 @@
     height: 1200px;    
     margin:auto;
 }
+@font-face {
+    font-family: 'HSGaeulSenggak20';
+    src: url('https://fastly.jsdelivr.net/gh/projectnoonnu/noonfonts_2108@1.1/HSGaeulSenggak20.woff') format('woff');
+    font-weight: normal;
+    font-style: normal;
+}
+body {
+    font-family: 'HSGaeulSenggak20', sans-serif;
+}
