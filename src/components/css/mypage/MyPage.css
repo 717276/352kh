@@ -1,0 +1,271 @@
+h1 {
+  text-align: center;
+  margin-top: 50px;
+  margin-bottom: 20px;
+}
+
+.MyPageInfo {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+}
+
+form {
+  width: 100%;
+}
+
+.myinfo {
+  display: flex;
+  align-items: stretch; /* 섹션의 높이를 동일하게 설정 */
+  justify-content: center;
+  gap: 30px;
+  padding: 10px 20px;
+}
+
+.info-section, .image-section {
+  display: flex;
+  flex-direction: column;
+  justify-content: center; /* 섹션의 내용물을 중앙에 배치 */
+  height: 100%;
+}
+
+.info-section {
+  flex: 1;
+  width: 65%;
+}
+
+.mypage-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.mypage-table td {
+  border: 1px solid #ddd;
+  padding: 10px;
+}
+
+.mypage-table td:first-child {
+  font-weight: bold;
+  background-color: #f2f2f2;
+  width: 30%;
+  border-left: none;
+}
+
+.mypage-table td:last-child {
+  width: 70%;
+  border-right: none;
+}
+
+.mypage-table td input {
+  padding: 5px;
+  margin-right: 10px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+}
+
+.mypage-table td button {
+  padding: 5px 10px;
+  margin-right: 5px;
+  border: 1px solid #1E90FF;
+  border-radius: 5px;
+  background-color: #1E90FF;
+  color: white;
+  cursor: pointer;
+  transition: background-color 0.3s ease; /* 부드러운 전환 효과 추가 */
+}
+
+.mypage-table td button:hover {
+  background-color: #1C86EE; /* hover 상태에서 더 밝은 색상으로 변경 */
+}
+
+.edit-field {
+  margin-top: 10px;
+}
+
+.searchAddr {
+  display: flex;
+}
+
+.edit-buttons {
+  display: flex;
+  gap: 10px;
+  margin-top: 5px;
+}
+
+.edit-description {
+  font-size: 0.9em;
+  color: #888;
+}
+
+.edit-buttons button {
+  padding: 5px 10px;
+  border: 1px solid #1E90FF;
+  border-radius: 5px;
+  background-color: #1E90FF;
+  color: white;
+  cursor: pointer;
+  transition: background-color 0.3s ease; /* 부드러운 전환 효과 추가 */
+}
+
+.edit-buttons button:hover {
+  background-color: #1C86EE; /* hover 상태에서 더 밝은 색상으로 변경 */
+}
+
+.my-info {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.searchAddr {
+  display: flex;
+  align-items: center;
+}
+
+.addrInput {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.zip-code-button {
+  padding: 5px 10px;
+  border: 1px solid #FF6347;
+  border-radius: 5px;
+  background-color: #FF6347;
+  color: white;
+  cursor: pointer;
+  width: 80px;
+  height: 50px;
+  transition: background-color 0.3s ease; /* 부드러운 전환 효과 추가 */
+}
+
+.zip-code-button:hover {
+  background-color: #FF4500; /* hover 상태에서 더 밝은 색상으로 변경 */
+}
+
+.edit-field:last-child > .edit-buttons {
+  margin-top: 10px;
+}
+
+.size-choice {
+  display: flex;
+  gap: 50px;
+}
+
+.image-section {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 35%;
+  justify-content: center;
+}
+
+.image-box {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 5px;
+  margin-bottom: 10px;
+}
+
+.image-box img {
+  width: 100%;
+  height: 100%;
+  border-radius: 10px;
+}
+
+.image-change {
+  padding: 5px 10px;
+  border: 1px solid #888;
+  border-radius: 5px;
+  background-color: #555;
+  color: white;
+  cursor: pointer;
+  display: inline-block;
+  transition: background-color 0.3s ease; /* 부드러운 전환 효과 추가 */
+}
+
+.image-change:hover {
+  background-color: #777; /* hover 상태에서 더 밝은 색상으로 변경 */
+}
+
+.MyPageTrip {
+  padding: 20px;
+  margin-top: 20px;
+}
+
+.trip-list {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.trip-item {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  border: 1px solid #ddd;
+  padding: 10px;
+  border-radius: 5px;
+}
+
+.trip-item img {
+  width: 100px;
+  height: 100px;
+  border-radius: 5px;
+}
+
+.trip-details {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.trip-name {
+  font-size: 18px;
+  font-weight: bold;
+}
+
+.trip-description {
+  font-size: 14px;
+  color: #666;
+}
+
+.trip-date {
+  font-size: 12px;
+  color: #888;
+}
+
+.trip-price {
+  font-size: 16px;
+  color: #000;
+  font-weight: bold;
+}
+
+.pagination {
+  display: flex;
+  justify-content: center;
+  margin-top: 20px;
+}
+
+.page-button {
+  padding: 5px 10px;
+  margin: 0 5px;
+  border: 1px solid #1E90FF;
+  border-radius: 5px;
+  background-color: #1E90FF;
+  color: white;
+  cursor: pointer;
+}
+
+.page-button.active {
+  background-color: #1C86EE;
+}
+
+.page-button:hover {
+  background-color: #1C86EE;
+}

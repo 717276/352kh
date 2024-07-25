@@ -1,39 +1,91 @@
 
+.title {
+  margin-top: 100px; /* 간격 조정 */
+  margin-bottom: 80px;
+  text-align: center;
+  font-family: 'Arial Black', sans-serif; /* 새로운 폰트 스타일 추가 */
+  color: #333;
+}
+
 .TourList {
   width: 100%;
-  margin: 120px auto;
+  margin: 60px auto;
   display: flex;
   justify-content: center;
-  gap: 100px;
+  gap: 80px; /* 간격을 줄여 더 많은 아이템이 보이도록 */
+  flex-wrap: wrap; /* 아이템이 너무 많아질 경우 줄 바꿈 허용 */
+  padding: 20px 0;
 }
 
 .listItem {
   width: 270px;
-  background-color: rgb(250, 248, 248);
+  background-color: white; /* 배경색을 흰색으로 변경 */
   border-radius: 15px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* 그림자 효과 추가 */
+  transition: all 0.2s linear;
+  opacity: 0;
+  animation: fadeIn 0.5s forwards;
+}
+
+@keyframes fadeIn {
+  to {
+    opacity: 1;
+  }
+}
+
+.listItem:hover {
+  transform: scale(1.05);
 }
 
 .listItem > img {
   width: 100%;
   border-top-left-radius: 15px; /* 왼쪽 위 모서리 */
   border-top-right-radius: 15px; /* 오른쪽 위 모서리 */
+  border-bottom: 1px solid #e0e0e0; /* 이미지 아래 구분선 추가 */
 } 
 
 .placeDescription {
-  margin: 15px 0px 15px 5px;
+  margin: 15px 10px; /* 간격 조정 */
   display: flex;
   flex-direction: column;
-  gap: 15px;
+  gap: 10px; /* 간격을 줄여 더 많은 정보가 보이도록 */
 }
 
 .placeName {
-  font-size: 25px;
+  font-size: 20px; /* 폰트 크기 조정 */
   font-weight: bold;
   color: rgb(29, 28, 28);
+  font-family: 'Segoe UI', sans-serif; /* 새로운 폰트 스타일 추가 */
 }
 
 .placeLocation {
-  font-size: 17px;
+  font-size: 15px; /* 폰트 크기 조정 */
   font-weight: 600;
   color: rgb(99, 95, 95);
+  font-family: 'Segoe UI', sans-serif; /* 새로운 폰트 스타일 추가 */
 }
+
+.loadMore {
+  display: flex;
+  justify-content: center;
+  margin: 30px 0; /* 간격 조정 */
+}
+
+.loadMore button {
+  padding: 10px 20px;
+  font-size: 17px; /* 폰트 크기 조정 */
+  cursor: pointer;
+  border-radius: 5px;
+  background-color: #4EC0E9;
+  color: white;
+  border: 1px solid #3BAFD0;
+  transition: background-color 0.3s ease;
+  display: flex;
+  align-items: center;
+}
+
+.loadMore button:hover {
+  background-color: #3BAFD0;
+  border: 1px solid #349BB8;
+}
+
