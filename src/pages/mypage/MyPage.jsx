@@ -1,13 +1,17 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import '../../components/css/mypage/MyPage.css';
 import profileImg from '../../images/profile/profile.png';
 import place1 from '../../images/place/place1.png';
 import place2 from '../../images/place/place2.png';
 import place3 from '../../images/place/place3.png';
+import productImg from '../../images/place/place1.png';
 
 const MyPage = () => {
   const [editField, setEditField] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
+  const [productPage, setProductPage] = useState(1);
+  const [sortType, setSortType] = useState('latest');
+  const [productSortType, setProductSortType] = useState('latest');
   const itemsPerPage = 5;
 
   const mockData = Array.from({ length: 15 }, (_, index) => ({
@@ -20,10 +24,54 @@ const MyPage = () => {
     price: `${(index + 1) * 10000}원`
   }));
 
-  const totalPages = Math.ceil(mockData.length / itemsPerPage);
+  const productMockData = Array.from({ length: 15 }, (_, index) => ({
+    id: index + 1,
+    img: productImg,
+    name: `상품 ${['A', 'B', 'C'][index % 3]}`,
+    purchaseDate: '2023-01-01',
+    quantity: index % 5 + 1,
+    totalAmount: `${(index + 1) * 10000}원`,
+    status: ['상품준비중', '배송중', '배송완료'][index % 3]
+  }));
+
+  const [sortedData, setSortedData] = useState([...mockData]);
+  const [sortedProductData, setSortedProductData] = useState([...productMockData]);
+
+  useEffect(() => {
+    const sorted = [...mockData].sort((a, b) => {
+      if (sortType === 'latest') {
+        return b.id - a.id;
+      } else {
+        return a.id - b.id;
+      }
+    });
+    setSortedData(sorted);
+  }, [sortType]);
+
+  useEffect(() => {
+    let filteredProducts = productMockData;
+    if (productSortType === 'ready') {
+      filteredProducts = productMockData.filter(product => product.status === '상품준비중');
+    } else if (productSortType === 'shipping') {
+      filteredProducts = productMockData.filter(product => product.status === '배송중');
+    } else if (productSortType === 'completion') {
+      filteredProducts = productMockData.filter(product => product.status === '배송완료');
+    } else {
+      filteredProducts = [...productMockData].sort((a, b) => b.id - a.id);
+    }
+
+    setSortedProductData(filteredProducts);
+  }, [productSortType]);
+
+  const totalPages = Math.ceil(sortedData.length / itemsPerPage);
+  const totalProductPages = Math.ceil(sortedProductData.length / itemsPerPage);
 
   const handleChangePage = (page) => {
     setCurrentPage(page);
+  };
+
+  const handleChangeProductPage = (page) => {
+    setProductPage(page);
   };
 
   const toggleEditField = (field) => {
@@ -31,7 +79,10 @@ const MyPage = () => {
   };
 
   const startIndex = (currentPage - 1) * itemsPerPage;
-  const selectedItems = mockData.slice(startIndex, startIndex + itemsPerPage);
+  const selectedItems = sortedData.slice(startIndex, startIndex + itemsPerPage);
+
+  const productStartIndex = (productPage - 1) * itemsPerPage;
+  const selectedProductItems = sortedProductData.slice(productStartIndex, productStartIndex + itemsPerPage);
 
   return (
     <>
@@ -202,6 +253,10 @@ const MyPage = () => {
         <div className='MyPageTrip'>
           <h1>나의 투어리스트</h1>
           <div className="trip-list">
+            <ul className='sort-type'>
+              <li onClick={() => setSortType('latest')}>최신순</li>
+              <li onClick={() => setSortType('oldest')}>오래된 순</li>
+            </ul>
             {selectedItems.map((item) => (
               <div key={item.id} className="trip-item">
                 <img src={item.img} alt={item.name} />
@@ -216,13 +271,49 @@ const MyPage = () => {
           </div>
           <div className="pagination">
             {Array.from({ length: totalPages }, (_, index) => (
-              <button
+              <span
                 key={index + 1}
-                className={`page-button ${currentPage === index + 1 ? 'active' : ''}`}
+                className={`page-span ${currentPage === index + 1 ? 'active' : ''}`}
                 onClick={() => handleChangePage(index + 1)}
               >
                 {index + 1}
-              </button>
+              </span>
+            ))}
+          </div>
+        </div>
+        <div className='MyPageProducts'>
+          <h1>구매한 상품 목록</h1>
+          <div className="product-list">
+            <ul className='sort-type'>
+              <li onClick={() => setProductSortType('latest')}>전체</li>
+              <li onClick={() => setProductSortType('ready')}>상품준비중</li>
+              <li onClick={() => setProductSortType('shipping')}>배송중</li>
+              <li onClick={() => setProductSortType('completion')}>배송완료</li>
+            </ul>
+            {selectedProductItems.map((item) => (
+              <div key={item.id} className="product-item">
+                <div className="purchase-date">{item.purchaseDate}</div>
+                <div className='product-info'>
+                  <img src={item.img} alt={item.name} />
+                  <div className="product-details">
+                    <div className="product-name">{item.name}</div>
+                    <div className="product-quantity">수량: {item.quantity}</div>
+                    <div className="product-price">결제금액: {item.totalAmount}</div>
+                    <div className={`product-status ${item.status}`}>{item.status}</div>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+          <div className="pagination">
+            {Array.from({ length: totalProductPages }, (_, index) => (
+              <span
+                key={index + 1}
+                className={`page-span ${productPage === index + 1 ? 'active' : ''}`}
+                onClick={() => handleChangeProductPage(index + 1)}
+              >
+                {index + 1}
+              </span>
             ))}
           </div>
         </div>
