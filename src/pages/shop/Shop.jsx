@@ -1,4 +1,5 @@
 import React, { useEffect } from 'react';
+import { Link } from 'react-router-dom';
 import '../../components/css/shop/Shop.css';
 
 const Shop = () => {
@@ -9,22 +10,10 @@ const Shop = () => {
         '/src/images/shop/doggoods00.png',
     ];
     const categories = [
-        {
-            category: '위생용품',
-            image: '/src/images/shop/doggoods00.png',
-        },
-        {
-            category: '사료 및 간식',
-            image: '/src/images/shop/doggoods01.png',
-        },
-        {
-            category: '강아지 옷',
-            image: '/src/images/shop/doggoods02.png',
-        },
-        {
-            category: '악세서리',
-            image: '/src/images/shop/doggoods03.png',
-        },
+        { category: '위생용품', image: '/src/images/shop/doggoods00.png' },
+        { category: '사료 및 간식', image: '/src/images/shop/doggoods01.png' },
+        { category: '강아지 옷', image: '/src/images/shop/doggoods02.png' },
+        { category: '악세서리', image: '/src/images/shop/doggoods03.png' },
     ];
 
     useEffect(() => {
@@ -122,7 +111,9 @@ const Shop = () => {
             <div className="product-grid">
                 {categories.map((category, index) => (
                     <div className="product-item" key={index}>
-                        <a href="#">{category.category}</a>
+                        <Link to={`/shoplist/${category.category}`}>
+                            <span>{category.category}</span>
+                        </Link>
                         <br />
                         <br />
                         <img src={category.image} alt={category.category} className="product-image" />
