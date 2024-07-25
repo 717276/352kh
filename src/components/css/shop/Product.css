@@ -1,0 +1,122 @@
+.product_container {
+    width: 100%;
+    min-height: 80%;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+.product_box {
+}
+.box_top {
+    display: flex;
+    justify-content: space-between;
+}
+.mainImage {
+    margin-left: 50px;
+    width: 400px;
+    height: 400px;
+}
+
+.product_text {
+    background-color: #a5c9f0; /* 파란 배경 */
+    color: #fff; /* 흰색 폰트 */
+    padding: 20px; /* 내부 여백 */
+    border-radius: 10px; /* 둥근 모서리 */
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); /* 그림자 효과 */
+    margin-bottom: 20px; /* 하단 여백 */
+    margin-right: 20px;
+    margin-top: 20px;
+}
+.sampleImage {
+    height: 100px;
+    width: 100px;
+}
+
+.imgArray {
+    margin-left: 30px;
+    display: flex;
+    justify-content: space-between;
+    width: 40%;
+}
+.product_title {
+    font-size: 24px; /* 폰트 크기 */
+    font-weight: bold; /* 폰트 두께 */
+    margin-bottom: 10px; /* 하단 여백 */
+}
+
+.product_price {
+    font-size: 20px; /* 폰트 크기 */
+    color: #ffeb3b; /* 노란색 폰트 */
+    margin-bottom: 20px; /* 하단 여백 */
+}
+
+.product_details div {
+    margin-bottom: 5px; /* 하단 여백 */
+}
+
+.product_quantity {
+    display: flex;
+    align-items: center;
+    margin-bottom: 20px; /* 하단 여백 */
+}
+
+.product_quantity span {
+    margin-right: 10px; /* 우측 여백 */
+}
+
+.product_quantity input {
+    width: 50px; /* 입력 상자 너비 */
+    padding: 5px; /* 내부 여백 */
+    border: 1px solid #ddd; /* 테두리 */
+    border-radius: 5px; /* 둥근 모서리 */
+    text-align: center; /* 가운데 정렬 */
+}
+
+.total_price {
+    margin-top: 10px;
+    font-size: 18px; /* 폰트 크기 */
+    font-weight: bold; /* 폰트 두께 */
+}
+
+.pay_btn {
+    font-size: 20px;
+    font-weight: bold;
+    text-align: right;
+    margin-top: 10px;
+    margin-bottom: 20px;
+}
+.box_btm {
+    display: flex;
+
+    overflow: auto; /* 넘치는 부분을 스크롤로 처리 */
+    width: 100%;
+}
+
+.btm_img {
+    margin: auto;
+    max-width: 80%; /* 이미지가 부모 요소를 넘지 않도록 설정 */
+    height: auto; /* 비율 유지 */
+    display: block; /* 이미지가 블록 요소로 표시되도록 설정 */
+}
+
+.pay_btn {
+    text-align: right; /* 오른쪽 정렬 */
+    margin-bottom: 20px;
+}
+
+.custom_button {
+    background-color: #007bff; /* 파란 배경 */
+    color: #fff; /* 흰색 폰트 */
+    border: none; /* 테두리 제거 */
+    padding: 10px 20px; /* 패딩 */
+    font-size: 16px; /* 폰트 크기 */
+    font-weight: bold; /* 폰트 두께 */
+    border-radius: 5px; /* 둥근 모서리 */
+    margin-left: 10px; /* 버튼 간 간격 */
+    cursor: pointer; /* 커서 포인터로 변경 */
+    transition: background-color 0.3s ease; /* 배경색 전환 효과 */
+}
+
+.custom_button:hover {
+    background-color: #0056b3; /* 호버 시 배경색 변경 */
+}

@@ -3,10 +3,10 @@ import '../../components/css/shop/Shop.css';
 
 const Shop = () => {
     const productImages = [
-        'images/shop/doggoods00.png',
-        'images/shop/doggoods01.png',
-        'images/shop/doggoods02.png',
-        'images/shop/doggoods03.png',
+        '/src/images/shop/doggoods00.png',
+        '/src/images/shop/doggoods01.png',
+        '/src/images/shop/doggoods02.png',
+        '/src/images/shop/doggoods00.png',
     ];
 
     useEffect(() => {
@@ -76,16 +76,16 @@ const Shop = () => {
             <div className="slider-container">
                 <div className="slideshow">
                     <div className="slideshow-slide">
-                        <img className="slide-image" src="src/images/doggoods01.png" alt="slide1" />
+                        <img className="slide-image" src={productImages[0]} alt="slide1" />
                     </div>
                     <div className="slideshow-slide">
-                        <img className="slide-image" src="src/images/doggoods00.png" alt="slide2" />
+                        <img className="slide-image" src={productImages[1]} alt="slide2" />
                     </div>
                     <div className="slideshow-slide">
-                        <img className="slide-image" src="src/images/doggoods02.png" alt="slide3" />
+                        <img className="slide-image" src={productImages[2]} alt="slide3" />
                     </div>
                     <div className="slideshow-slide">
-                        <img className="slide-image" src="src/images/doggoods03.png" alt="slide4" />
+                        <img className="slide-image" src={productImages[3]} alt="slide4" />
                     </div>
                     <button className="prev" onClick={prevSlide}>
                         &#10094;
