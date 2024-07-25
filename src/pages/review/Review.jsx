@@ -6,8 +6,11 @@ const Review = ()=> {
   const nav = useNavigate();
   return (
     <>
-    <div className="Review">      
-      <ReviewList/>          
+    <div className="Review">  
+      <h3>후기게시판</h3>   
+      <div>
+        <ReviewList/>       
+      </div>           
     </div>
     <div className="ReviewButton">
       <div className="ReviewSearch">

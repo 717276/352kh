@@ -1,5 +1,10 @@
 .Review table {
-  width: 100%;
+  width: 100%;  
+}
+
+.Review h3 {
+  text-align: center;
+  margin-top: 50px;
 }
 
 .ReviewButton {
@@ -8,6 +13,7 @@
   justify-content: space-between;
   padding: 10px; 
   margin-top: 20px; 
+  margin-bottom: 50px;
 }
 
 .ReviewSearch {
