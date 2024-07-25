@@ -71,11 +71,14 @@ const Shop = () => {
             <hr />
             <br />
             <br />
-            <div>
-                <span>메뉴2</span> &nbsp; &nbsp;
-                <span>메뉴3</span> &nbsp; &nbsp;
-                <span>메뉴4</span>
+            <div className="top_categories">
+                {categories.map((category, index) => (
+                    <Link key={index} to={`/shoplist/${category.category}`} className="top_category_link">
+                        <div className="top_category">{category.category}</div>
+                    </Link>
+                ))}
             </div>
+
             <br />
             <hr />
             <br />
