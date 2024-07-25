@@ -4,6 +4,10 @@
   margin-top: 20px;
 }
 
+.ReviewComment img {
+  width: 200px;
+}
+
 .ReviewComment table {
   width: 100%;
   border-collapse: collapse;
@@ -75,7 +79,6 @@
 
 .comment-list td:first-child {
   font-weight: bold;
-  width: 100px;
 }
 
 .comment-list td:last-child {
@@ -87,4 +90,12 @@
   display: flex;
   justify-content: center;
   gap: 20px;
+}
+
+.commentTable td {
+  width: 40px;
+}
+
+.commentTable td:nth-child(2) {
+  width: 50%;
 }

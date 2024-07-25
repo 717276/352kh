@@ -1,3 +1,7 @@
+.Review1 {
+  min-height: 1100px;
+}
+
 .Review table {
   width: 100%;  
 }
@@ -5,6 +9,11 @@
 .Review h3 {
   text-align: center;
   margin-top: 50px;
+}
+
+.Review select {
+  width: 100px;  
+  margin-left: 850px;
 }
 
 .ReviewButton {
