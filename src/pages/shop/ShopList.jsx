@@ -1,51 +1,65 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { useParams } from 'react-router-dom';
 import '../../components/css/shop/ShopList.css';
 
 const ShopList = () => {
+    const { category } = useParams();
     const products = [
-        { id: 1, name: '댕트립 굿즈 01', price: 7000, category: '신상품', image: '/src/images/shop/doggoods00.png' },
+        { id: 1, name: '위생용품 01', price: 7000, category: '위생용품', image: '/src/images/shop/doggoods00.png' },
         {
             id: 2,
-            name: '댕트립 굿즈 02',
+            name: '사료 및 간식 02',
             price: 56400,
             category: '사료 및 간식',
             image: '/src/images/shop/doggoods01.png',
         },
         {
             id: 3,
-            name: '댕트립 굿즈 03',
+            name: '강아지 옷 03',
             price: 84537,
             category: '강아지 옷',
             image: '/src/images/shop/doggoods02.png',
         },
-        { id: 4, name: '댕트립 굿즈 04', price: 84423, category: '위생용품', image: '/src/images/shop/doggoods03.png' },
-        { id: 5, name: '댕트립 굿즈 05', price: 8463, category: '악세서리', image: '/src/images/shop/doggoods00.png' },
-        { id: 6, name: '댕트립 굿즈 06', price: 87462, category: '신상품', image: '/src/images/shop/doggoods01.png' },
+        { id: 4, name: '위생용품', price: 84423, category: '위생용품', image: '/src/images/shop/doggoods03.png' },
+        { id: 5, name: '악세서리 05', price: 8463, category: '악세서리', image: '/src/images/shop/doggoods00.png' },
+        {
+            id: 6,
+            name: '사료 및 간식 06',
+            price: 87462,
+            category: '사료 및 간식',
+            image: '/src/images/shop/doggoods01.png',
+        },
         {
             id: 7,
-            name: '댕트립 굿즈 07',
+            name: '사료 및 간식 07',
             price: 8756,
             category: '사료 및 간식',
             image: '/src/images/shop/doggoods03.png',
         },
         {
             id: 8,
-            name: '댕트립 굿즈 08',
+            name: '강아지 옷 08',
             price: 15758,
             category: '강아지 옷',
             image: '/src/images/shop/doggoods02.png',
         },
-        { id: 9, name: '댕트립 굿즈 09', price: 14573, category: '위생용품', image: '/src/images/shop/doggoods00.png' },
+        { id: 9, name: '위생용품 09', price: 14573, category: '위생용품', image: '/src/images/shop/doggoods00.png' },
         {
             id: 10,
-            name: '댕트립 굿즈 10',
+            name: '악세서리 10',
             price: 78454,
             category: '악세서리',
             image: '/src/images/shop/doggoods01.png',
         },
     ];
 
-    const [selectedCategory, setSelectedCategory] = useState('전체');
+    const [selectedCategory, setSelectedCategory] = useState(category || '전체');
+
+    useEffect(() => {
+        if (category) {
+            setSelectedCategory(category);
+        }
+    }, [category]);
 
     const handleCategoryClick = (category) => {
         setSelectedCategory(category);

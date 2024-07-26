@@ -18,6 +18,30 @@
     font-size: 18px;
 }
 
+.top_categories {
+    display: flex;
+    justify-content: space-around; /* 아이템들을 가로로 배치하고, 공간을 균등하게 분배 */
+    flex-wrap: wrap; /* 가로 공간이 부족할 경우 줄 바꿈 */
+    margin-bottom: 20px;
+}
+
+.top_category_link {
+    text-decoration: none; /* 밑줄 제거 */
+}
+
+.top_category {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 10px 20px;
+    margin: 5px;
+    background-color: #f4f4f4;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    cursor: pointer;
+    text-align: center;
+}
+
 .slider-container {
     width: 100%;
     display: flex;
