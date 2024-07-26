@@ -26,7 +26,6 @@ const ReviewList = () => {
 
   const [sortedData, setSortedData] = useState(allData);
   const [sortType, setSortType] = useState("");
-
   const handleSortChange = (e) => {
     const selectedSortType = e.target.value;
 
@@ -46,23 +45,11 @@ const ReviewList = () => {
     setSortType(selectedSortType);
   };
 
-  const itemsPerPage = 10; // 한 페이지당 아이템 수
-  const totalItemsCount = sortedData.length; // 총 아이템 수
-  const [currentPage, setCurrentPage] = useState(1);
-  const [tableData, setTableData] = useState([]);
-
-  // 페이지 변경 시 호출되는 함수
-  const handlePageChange = (pageNumber) => {
-    setCurrentPage(pageNumber);
-  };
-
-  // 현재 페이지에 해당하는 데이터 로딩
-  useEffect(() => {
-    const startIndex = (currentPage - 1) * itemsPerPage;
-    const endIndex = startIndex + itemsPerPage;
-    const paginatedData = sortedData.slice(startIndex, endIndex);
-    setTableData(paginatedData);
-  }, [currentPage, sortedData]); // sortedData도 의존성에 추가
+  // 페이징
+  const [page, setPage] = useState(1);
+  const totalItems = sortedData.length;
+  const totalPage = Math.ceil(totalItems / 10);
+  const currentPageData = sortedData.slice((page - 1) * 10, page * 10);
 
   return (
     <>
@@ -84,7 +71,7 @@ const ReviewList = () => {
             </tr>
           </thead>
           <tbody>
-            {tableData.map((row) => (
+            {currentPageData.map((row) => (
               <tr key={row.id}>
                 <td hidden>{row.id}</td>
                 <td onClick={() => { nav(`/ReviewComment/${row.id}`) }}>{row.title}</td>
@@ -98,11 +85,9 @@ const ReviewList = () => {
         </table>
 
         <Page
-          activePage={currentPage}
-          itemsCountPerPage={itemsPerPage}
-          totalItemsCount={totalItemsCount}
-          pageRangeDisplayed={5}
-          onPageChange={handlePageChange}
+          totalPage={totalPage}
+          page={page}
+          setPage={setPage}
         />
       </div>
     </>

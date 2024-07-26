@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import '../../components/css/admin/ProductList.css';
 import { useNavigate } from 'react-router-dom';
-import Page from '../Page'; // Page 컴포넌트의 경로에 맞게 수정
+import Page from '../Page';
 
 // 예시 데이터 (보통 이 데이터는 API 호출을 통해 얻습니다.)
 const allData = [
@@ -27,22 +27,12 @@ const ProductList = () => {
   const nav = useNavigate();
   const itemsPerPage = 10; // 한 페이지당 아이템 수
   const totalItemsCount = allData.length; // 총 아이템 수
-  const [currentPage, setCurrentPage] = useState(1);
-  const [tableData, setTableData] = useState([]);
 
-  // 페이지 변경 시 호출되는 함수
-  const handlePageChange = (pageNumber) => {
-    setCurrentPage(pageNumber);
-  };
-
-  // 현재 페이지에 해당하는 데이터 로딩
-  useEffect(() => {
-    // 데이터 페칭 로직 (여기서는 데이터 조각화 예시)
-    const startIndex = (currentPage - 1) * itemsPerPage;
-    const endIndex = startIndex + itemsPerPage;
-    const paginatedData = allData.slice(startIndex, endIndex);
-    setTableData(paginatedData);
-  }, [currentPage]);
+  // 페이징
+  const [page, setPage] = useState(1);
+  const totalItems = allData.length;
+  const totalPage = Math.ceil(totalItems / 10);
+  const currentPageData = allData.slice((page - 1) * 10, page * 10);
 
   return (
     <>
@@ -63,7 +53,7 @@ const ProductList = () => {
             </tr>
           </thead>
           <tbody>
-            {tableData.map((row) => (
+            {currentPageData.map((row) => (
               <tr key={row.no}>
                 <td>{row.no}</td>
                 <td>{/* 이미지 출력 로직 추가 */}</td>
@@ -86,11 +76,9 @@ const ProductList = () => {
           <button id='saveButton' onClick={() => { nav('/admin/productRegister') }}>상품등록</button>
         </div>
         <Page
-          activePage={currentPage}
-          itemsCountPerPage={itemsPerPage}
-          totalItemsCount={totalItemsCount}
-          pageRangeDisplayed={5}
-          onPageChange={handlePageChange}
+          totalPage={totalPage}
+          page={page}
+          setPage={setPage}
         />
       </div>
     </>
