@@ -21,7 +21,7 @@ import MyPage from './pages/mypage/MyPage';
 import Product from './pages/shop/Product';
 import ShopList from './pages/shop/ShopList';
 import QnA from './pages/csr/QnA';
-
+import Managerment from './pages/admin/Management';
 function App() {  
   return (
     <>    
@@ -47,6 +47,7 @@ function App() {
           <Route path="/shoplist/:category" element={<ShopList />} />
           <Route path="/mypage" element={<MyPage />} />
           <Route path="/qna" element={<QnA/>}/>
+          <Route path="/mg" element={<Managerment/>}/>
         </Routes>          
       <Footer></Footer>
     </div>
