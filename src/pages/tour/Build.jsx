@@ -4,7 +4,6 @@ import DatePicker from 'react-datepicker';
 import Hotels from './Hotels';
 import Foods from'./Foods';
 import Places from './Places';
-import Gmap from './Gmap';
 import GetPlace from './GetPlace';
 import 'react-datepicker/dist/react-datepicker.css';
 
@@ -300,7 +299,8 @@ const Build = () => {
             </div>
             {/* npm install '@vis.gl/react-google-maps' */}
             <div className="build google_map">
-                <GetPlace className="g_map" search={search} category={category} filteredData={resultHandler}></GetPlace>
+                <GetPlace className="g_map" search={'부산'} category={2} filteredData={resultHandler}></GetPlace>
+                                
             </div>
         </div>
     );

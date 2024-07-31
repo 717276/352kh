@@ -28,7 +28,7 @@ function GetPlace({search, category, filteredData}) {
         if (category === 1) {
             query += "명소 " + search;
         } else if(category === 2) {
-            query += "식당 " + search; 
+            query += "레스토랑 " + search; 
         }
     }
     const { isLoaded } = useJsApiLoader({
@@ -62,6 +62,7 @@ function GetPlace({search, category, filteredData}) {
                     address: place.formatted_address,
                     photo: place.photos && place.photos[0] ? place.photos[0].getUrl() : null,
                 }));
+                filteredData = newMarkers;
                 setMarkers(newMarkers);
                 
                 if (newMarkers.length > 0) {
