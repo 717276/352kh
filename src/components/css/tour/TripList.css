@@ -1,0 +1,47 @@
+.TripList {
+  padding: 20px;
+  margin-top: 20px;
+}
+
+.trip-items {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.trip-item {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  width: 100%;
+  background-color: #f9f9f9;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  cursor: pointer;
+  transition: transform 0.3s, box-shadow 0.3s;
+}
+
+.trip-item:hover {
+  transform: scale(1.02);
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+}
+
+.trip-item img {
+  width: 150px;
+  height: auto;
+  border-top-left-radius: 10px;
+  border-bottom-left-radius: 10px;
+}
+
+.trip-info {
+  padding: 20px;
+  flex: 1;
+}
+
+.trip-info h2 {
+  margin: 0 0 10px 0;
+}
+
+.trip-info p {
+  margin: 5px 0;
+}
