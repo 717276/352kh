@@ -1,7 +1,17 @@
 import '../components/css/Main.css'
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-const Main=()=>{
+import * as LoginFunctions from '../components/js/Login.js';
+const Main=()=>{    
+    useEffect(()=>{                
+        const accessToken = localStorage.getItem('accessToken');        
+        if (accessToken !== null && accessToken !== "null") {            
+            // 확인용
+            // const decodedToken = jwtDecode(accessToken);
+            // console.log(decodedToken.userNo);                          
+        } 
+    },[]);
+
     const slide_dummy =
         [
             '/images/tour/place1.png',

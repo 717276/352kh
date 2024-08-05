@@ -1,5 +1,5 @@
 import React from "react";
-import {useState} from 'react';
+import {useState,useEffect, useRef} from 'react';
 import {
     GoogleMap,    
     useJsApiLoader,
@@ -20,17 +20,31 @@ const radius = 5000;
 
 const libraries = ["places"];
 
-function GetPlace({search, category, filteredData}) {        
-    let query = "반려동물 동반 ";
-    if (search === '') {
-        query = "서울역"; 
-    } else {
-        if (category === 1) {
-            query += "명소 " + search;
-        } else if(category === 2) {
-            query += "레스토랑 " + search; 
+function GetPlace({search, category, filteredData}) {
+
+    const searchRef = useRef(search);
+    const categoryRef = useRef(category);
+    console.log("Get place " + searchRef.current + "  " + categoryRef.current);
+
+    useEffect(() => {
+        searchRef.current = search;
+        categoryRef.current = category;
+    }, [search, category]);
+
+    const query = React.useMemo(() => {
+        let baseQuery = "반려동물 동반 ";
+        if (search === '') {
+            return "서울역";
+        } else {
+            if (category === 1) {
+                return baseQuery + "명소 " + search;
+            } else if (category === 2) {
+                return baseQuery + "레스토랑 " + search;
+            }
         }
-    }
+        return baseQuery;
+    }, [search, category]);
+
     const { isLoaded } = useJsApiLoader({
         id: "google-map-script",
         googleMapsApiKey: "AIzaSyBRZQy7nY-LfiTF9w9GdgQE81CvnGAKp9I",
@@ -38,6 +52,7 @@ function GetPlace({search, category, filteredData}) {
     });
     const [map, setMap] = React.useState(null);
     const [markers, setMarkers] = React.useState([]);
+    
     const onLoad = React.useCallback(function callback(map) {
         const bounds = new window.google.maps.LatLngBounds(center);
         map.fitBounds(bounds);
@@ -73,14 +88,17 @@ function GetPlace({search, category, filteredData}) {
                 }
             }                    
         });
-    }, []);
+    },[query]);
 
     const onUnmount = React.useCallback(function callback(map) {
         setMap(null);
     }, []);
 
+    const mapKey = React.useMemo(() => search, [search]);
+
     return isLoaded ? (
         <GoogleMap
+            key={mapKey}
             mapContainerStyle={containerStyle}
             center={center}
             zoom={15}

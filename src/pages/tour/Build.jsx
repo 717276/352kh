@@ -1,5 +1,5 @@
 import '../../components/css/tour/Build.css';
-import { useState, useRef, useEffect, useReducer } from 'react';
+import { useState, useRef, useEffect, useReducer, useCallback  } from 'react';
 import DatePicker from 'react-datepicker';
 import Hotels from './Hotels';
 import Foods from'./Foods';
@@ -68,6 +68,10 @@ const Build = () => {
     // 카테고리, 검색어 설정
     const [category, setCategory] = useState(0);
     const [search, setSearch] = useState('');
+    
+    const [resultSearch, setResultSearch] = useState('');
+    const [resultCategory, setResultCategory] = useState(category);
+
     const [selectedCategory, setSelectedCategory] = useState(null);
     // 검색된 데이터
     const [hotels, setHotels] = useState([]);
@@ -82,24 +86,31 @@ const Build = () => {
         setCategory(type);
         setSelectedCategory(type);
     };        
-    // 검색
-    function getSearch(category, search){
+    // 검색    useCallback 동작 수정 필요
+    const getSearch = useCallback((category, search) => {
+        console.log(category + " " + search);
         if (search === '') {
             inputRef.current.focus();
             return;
         }
-        const filterData = async () => {
-            let filteredData;
-            if (category === 0){
-                filteredData = await fetchHotels(search);
+
+        const renderingSearch = async () => {
+            if (category === 0) {
+                const filteredData = await fetchHotels(search);
                 setHotels(filteredData);
             } else {
-                setSearch(search);
-                setCategory(category);
+                setResultSearch(search);
+                setResultCategory(category);
             }
-        }
-        filterData();
-    }
+        };
+
+        renderingSearch();
+    }, []);
+
+    useEffect(() => {
+        console.log("rendering");
+    }, [resultSearch, resultCategory]);
+
     function resultHandler(results){
         if (category === 1) {
             setPlaces(results);
@@ -111,7 +122,7 @@ const Build = () => {
         const response = await fetch(`/api/tour/hotels?search=${search}&startDate=${startDate}`);
         return response.json();
     };
-        
+            
     // 날짜 설정
     const [day, setDay]=useState(1);
     const incrementDay = () => setDay(day + 1);
@@ -222,12 +233,12 @@ const Build = () => {
                         value={search}
                         onChange={(e) => setSearch(e.target.value)}
                     />
-                    <div
+                    <button
                         className="build_search_btn"
                         onClick={() => getSearch(category, search)}
                     >
                         <img src=""></img>
-                    </div>
+                    </button>
                 </div>
                 <div className='data_list'>
                     {category === 0 && <Hotels createdHotel={createdHotel} hotels={hotels}/>}
@@ -298,9 +309,8 @@ const Build = () => {
                 </div>
             </div>
             {/* npm install '@vis.gl/react-google-maps' */}
-            <div className="build google_map">
-                <GetPlace className="g_map" search={'부산'} category={2} filteredData={resultHandler}></GetPlace>
-                                
+            <div className="build google_map">                
+                <GetPlace className="g_map" search={resultSearch} category={resultCategory} filteredData={resultHandler}></GetPlace>                                                                   
             </div>
         </div>
     );
