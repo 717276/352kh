@@ -1,0 +1,34 @@
+.payment-result {
+  padding: 20px;
+  margin-top: 20px;
+  text-align: center;
+}
+
+.result-details {
+  margin: 20px 0;
+  padding: 20px;
+  background-color: #f9f9f9;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.result-details p {
+  margin: 10px 0;
+}
+
+.navigate-button {
+  padding: 10px 20px;
+  margin-top: 20px;
+  border: none;
+  border-radius: 5px;
+  background-color: #1e90ff;
+  color: white;
+  cursor: pointer;
+  transition: background-color 0.3s, box-shadow 0.3s;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.navigate-button:hover {
+  background-color: #1c86ee;
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+}

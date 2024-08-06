@@ -27,7 +27,7 @@ function App() {
     <>    
     <div className="Full">
       <Header></Header>          
-        <Routes>
+        <Routes>        
           <Route path="/" element={<Main />} />
           <Route path="/trip" element={<Trip />} />
           <Route path="/tripDetail/:no" element={<TripDetail />} />

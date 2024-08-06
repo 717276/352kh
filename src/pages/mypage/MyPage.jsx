@@ -1,75 +1,117 @@
 import React, { useState, useEffect } from "react";
+import { useNavigate, useParams } from "react-router-dom";
 import "../../components/css/mypage/MyPage.css";
 import profileImg from "../../images/profile/profile.png";
-import place1 from "../../images/place/place1.png";
-import place2 from "../../images/place/place2.png";
-import place3 from "../../images/place/place3.png";
-import productImg from "../../images/place/place1.png";
 
 const MyPage = () => {
+  const { userNo } = useParams();
   const [editField, setEditField] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const [productPage, setProductPage] = useState(1);
   const [sortType, setSortType] = useState("latest");
   const [productSortType, setProductSortType] = useState("latest");
   const itemsPerPage = 5;
-
-  const mockData = Array.from({ length: 15 }, (_, index) => ({
-    id: index + 1,
-    img: [place1, place2, place3][index % 3],
-    name: ["투어 A", "투어 B", "투어 C"][index % 3],
-    description: ["짧은 설명 A", "짧은 설명 B", "짧은 설명 C"][index % 3],
-    startDate: "2023-01-01",
-    endDate: "2023-01-05",
-    price: `${(index + 1) * 10000}원`,
-  }));
-
-  const productMockData = Array.from({ length: 15 }, (_, index) => ({
-    id: index + 1,
-    img: productImg,
-    name: `상품 ${["A", "B", "C"][index % 3]}`,
-    purchaseDate: "2023-01-01",
-    quantity: (index % 5) + 1,
-    totalAmount: `${(index + 1) * 10000}원`,
-    status: ["상품준비중", "배송중", "배송완료"][index % 3],
-  }));
-
-  const [sortedData, setSortedData] = useState([...mockData]);
-  const [sortedProductData, setSortedProductData] = useState([
-    ...productMockData,
-  ]);
+  const [user, setUser] = useState(null);
+  const [sortedData, setSortedData] = useState([]);
+  const [sortedProductData, setSortedProductData] = useState([]);
+  const [updateValues, setUpdateValues] = useState({});
+  const nav = useNavigate();
+  useEffect(() => {
+    const url = `http://localhost:8080/api/mypage/${userNo}`;
+    fetch(url)
+      .then((response) => response.json())
+      .then((data) => {
+        setUser(data);
+        setSortedData(data.tours);
+        setSortedProductData(data.orderItems);
+      })
+      .catch((error) => {
+        console.error("Error fetching user data:", error);
+      });
+  }, [userNo]);
 
   useEffect(() => {
-    const sorted = [...mockData].sort((a, b) => {
+    const sorted = [...(user?.tours || [])].sort((a, b) => {
       if (sortType === "latest") {
-        return b.id - a.id;
+        return b.t_no - a.t_no;
       } else {
-        return a.id - b.id;
+        return a.t_no - b.t_no;
       }
     });
     setSortedData(sorted);
-  }, [sortType]);
+  }, [sortType, user]);
+
+  const getTourImageUrl = (img) => {
+    return `/images/${img.i_category}/${img.i_ref_no}/${img.i_order}.png`;
+  };
+
+  const getProImageUrl = (img) => {
+    return `/images/${img.i_category}/${img.i_ref_no}/${img.i_order}.png`;
+  };
+
+  const formatDateToYYYYMMDD = (dateString) => {
+    const date = new Date(dateString);
+    const year = date.getFullYear();
+    const month = ("0" + (date.getMonth() + 1)).slice(-2);
+    const day = ("0" + date.getDate()).slice(-2);
+    return `${year}-${month}-${day}`;
+  };
+
+  const formatDate = (dateString) => {
+    const options = {
+      year: "numeric",
+      month: "2-digit",
+      day: "2-digit",
+      hour: "2-digit",
+      minute: "2-digit",
+      second: "2-digit",
+    };
+    return new Date(dateString).toLocaleString("ko-KR", options);
+  };
 
   useEffect(() => {
-    let filteredProducts = productMockData;
+    let filteredProducts = [...(user?.orderItems || [])];
     if (productSortType === "ready") {
-      filteredProducts = productMockData.filter(
-        (product) => product.status === "상품준비중"
-      );
+      filteredProducts = filteredProducts
+        .filter((product) => product.oi_status === 0)
+        .sort((a, b) => b.oi_no - a.oi_no);
     } else if (productSortType === "shipping") {
-      filteredProducts = productMockData.filter(
-        (product) => product.status === "배송중"
-      );
+      filteredProducts = filteredProducts
+        .filter((product) => product.oi_status === 1)
+        .sort((a, b) => b.oi_no - a.oi_no);
     } else if (productSortType === "completion") {
-      filteredProducts = productMockData.filter(
-        (product) => product.status === "배송완료"
-      );
+      filteredProducts = filteredProducts
+        .filter((product) => product.oi_status === 2)
+        .sort((a, b) => b.oi_no - a.oi_no);
     } else {
-      filteredProducts = [...productMockData].sort((a, b) => b.id - a.id);
+      filteredProducts = filteredProducts.sort((a, b) => b.oi_no - a.oi_no);
     }
-
     setSortedProductData(filteredProducts);
-  }, [productSortType]);
+  }, [productSortType, user]);
+
+  useEffect(() => {
+    const script = document.createElement("script");
+    script.src =
+      "//t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js";
+    script.async = true;
+    document.body.appendChild(script);
+  }, []);
+
+  if (!user) {
+    return <div>Loading...</div>;
+  }
+
+  const handleClick = () => {
+    new window.daum.Postcode({
+      oncomplete: (data) => {
+        setUpdateValues({
+          ...updateValues,
+          POSTNO: data.zonecode,
+          BASICADDRESS: data.roadAddress,
+        });
+      },
+    }).open();
+  };
 
   const totalPages = Math.ceil(sortedData.length / itemsPerPage);
   const totalProductPages = Math.ceil(sortedProductData.length / itemsPerPage);
@@ -95,12 +137,122 @@ const MyPage = () => {
     productStartIndex + itemsPerPage
   );
 
+  const getDogSizeText = (size) => {
+    switch (size) {
+      case 0:
+        return "소형견";
+      case 1:
+        return "중형견";
+      case 2:
+        return "대형견";
+      default:
+        return "알 수 없음";
+    }
+  };
+
+  const getOrderStatusText = (status) => {
+    switch (status) {
+      case 0:
+        return "상품준비중";
+      case 1:
+        return "배송중";
+      case 2:
+        return "배송완료";
+      default:
+        return "알 수 없음";
+    }
+  };
+
+  const getPaymentTypeText = (type) => {
+    switch (type) {
+      case 0:
+        return "카드/간편결제";
+      case 1:
+        return "실시간 계좌이체";
+      case 2:
+        return "가상계좌";
+      case 3:
+        return "휴대폰 결제";
+      default:
+        return "알 수 없음";
+    }
+  };
+
+  const handleInputChange = (field, value) => {
+    setUpdateValues({
+      ...updateValues,
+      [field]: value,
+    });
+  };
+
+  const handleSubmit = (field) => (e) => {
+    e.preventDefault();
+
+    const payload = {
+      userNo: parseInt(userNo, 10),
+      ...updateValues,
+    };
+
+    let endpoint = "";
+
+    switch (field) {
+      case "ADDRESS":
+        endpoint = "/mypage/updateAddress";
+        break;
+      case "USERID":
+        endpoint = "/mypage/updateUserId";
+        break;
+      case "NAME":
+        endpoint = "/mypage/updateName";
+        break;
+      case "PHONE":
+        endpoint = "/mypage/updatePhone";
+        break;
+      case "DOGNAME":
+        endpoint = "/mypage/updateDogName";
+        break;
+      case "BREED":
+        endpoint = "/mypage/updateBreed";
+        break;
+      case "DSIZE":
+        endpoint = "/mypage/updateDsize";
+        break;
+      default:
+        return;
+    }
+
+    fetch(`http://localhost:8080/api${endpoint}`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(payload),
+    })
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error("Network response was not ok");
+        }
+        return response.json();
+      })
+      .then((data) => {
+        setUser(data); // 서버에서 반환된 최신 데이터를 사용하여 상태 업데이트
+        toggleEditField("");
+      })
+      .catch((error) => {
+        console.error("Error updating user data:", error);
+      });
+  };
+
+  const handleItemClick = (t_no) => {
+    nav(`/tripDetail/${t_no}`);
+  };
+
   return (
     <>
       <div className="MyPage">
-        <h1 className="mypage-h1">마이페이지</h1>
-        <div className="MyPageInfo">
-          <form action="#">
+        <div className="section">
+          <h1 className="section-title">마이페이지</h1>
+          <div className="MyPageInfo">
             <div className="myinfo">
               <div className="info-section">
                 <table className="mypage-table">
@@ -109,68 +261,116 @@ const MyPage = () => {
                       <td>ID</td>
                       <td>
                         <div className="my-info">
-                          <div className="my-infodesc">매튜</div>
-                          {editField !== "id" && (
+                          <div className="my-infodesc">{user.m_userId}</div>
+                          {editField !== "USERID" && (
                             <button
                               type="button"
-                              onClick={() => toggleEditField("id")}
+                              onClick={() => toggleEditField("USERID")}
                             >
                               변경
                             </button>
                           )}
                         </div>
-                        {editField === "id" && (
+                        {editField === "USERID" && (
                           <div className="edit-field">
-                            <input type="text" placeholder="새 ID" />
-                            <br />
-                            <span className="edit-description">
-                              사용하실 ID를 입력해주세요.
-                            </span>
-                            <div className="edit-buttons">
-                              <button type="submit">변경</button>
-                              <button
-                                type="button"
-                                onClick={() => toggleEditField("id")}
-                              >
-                                취소
-                              </button>
-                            </div>
+                            <form onSubmit={handleSubmit("USERID")}>
+                              <input
+                                type="text"
+                                name="USERID"
+                                placeholder="새 ID"
+                                value={updateValues.USERID || ""}
+                                onChange={(e) =>
+                                  handleInputChange("USERID", e.target.value)
+                                }
+                                required
+                              />
+                              <br />
+                              <span className="edit-description">
+                                사용하실 ID를 입력해주세요.
+                              </span>
+                              <div className="edit-buttons">
+                                <button type="submit">변경</button>
+                                <button
+                                  type="button"
+                                  onClick={() => toggleEditField("USERID")}
+                                >
+                                  취소
+                                </button>
+                              </div>
+                            </form>
                           </div>
                         )}
                       </td>
                     </tr>
                     <tr>
                       <td>Email</td>
-                      <td>email@gmail.com</td>
+                      <td>
+                        <div className="my-info">
+                          <div className="my-infodesc">{user.m_email}</div>
+                        </div>
+                      </td>
                     </tr>
                     <tr>
                       <td>주소</td>
                       <td>
                         <div className="my-info">
                           <div className="my-infodesc">
-                            우편번호: 11111 <br />
-                            기본주소: 서울특별시 강남구 호산빌딩 5층
+                            우편번호: {user.m_postNo} <br />
+                            기본주소: {user.m_basicAddress}
                             <br />
-                            상세주소: 502호
+                            상세주소: {user.m_detailAddress}
                           </div>
-                          {editField !== "address" && (
+                          {editField !== "ADDRESS" && (
                             <button
                               type="button"
-                              onClick={() => toggleEditField("address")}
+                              onClick={() => toggleEditField("ADDRESS")}
                             >
                               변경
                             </button>
                           )}
                         </div>
-                        {editField === "address" && (
-                          <div className="edit-field">
+                        {editField === "ADDRESS" && (
+                          <form
+                            className="edit-field"
+                            onSubmit={handleSubmit("ADDRESS")}
+                          >
                             <div className="searchAddr">
                               <div className="addrInput">
-                                <input type="text" placeholder="새 우편번호" />
-                                <input type="text" placeholder="새 기본주소" />
-                                <input type="text" placeholder="새 상세주소" />
+                                <input
+                                  type="text"
+                                  name="POSTNO"
+                                  placeholder="새 우편번호"
+                                  value={updateValues.POSTNO || ""}
+                                  readOnly
+                                  required
+                                />
+                                <input
+                                  type="text"
+                                  name="BASICADDRESS"
+                                  placeholder="새 기본주소"
+                                  value={updateValues.BASICADDRESS || ""}
+                                  readOnly
+                                  required
+                                />
+                                <input
+                                  type="text"
+                                  name="DETAILADDRESS"
+                                  placeholder="새 상세주소"
+                                  value={updateValues.DETAILADDRESS || ""}
+                                  onChange={(e) =>
+                                    handleInputChange(
+                                      "DETAILADDRESS",
+                                      e.target.value
+                                    )
+                                  }
+                                  required
+                                />
                               </div>
-                              <button type="button" className="zip-code-button">
+                              <button
+                                type="button"
+                                className="zip-code-button"
+                                onClick={handleClick}
+                              >
                                 우편번호 찾기
                               </button>
                               <br />
@@ -179,11 +379,56 @@ const MyPage = () => {
                               <button type="submit">변경</button>
                               <button
                                 type="button"
-                                onClick={() => toggleEditField("address")}
+                                onClick={() => toggleEditField("ADDRESS")}
                               >
                                 취소
                               </button>
                             </div>
+                          </form>
+                        )}
+                      </td>
+                    </tr>
+                    <tr>
+                      <td>이름</td>
+                      <td>
+                        <div className="my-info">
+                          <div className="my-infodesc">{user.m_name}</div>
+                          {editField !== "NAME" && (
+                            <button
+                              type="button"
+                              onClick={() => toggleEditField("NAME")}
+                            >
+                              변경
+                            </button>
+                          )}
+                        </div>
+                        {editField === "NAME" && (
+                          <div className="edit-field">
+                            <form onSubmit={handleSubmit("NAME")}>
+                              <input
+                                type="text"
+                                name="NAME"
+                                placeholder="새 이름"
+                                value={updateValues.NAME || ""}
+                                onChange={(e) =>
+                                  handleInputChange("NAME", e.target.value)
+                                }
+                                required
+                              />
+                              <br />
+                              <span className="edit-description">
+                                사용하실 이름을 입력해주세요.
+                              </span>
+                              <div className="edit-buttons">
+                                <button type="submit">변경</button>
+                                <button
+                                  type="button"
+                                  onClick={() => toggleEditField("NAME")}
+                                >
+                                  취소
+                                </button>
+                              </div>
+                            </form>
                           </div>
                         )}
                       </td>
@@ -192,32 +437,44 @@ const MyPage = () => {
                       <td>연락처</td>
                       <td>
                         <div className="my-info">
-                          <div className="my-infodesc"> 01011111111</div>
-                          {editField !== "phone" && (
+                          <div className="my-infodesc">0{user.m_phone}</div>
+                          {editField !== "PHONE" && (
                             <button
                               type="button"
-                              onClick={() => toggleEditField("phone")}
+                              onClick={() => toggleEditField("PHONE")}
                             >
                               변경
                             </button>
                           )}
                         </div>
-                        {editField === "phone" && (
+                        {editField === "PHONE" && (
                           <div className="edit-field">
-                            <input type="text" placeholder="새 전화번호" />
-                            <br />
-                            <span className="edit-description">
-                              사용하실 전화번호를 입력해주세요.
-                            </span>
-                            <div className="edit-buttons">
-                              <button type="submit">변경</button>
-                              <button
-                                type="button"
-                                onClick={() => toggleEditField("phone")}
-                              >
-                                취소
-                              </button>
-                            </div>
+                            <form onSubmit={handleSubmit("PHONE")}>
+                              <input
+                                type="text"
+                                name="PHONE"
+                                placeholder="새 전화번호"
+                                value={updateValues.PHONE || ""}
+                                maxLength={11}
+                                onChange={(e) =>
+                                  handleInputChange("PHONE", e.target.value)
+                                }
+                                required
+                              />
+                              <br />
+                              <span className="edit-description">
+                                사용하실 전화번호를 입력해주세요.
+                              </span>
+                              <div className="edit-buttons">
+                                <button type="submit">변경</button>
+                                <button
+                                  type="button"
+                                  onClick={() => toggleEditField("PHONE")}
+                                >
+                                  취소
+                                </button>
+                              </div>
+                            </form>
                           </div>
                         )}
                       </td>
@@ -226,33 +483,43 @@ const MyPage = () => {
                       <td>강아지 이름</td>
                       <td>
                         <div className="my-info">
-                          <div className="my-infodesc">초코</div>
-                          {editField !== "dogName" && (
+                          <div className="my-infodesc">{user.dog.d_name}</div>
+                          {editField !== "DOGNAME" && (
                             <button
                               type="button"
-                              onClick={() => toggleEditField("dogName")}
+                              onClick={() => toggleEditField("DOGNAME")}
                             >
                               변경
                             </button>
                           )}
                         </div>
-                        {editField === "dogName" && (
+                        {editField === "DOGNAME" && (
                           <div className="edit-field">
-                            <input type="text" placeholder="새 강아지 이름" />
-                            <br />
-                            <span className="edit-description">
-                              {" "}
-                              강아지 이름을 입력해주세요.
-                            </span>
-                            <div className="edit-buttons">
-                              <button type="submit">변경</button>
-                              <button
-                                type="button"
-                                onClick={() => toggleEditField("dogName")}
-                              >
-                                취소
-                              </button>
-                            </div>
+                            <form onSubmit={handleSubmit("DOGNAME")}>
+                              <input
+                                type="text"
+                                name="DOGNAME"
+                                placeholder="새 강아지 이름"
+                                value={updateValues.DOGNAME || ""}
+                                onChange={(e) =>
+                                  handleInputChange("DOGNAME", e.target.value)
+                                }
+                                required
+                              />
+                              <br />
+                              <span className="edit-description">
+                                강아지 이름을 입력해주세요.
+                              </span>
+                              <div className="edit-buttons">
+                                <button type="submit">변경</button>
+                                <button
+                                  type="button"
+                                  onClick={() => toggleEditField("DOGNAME")}
+                                >
+                                  취소
+                                </button>
+                              </div>
+                            </form>
                           </div>
                         )}
                       </td>
@@ -261,33 +528,43 @@ const MyPage = () => {
                       <td>강아지 종</td>
                       <td>
                         <div className="my-info">
-                          <div className="my-infodesc">시츄</div>
-                          {editField !== "dogBreed" && (
+                          <div className="my-infodesc">{user.dog.d_breed}</div>
+                          {editField !== "BREED" && (
                             <button
                               type="button"
-                              onClick={() => toggleEditField("dogBreed")}
+                              onClick={() => toggleEditField("BREED")}
                             >
                               변경
                             </button>
                           )}
                         </div>
-                        {editField === "dogBreed" && (
+                        {editField === "BREED" && (
                           <div className="edit-field">
-                            <input type="text" placeholder="새 강아지 종" />
-                            <br />
-                            <span className="edit-description">
-                              {" "}
-                              강아지 종을 입력해주세요.
-                            </span>
-                            <div className="edit-buttons">
-                              <button type="submit">변경</button>
-                              <button
-                                type="button"
-                                onClick={() => toggleEditField("dogBreed")}
-                              >
-                                취소
-                              </button>
-                            </div>
+                            <form onSubmit={handleSubmit("BREED")}>
+                              <input
+                                type="text"
+                                name="BREED"
+                                placeholder="새 강아지 종"
+                                value={updateValues.BREED || ""}
+                                onChange={(e) =>
+                                  handleInputChange("BREED", e.target.value)
+                                }
+                                required
+                              />
+                              <br />
+                              <span className="edit-description">
+                                강아지 종을 입력해주세요.
+                              </span>
+                              <div className="edit-buttons">
+                                <button type="submit">변경</button>
+                                <button
+                                  type="button"
+                                  onClick={() => toggleEditField("BREED")}
+                                >
+                                  취소
+                                </button>
+                              </div>
+                            </form>
                           </div>
                         )}
                       </td>
@@ -296,41 +573,72 @@ const MyPage = () => {
                       <td>강아지 크기</td>
                       <td>
                         <div className="my-info">
-                          <div className="my-infodesc">소형견</div>
-                          {editField !== "dogSize" && (
+                          <div className="my-infodesc">
+                            {getDogSizeText(user.dog.d_size)}
+                          </div>
+                          {editField !== "DSIZE" && (
                             <button
                               type="button"
-                              onClick={() => toggleEditField("dogSize")}
+                              onClick={() => toggleEditField("DSIZE")}
                             >
                               변경
                             </button>
                           )}
                         </div>
-                        {editField === "dogSize" && (
+                        {editField === "DSIZE" && (
                           <div className="edit-field">
-                            <div className="size-choice">
-                              <span>
-                                <label htmlFor="large">대형견</label>{" "}
-                                <input type="radio" name="size" id="large" />
-                              </span>
-                              <span>
-                                <label htmlFor="medium">중형견</label>{" "}
-                                <input type="radio" name="size" id="medium" />
-                              </span>
-                              <span>
-                                <label htmlFor="small">소형견</label>{" "}
-                                <input type="radio" name="size" id="small" />
-                              </span>
-                            </div>
-                            <div className="edit-buttons">
-                              <button type="submit">변경</button>
-                              <button
-                                type="button"
-                                onClick={() => toggleEditField("dogSize")}
-                              >
-                                취소
-                              </button>
-                            </div>
+                            <form onSubmit={handleSubmit("DSIZE")}>
+                              <div className="size-choice">
+                                <span>
+                                  <label htmlFor="large">대형견</label>{" "}
+                                  <input
+                                    type="radio"
+                                    name="size"
+                                    id="large"
+                                    checked={updateValues.DSIZE === 2}
+                                    onChange={() =>
+                                      handleInputChange("DSIZE", 2)
+                                    }
+                                    required
+                                  />
+                                </span>
+                                <span>
+                                  <label htmlFor="medium">중형견</label>{" "}
+                                  <input
+                                    type="radio"
+                                    name="size"
+                                    id="medium"
+                                    checked={updateValues.DSIZE === 1}
+                                    onChange={() =>
+                                      handleInputChange("DSIZE", 1)
+                                    }
+                                    required
+                                  />
+                                </span>
+                                <span>
+                                  <label htmlFor="small">소형견</label>{" "}
+                                  <input
+                                    type="radio"
+                                    name="size"
+                                    id="small"
+                                    checked={updateValues.DSIZE === 0}
+                                    onChange={() =>
+                                      handleInputChange("DSIZE", 0)
+                                    }
+                                    required
+                                  />
+                                </span>
+                              </div>
+                              <div className="edit-buttons">
+                                <button type="submit">변경</button>
+                                <button
+                                  type="button"
+                                  onClick={() => toggleEditField("")}
+                                >
+                                  취소
+                                </button>
+                              </div>
+                            </form>
                           </div>
                         )}
                       </td>
@@ -348,26 +656,30 @@ const MyPage = () => {
                 </label>
               </div>
             </div>
-          </form>
+          </div>
         </div>
-        <hr />
-        <div className="MyPageTrip">
-          <h1>나의 투어리스트</h1>
+        <div className="section">
+          <h1 className="section-title">나의 투어리스트</h1>
+          <ul className="sort-type trip-ul">
+            <li onClick={() => setSortType("latest")}>최신순</li>
+            <li onClick={() => setSortType("oldest")}>오래된 순</li>
+          </ul>
           <div className="trip-list">
-            <ul className="sort-type">
-              <li onClick={() => setSortType("latest")}>최신순</li>
-              <li onClick={() => setSortType("oldest")}>오래된 순</li>
-            </ul>
             {selectedItems.map((item) => (
-              <div key={item.id} className="trip-item">
-                <img src={item.img} alt={item.name} />
+              <div
+                key={item.t_no}
+                className="trip-item"
+                onClick={() => handleItemClick(item.t_no)}
+              >
+                <img src={getTourImageUrl(item.img)} alt={item.t_title} />
                 <div className="trip-details">
-                  <div className="trip-name">{item.name}</div>
-                  <div className="trip-description">{item.description}</div>
+                  <div className="trip-name">{item.t_title}</div>
+                  <div className="trip-description">{item.t_explain}</div>
                   <div className="trip-date">
-                    {item.startDate} - {item.endDate}
+                    {formatDateToYYYYMMDD(item.t_strDate)} ~{" "}
+                    {formatDateToYYYYMMDD(item.t_endDate)}
                   </div>
-                  <div className="trip-price">{item.price}</div>
+                  <div className="trip-price">{item.t_totalPrice}</div>
                 </div>
               </div>
             ))}
@@ -386,31 +698,40 @@ const MyPage = () => {
             ))}
           </div>
         </div>
-        <hr />
-        <div className="MyPageProducts">
-          <h1>구매한 상품 목록</h1>
+        <div className="section">
+          <h1 className="section-title">구매한 상품 목록</h1>
+          <ul className="sort-type">
+            <li onClick={() => setProductSortType("latest")}>전체</li>
+            <li onClick={() => setProductSortType("ready")}>상품준비중</li>
+            <li onClick={() => setProductSortType("shipping")}>배송중</li>
+            <li onClick={() => setProductSortType("completion")}>배송완료</li>
+          </ul>
           <div className="product-list">
-            <ul className="sort-type">
-              <li onClick={() => setProductSortType("latest")}>전체</li>
-              <li onClick={() => setProductSortType("ready")}>상품준비중</li>
-              <li onClick={() => setProductSortType("shipping")}>배송중</li>
-              <li onClick={() => setProductSortType("completion")}>배송완료</li>
-            </ul>
             {selectedProductItems.map((item) => (
-              <div key={item.id} className="product-item">
-                <div className="purchase-date">{item.purchaseDate}</div>
+              <div key={item.oi_no} className="product-item-mypage">
+                <div className="purchase-date">
+                  {formatDate(item.oi_orderDate)}
+                </div>
                 <div className="product-info">
-                  <img src={item.img} alt={item.name} />
+                  <img
+                    src={getProImageUrl(item.product.img)}
+                    alt={item.product.pd_name}
+                  />
                   <div className="product-details">
-                    <div className={`product-status ${item.status}`}>
-                      {item.status} <hr />
+                    <div
+                      className={`product-status ${getOrderStatusText(
+                        item.oi_status
+                      )}`}
+                    >
+                      {getOrderStatusText(item.oi_status)} <hr />
                     </div>
-                    <div className="product-name">{item.name}</div>
+                    <div className="product-name">{item.product.pd_name}</div>
                     <div className="product-quantity">
-                      수량: {item.quantity}
+                      수량: {item.oi_quantity}
                     </div>
                     <div className="product-price">
-                      결제금액: {item.totalAmount}
+                      결제금액(타입): {item.oi_price}
+                      원({getPaymentTypeText(item.paymentItem.pay_type)})
                     </div>
                   </div>
                 </div>
