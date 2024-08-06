@@ -7,17 +7,57 @@ const Trip = () => {
   const [visibleItems, setVisibleItems] = useState(6);
   const navigate = useNavigate();
 
-  useEffect(() => {
-    fetch("http://localhost:8080/api/trip")
-      .then((response) => response.json())
+  const fetchTours = (token) => {
+    fetch("http://localhost:8080/api/trip", {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+    })
+      .then((response) => {
+        if (!response.ok) {
+          if (response.status === 401) {
+            // 새로운 토큰이 발급되었을 경우
+            const newToken = response.headers.get("Authorization");
+            if (newToken) {
+              localStorage.setItem(
+                "accessToken",
+                newToken.replace("Bearer ", "")
+              );
+              fetchTours(newToken.replace("Bearer ", ""));
+              return;
+            }
+
+            // 토큰이 만료된 경우 처리
+            console.error("Access token expired");
+            localStorage.removeItem("accessToken");
+            navigate("/login"); // 로그인 페이지로 이동
+            return;
+          }
+          throw new Error("Network response was not ok");
+        }
+        return response.json();
+      })
       .then((data) => {
         setTours(data);
       })
       .catch((error) => {
         console.error("Error fetching tours:", error);
       });
-  }, []);
+  };
 
+  useEffect(() => {
+    const token = localStorage.getItem("accessToken");
+
+    if (!token) {
+      console.error("No access token found");
+      navigate("/login"); // 로그인 페이지로 이동
+      return;
+    }
+
+    fetchTours(token);
+  }, []);
   const loadMore = () => {
     setVisibleItems((prev) => prev + 6);
   };
