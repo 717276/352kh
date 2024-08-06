@@ -182,6 +182,16 @@ const Build = () => {
         dispatch({ type: SELECT_TYPES.ADD_RES, payload: new Res(data.name, data.address, data.image) });        
     }
 
+
+    function deleteOption(index){
+        console.log("delete option");
+        setPlaces(places.filter((i)=> i !== index));
+
+        console.log(places.map((place)=>{
+            console.log(place.name);
+        }))        
+    }
+
     return (
         <div className="Build">
             <div className="build build_list_box">
@@ -242,7 +252,7 @@ const Build = () => {
                     </button>
                 </div>
                 <div className='data_list'>
-                    {category === 0 && <Hotels createdHotel={createdHotel} hotels={hotels}/>}
+                    {category === 0 && <Hotels createdHotel={createdHotel} hotels={hotels} width={150} height={100}/>}
                     {category === 1 && <Places createdPlace={createdPlace} places={places} width={150} height={100}/>}
                     {category === 2 && <Foods createdRes={createdRes} res={res} width={150} height={100}/>}
                 </div>
@@ -268,6 +278,7 @@ const Build = () => {
                             <div key={index}>
                                 <h4>장소</h4>
                                 <div className='selected_place_img'>
+                                    <button onClick={()=>deleteOption(index)}>X</button>                                    
                                     <img src={place.photo}></img>
                                 </div>
                                 <div className='selected_place_name'>
