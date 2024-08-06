@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import '../../components/css/login/Register.css';
-import axios from 'axios';
 
 const Register = () => {
     const [dogName, setDogName] = useState('');
@@ -96,14 +95,19 @@ const Register = () => {
     };
 
     const handleClickIdCheck = () => {
-        axios
-            .get(`http://localhost:8080/api/members/checkId/${userId}`)
+        fetch(`http://localhost:8080/api/members/checkId/${userId}`)
             .then((response) => {
-                alert(response.data.message);
+                if (response.ok) {
+                    return response.json();
+                }
+                throw new Error('Network response was not ok');
+            })
+            .then((data) => {
+                alert(data.message);
             })
             .catch((error) => {
-                if (error.response.status === 409) {
-                    alert(error.response.data.message);
+                if (error.message.includes('409')) {
+                    alert('ID가 이미 존재합니다.');
                 } else {
                     alert('오류가 발생했습니다. 다시 시도해주세요.');
                 }

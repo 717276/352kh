@@ -79,11 +79,15 @@ const Login = ({ login }) => {
 
             if (response.ok) {
                 const data = await response.json();
-                console.log(data);
-                login(); // 로그인 성공 시 상태 변경
-                navigate('/');
+                if (data.message === 'Login successful') {
+                    login(); // 로그인 성공 시 상태 변경
+                    navigate('/');
+                } else {
+                    alert('로그인 실패: ' + data.message);
+                }
             } else {
                 const errorData = await response.json();
+                alert('로그인 실패: ' + errorData.message);
                 console.error('Failed to login', errorData);
             }
         } catch (error) {
