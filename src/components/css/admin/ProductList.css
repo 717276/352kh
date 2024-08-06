@@ -9,10 +9,10 @@
 }
 
 .ProductListTable {
-  width: 90%;
+  width: 70%;
   border-collapse: collapse;
   border-bottom: 1px solid #ddd;
-  margin: 0 auto;
+  margin-left: 25%;
 }
 
 .ProductListTable th {
@@ -84,4 +84,45 @@
   border: 1px solid black;
   border-radius: 5px;
   margin-bottom: 10px;
+}
+
+.mg_mangeMenu {
+  width: 200px; 
+  position: fixed; 
+  top: 50%; 
+  transform: translateY(-50%); 
+  background-color: #f9f9f9;
+  border: 2px solid #007bff;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  padding-top: 20px;
+  margin-left: 10px;
+}
+
+.mg_box {
+  display: flex;
+  width: 80%;
+  background-color: #fff;
+  border-radius: 10px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+}
+
+.mg_mangeMenu ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  width: 100%;
+}
+
+.mg_mangeMenu li {
+  padding: 15px 20px;
+  cursor: pointer;
+  text-align: center;
+  border-bottom: 1px solid #ddd;
+}
+
+.mg_mangeMenu li:hover {
+  background-color: #e0e0e0;
 }

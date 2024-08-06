@@ -3,6 +3,11 @@
   margin: 20px auto;
 }
 
+.ReviewList select {
+  margin-left: 70%;
+  width: 30%;
+}
+
 .ReviewListTable {
   width: 100%;
   border-collapse: collapse;

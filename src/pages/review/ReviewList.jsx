@@ -1,31 +1,31 @@
 import React, { useEffect, useState } from 'react';
 import '../../components/css/review/ReviewList.css';
 import { useNavigate } from "react-router-dom";
-import Page from '../Page';
-
-// 예시 데이터
-const allData = [
-  { id: 1, title: 'review1', userId: 'hkd01', like: 28, readCount: 50, date: '2024-07-24' },
-  { id: 2, title: 'review2', userId: 'hkd02', like: 28, readCount: 50, date: '2024-07-24' },
-  { id: 3, title: 'review3', userId: 'hkd03', like: 28, readCount: 50, date: '2024-07-24' },
-  { id: 4, title: 'review4', userId: 'hkd04', like: 30, readCount: 60, date: '2024-07-25' },
-  { id: 5, title: 'review5', userId: 'hkd05', like: 32, readCount: 70, date: '2024-07-26' },
-  { id: 6, title: 'review3', userId: 'hkd03', like: 28, readCount: 50, date: '2024-07-24' },
-  { id: 7, title: 'review4', userId: 'hkd04', like: 30, readCount: 60, date: '2024-07-25' },
-  { id: 8, title: 'review5', userId: 'hkd05', like: 32, readCount: 70, date: '2024-07-26' },
-  { id: 9, title: 'review10', userId: 'hkd10', like: 35, readCount: 90, date: '2024-08-01' },
-  { id: 10, title: 'review10', userId: 'hkd10', like: 35, readCount: 90, date: '2024-08-01' },
-  { id: 11, title: 'review3', userId: 'hkd03', like: 28, readCount: 50, date: '2024-07-24' },
-  { id: 12, title: 'review4', userId: 'hkd04', like: 30, readCount: 60, date: '2024-07-25' },
-  { id: 13, title: 'review5', userId: 'hkd05', like: 32, readCount: 70, date: '2024-07-26' },
-  { id: 14, title: 'review10', userId: 'hkd10', like: 35, readCount: 90, date: '2024-08-01' },
-];
+import Page from '../Pagination';
 
 const ReviewList = () => {
   const nav = useNavigate();
 
-  const [sortedData, setSortedData] = useState(allData);
+  const [items, setReviewList] = useState([]);
+  const [sortedData, setSortedData] = useState([]);
   const [sortType, setSortType] = useState("");
+
+  const url = 'http://localhost:8080/api/review';
+
+  useEffect(() => {
+    getList(url);
+  }, []);
+
+  const getList = (url) => {
+    fetch(url)
+      .then((response) => response.json())
+      .then((data) => {
+        setReviewList(data);
+        //setSortType(data);
+        setSortedData(data);
+      })
+  };
+
   const handleSortChange = (e) => {
     const selectedSortType = e.target.value;
 
@@ -38,7 +38,7 @@ const ReviewList = () => {
       sorted = [...sortedData].sort((a, b) => a.readCount - b.readCount);
     } else {
       // 정렬이 없는 경우 원래 데이터로 리셋
-      sorted = [...allData];
+      sorted = [...items];
     }
 
     setSortedData(sorted);
@@ -71,16 +71,22 @@ const ReviewList = () => {
             </tr>
           </thead>
           <tbody>
-            {currentPageData.map((row) => (
-              <tr key={row.id}>
-                <td hidden>{row.id}</td>
-                <td onClick={() => { nav(`/ReviewComment/${row.id}`) }}>{row.title}</td>
-                <td>{row.userId}</td>
-                <td>{row.like}</td>
-                <td>{row.readCount}</td>
-                <td>{row.date}</td>
+            {currentPageData.length === 0 ? (
+              <tr>
+                <td colSpan="6" style={{ textAlign: 'center' }}>작성한 게시글이 없습니다.</td>
               </tr>
-            ))}
+            ) : (
+              currentPageData.map((row) => (
+                <tr key={row.arNo}>
+                  <td hidden>{row.arNo}</td>
+                  <td onClick={() => { nav(`/reviewComment/${row.arNo}`) }}>{row.arTitle}</td>
+                  <td>{row.arUserId}</td>
+                  <td>{row.arLike}</td>
+                  <td>{row.arView}</td>
+                  <td>{row.arCreatedDate}</td>
+                </tr>
+              ))
+            )}
           </tbody>
         </table>
 

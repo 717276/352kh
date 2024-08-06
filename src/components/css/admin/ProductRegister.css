@@ -9,6 +9,7 @@
   margin: 0 auto;
   margin-bottom: 30px;
   padding: 20px;
+  min-height: 1100px;
 }
 
 .ProductRegister h3 {
@@ -19,8 +20,8 @@
 }
 
 .ProductRegisterTable {
-  width: 80%;  
-  margin: 0 auto;
+  width: 70%;  
+  margin-left: 25%;
 }
 
 .ProductRegisterTable table {
@@ -66,4 +67,72 @@ input[type="file"] {
   justify-content: center;
   gap: 20px;
   margin-top: 20px;
+}
+
+.mg_mangeMenu {
+  width: 200px; 
+  position: fixed; 
+  top: 50%; 
+  transform: translateY(-50%); 
+  background-color: #f9f9f9;
+  border: 2px solid #007bff;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  padding-top: 20px;
+  margin-left: 10px;
+}
+
+.mg_box {
+  display: flex;
+  width: 80%;
+  background-color: #fff;
+  border-radius: 10px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+}
+
+.mg_mangeMenu ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  width: 100%;
+}
+
+.mg_mangeMenu li {
+  padding: 15px 20px;
+  cursor: pointer;
+  text-align: center;
+  border-bottom: 1px solid #ddd;
+}
+
+.mg_mangeMenu li:hover {
+  background-color: #e0e0e0;
+}
+
+#modifyButton {
+  background-color: #ffce52;
+  color: white;
+  padding: 5px;
+  border: none;
+  border-radius: 5px;
+  margin-bottom: 10px;
+}
+
+#deleteButton {
+  background-color: #ed5464;
+  color: white;
+  padding: 5px;
+  border: none;
+  border-radius: 5px;
+  margin-bottom: 10px;
+}
+
+#saveButton {
+  background-color: #4ec0e9;
+  color: white;
+  padding: 5px;
+  border: none;
+  border-radius: 5px;
+  margin-bottom: 10px;
 }
