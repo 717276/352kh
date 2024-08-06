@@ -1,6 +1,6 @@
 import {useState,useEffect} from 'react';
 
-const Foods=({createdRes, res})=>{    
+const Foods=({createdRes, res, width, height})=>{    
 
     return (
         <div>
@@ -9,7 +9,7 @@ const Foods=({createdRes, res})=>{
                     <div key={index} onClick={()=>{createdRes(res)}}>
                         <span>{res.name}</span>
                         <div className="place_img">
-                            <img src={res.image} />
+                            <img src={res.photo} style={{ width: `${width}px`, height: `${height}px` }}/>
                         <div className="place_address">
                             {res.address}
                         </div>

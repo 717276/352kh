@@ -71,13 +71,25 @@ function GetPlace({search, category, filteredData}) {
                 results
             ) {
                 // 검색된 장소에 대한 마커 추가
-                const newMarkers = results.map((place) => ({
-                    position: place.geometry.location,
-                    name: place.name,
-                    address: place.formatted_address,
-                    photo: place.photos && place.photos[0] ? place.photos[0].getUrl() : null,
-                }));
-                filteredData = newMarkers;
+                // const newMarkers = results.map((place) => 
+                //     ({
+                //     position: place.geometry.location,
+                //     name: place.name,
+                //     address: place.formatted_address,
+                //     photo: place.photos && place.photos[0] ? place.photos[0].getUrl() : null,                                        
+                // }));
+                const newMarkers = results.map((place) => {
+                    const photoUrl = place.photos && place.photos[0] ? place.photos[0].getUrl() : null;        
+                    // photo 정보 콘솔에 출력
+                    console.log('Place:', place.name, 'Photo URL:', photoUrl);        
+                    return {
+                        position: place.geometry.location,
+                        name: place.name,
+                        address: place.formatted_address,
+                        photo: photoUrl,
+                    };
+                });
+                filteredData (newMarkers);
                 setMarkers(newMarkers);
                 
                 if (newMarkers.length > 0) {

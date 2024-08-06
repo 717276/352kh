@@ -112,9 +112,9 @@ const Build = () => {
     }, [resultSearch, resultCategory]);
 
     function resultHandler(results){
-        if (category === 1) {
+        if (category === 1) {            
             setPlaces(results);
-        }else {
+        }else {            
             setRes(results);
         }
     }
@@ -169,7 +169,7 @@ const Build = () => {
             console.log('이전 투어가 없습니다.');
         }
     }
-    // 숙소, 장소, 식당 등록
+    // 개별 숙소, 장소, 식당 등록
     const [state, dispatch] = useReducer(reducer, initialState);
 
     function createdHotel(data){        
@@ -181,6 +181,7 @@ const Build = () => {
     function createdRes(data){        
         dispatch({ type: SELECT_TYPES.ADD_RES, payload: new Res(data.name, data.address, data.image) });        
     }
+
     return (
         <div className="Build">
             <div className="build build_list_box">
@@ -242,8 +243,8 @@ const Build = () => {
                 </div>
                 <div className='data_list'>
                     {category === 0 && <Hotels createdHotel={createdHotel} hotels={hotels}/>}
-                    {category === 1 && <Places createdPlace={createdPlace} places={places}/>}
-                    {category === 2 && <Foods createdRes={createdRes} res={res}/>}
+                    {category === 1 && <Places createdPlace={createdPlace} places={places} width={150} height={100}/>}
+                    {category === 2 && <Foods createdRes={createdRes} res={res} width={150} height={100}/>}
                 </div>
             </div>
             <div className="build build_selected_box">
@@ -267,7 +268,7 @@ const Build = () => {
                             <div key={index}>
                                 <h4>장소</h4>
                                 <div className='selected_place_img'>
-                                    <img src={place.image}></img>
+                                    <img src={place.photo}></img>
                                 </div>
                                 <div className='selected_place_name'>
                                     <span>{place.name}</span>
@@ -285,7 +286,7 @@ const Build = () => {
                             <div key={index}>
                                 <h4>음식</h4>
                                 <div className='selected_res_img'>
-                                    <img src={restaurante.image}></img>
+                                    <img src={restaurante.photo}></img>
                                 </div>
                                 <div className='selected_res_name'>
                                     <span>{restaurante.name}</span>

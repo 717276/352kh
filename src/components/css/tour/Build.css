@@ -107,8 +107,16 @@
 .selected_places{
     overflow-y: scroll;
 }
+.selected_place_img img {
+    width: 150px;
+    height: 100px;
+}
 .selected_res{
     overflow-y:scroll;
+}
+.selected_res_img img{
+    width: 150px;
+    height: 100px;
 }
 .data_list::-webkit-scrollbar, .selected_places::-webkit-scrollbar, .selected_res::-webkit-scrollbar {
     display: none;
