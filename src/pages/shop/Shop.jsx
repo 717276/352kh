@@ -10,10 +10,10 @@ const Shop = () => {
         '/src/images/shop/doggoods00.png',
     ];
     const categories = [
-        { category: '위생용품', image: '/src/images/shop/doggoods00.png' },
-        { category: '사료 및 간식', image: '/src/images/shop/doggoods01.png' },
-        { category: '강아지 옷', image: '/src/images/shop/doggoods02.png' },
-        { category: '악세서리', image: '/src/images/shop/doggoods03.png' },
+        { category: '0', name: '위생용품', image: '/src/images/shop/doggoods00.png' },
+        { category: '1', name: '간식 및 사료', image: '/src/images/shop/doggoods01.png' },
+        { category: '2', name: '강아지 옷', image: '/src/images/shop/doggoods02.png' },
+        { category: '3', name: '악세사리', image: '/src/images/shop/doggoods03.png' },
     ];
 
     useEffect(() => {
@@ -73,8 +73,13 @@ const Shop = () => {
             <br />
             <div className="top_categories">
                 {categories.map((category, index) => (
-                    <Link key={index} to={`/shoplist/${category.category}`} className="top_category_link">
-                        <div className="top_category">{category.category}</div>
+                    <Link
+                        key={index}
+                        to={`/shoplist/${category.category}`}
+                        state={{ selectedCategory: category.name }}
+                        className="top_category_link"
+                    >
+                        <div className="top_category">{category.name}</div>
                     </Link>
                 ))}
             </div>
@@ -114,8 +119,8 @@ const Shop = () => {
             <div className="product-grid">
                 {categories.map((category, index) => (
                     <div className="product-item" key={index}>
-                        <Link to={`/shoplist/${category.category}`}>
-                            <span>{category.category}</span>
+                        <Link to={`/shoplist/${category.category}`} state={{ selectedCategory: category.name }}>
+                            <span>{category.name}</span>
                         </Link>
                         <br />
                         <br />

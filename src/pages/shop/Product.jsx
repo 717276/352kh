@@ -1,24 +1,60 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { useParams } from 'react-router-dom';
 import '../../components/css/shop/Product.css';
 
-const Product = () => {
-    const productImages = [
-        '/src/images/shop/doggoods00.png',
-        '/src/images/shop/doggoods01.png',
-        '/src/images/shop/doggoods02.png',
-        '/src/images/shop/doggoods03.png',
-        '/src/images/shop/doggoods00detail.png',
-    ];
+const categoryMap = {
+    0: '위생용품',
+    1: '사료 및 간식',
+    2: '강아지 옷',
+    3: '악세서리',
+};
 
-    const [mainImage, setMainImage] = useState(productImages[0]);
+const Product = () => {
+    const { pdNo } = useParams();
+    const [product, setProduct] = useState(null);
+    const [mainImage, setMainImage] = useState('');
     const [quantity, setQuantity] = useState(1);
+
+    useEffect(() => {
+        const fetchProduct = async () => {
+            try {
+                const response = await fetch(`http://localhost:8080/api/product/${pdNo}`);
+                const data = await response.json();
+                setProduct(data);
+                setMainImage(`/public/product/${data.pdNo}/1.png`);
+            } catch (err) {
+                console.error(err);
+            }
+        };
+
+        fetchProduct();
+    }, [pdNo]);
+
     const handleQuantityChange = (event) => {
-        const value = event.target.value;
-        setQuantity(value);
+        const value = parseInt(event.target.value, 10);
+        if (value < 1 || value > product.pdMount) {
+            alert(`최대 주문 가능 수량을 확인해주세요. 재고갯수: ${product.pdMount}`);
+            setQuantity(1);
+        } else {
+            setQuantity(value);
+        }
     };
+
     const handleImageClick = (src) => {
         setMainImage(src);
     };
+
+    if (!product) {
+        return <p>Loading...</p>;
+    }
+
+    const productImages = [
+        `/public/product/${product.pdNo}/1.png`,
+        `/public/product/${product.pdNo}/2.png`,
+        `/public/product/${product.pdNo}/3.png`,
+        `/public/product/${product.pdNo}/4.png`,
+        `/public/product/${product.pdNo}/5.png`,
+    ];
 
     return (
         <div className="product_container">
@@ -29,14 +65,13 @@ const Product = () => {
                         <img className="mainImage" src={mainImage} alt="Main product" />
                     </div>
                     <div className="product_text">
-                        <div className="product_title">KH 브랜드 신상품 고급 소재 목줄</div>
-                        <div className="product_price">24,000원</div>
+                        <div className="product_title">{product.pdName}</div>
+                        <div className="product_price">{product.pdPrice.toLocaleString()}원</div>
                         <hr />
                         <div className="product_details">
-                            <div>제조사 : KH Design</div>
-                            <div>유통사 : 댕트립</div>
-                            <div>발매일 : 24년 10월</div>
-                            <div>재질 : 고급소재</div>
+                            <div>설명 : {product.pdExplain}</div>
+                            <div>등록일 : {new Date(product.pdRegistrationDate).toLocaleDateString()}</div>
+                            <div>카테고리 : {categoryMap[product.pdCategory]}</div>
                         </div>
                         <div className="product_quantity">
                             <span>수량을 선택해주세요:</span>
@@ -45,11 +80,14 @@ const Product = () => {
                                 id="quantity"
                                 value={quantity}
                                 onChange={handleQuantityChange}
-                                min="1" // 최소값 설정
+                                min="1"
+                                max={product.pdMount}
                             />
                         </div>
                         <hr />
-                        <div className="total_price">총 상품금액(수량): 48,000원 (2개)</div>
+                        <div className="total_price">
+                            총 상품금액(수량): {(product.pdPrice * quantity).toLocaleString()}원 ({quantity}개)
+                        </div>
                         <div className="pay_btn">
                             <button className="custom_button">장바구니</button>
                             <button className="custom_button">바로구매</button>

@@ -1,0 +1,98 @@
+.mg_container {
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    width: 100%;
+    min-height: 80%;
+    margin-top: 20px;
+    padding: 20px;
+    box-sizing: border-box;
+}
+
+.mg_box {
+    display: flex;
+    width: 100%;
+
+    background-color: #fff;
+    border-radius: 10px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+}
+
+.mg_manageMenu {
+    width: 150px;
+    position: fixed;
+    top: 50%;
+    transform: translateY(-50%);
+    background-color: #f9f9f9;
+    border: 2px solid #007bff;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    padding-top: 20px;
+    margin-left: 10px;
+}
+
+.mg_manageMenu ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    width: 100%;
+}
+
+.mg_manageMenu li {
+    padding: 15px 20px;
+    cursor: pointer;
+    text-align: center;
+    border-bottom: 1px solid #ddd;
+}
+
+.mg_manageMenu li:hover {
+    background-color: #e0e0e0;
+}
+
+.mg_userList {
+    flex: 1; /* 남은 공간을 차지하도록 설정합니다 */
+    padding: 20px;
+    margin-left: 150px; /* 메뉴의 고정된 너비만큼 왼쪽 마진을 설정합니다 */
+    background-color: #fff;
+}
+
+.mg_userList h2 {
+    margin-bottom: 20px;
+    text-align: center;
+}
+
+.mg_userList table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.mg_userList th,
+.mg_userList td {
+    border: 1px solid #ddd;
+    padding: 10px;
+    text-align: center;
+}
+
+.mg_userList th {
+    background-color: #007bff;
+    color: white;
+}
+
+.mg_userList tr:nth-child(even) {
+    background-color: #f9f9f9;
+}
+
+.mg_userList button {
+    background-color: #ff4d4d;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    padding: 5px 10px;
+    cursor: pointer;
+}
+
+.mg_userList button:hover {
+    background-color: #ff1a1a;
+}

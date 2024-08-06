@@ -21,7 +21,13 @@
     border-radius: 5px;
     font-size: 16px;
 }
-
+/* 추가할 CSS */
+.login-buttons {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 10px; /* 버튼 사이 간격 조정 */
+}
 .login-button {
     width: 85%;
     padding: 10px;
@@ -36,6 +42,31 @@
 
 .google-login {
     margin: 20px 0;
+}
+/* 추가할 CSS */
+.naver-login-button {
+    background-color: white; /* 초록색 배경 */
+    color: black; /* 흰색 폰트 */
+    border: none;
+    padding: 10px 20px;
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 3px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2); /* 그림자 추가 */
+    transition: box-shadow 0.2s ease-in-out;
+}
+.naver-login-button:hover {
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* 호버 시 그림자 확대 */
+}
+
+.n_logo {
+    width: 20px;
+    height: 20px;
+    margin-right: 10px;
 }
 
 .footer-links {

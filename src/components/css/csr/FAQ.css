@@ -1,0 +1,92 @@
+.qna_container {
+    width: 100%;
+    margin: 20px auto;
+    background-color: #fff;
+    border-radius: 10px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    text-align: left;
+}
+
+.qna_box {
+    padding: 20px;
+}
+
+.qna_header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+    border-bottom: 2px solid #007bff;
+    padding-bottom: 10px;
+}
+
+.qna_write_button {
+    background-color: #007bff;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+    margin-left: 10px; /* 글쓰기 버튼과 셀렉트박스 사이의 간격 */
+}
+
+.qna_write_button:hover {
+    background-color: #0056b3;
+}
+
+.qna_posts_per_page {
+    padding: 10px;
+    border-radius: 5px;
+    border: 1px solid #ddd;
+    font-size: 16px;
+    width: 80px;
+    margin-right: 10px;
+}
+
+.qna_posts_table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+}
+
+.qna_posts_table th,
+.qna_posts_table td {
+    border: 1px solid #ddd;
+    padding: 10px;
+    text-align: center;
+}
+
+.qna_posts_table th {
+    background-color: #007bff;
+    color: white;
+    font-weight: bold;
+}
+
+.qna_posts_table tr:nth-child(even) {
+    background-color: #f9f9f9;
+}
+
+.qna_posts_table tr:hover {
+    background-color: #f1f1f1;
+}
+
+.qna_footer {
+    margin-top: 20px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.qna_pagination span {
+    padding: 10px 15px;
+    margin: 0 5px;
+    background-color: #007bff;
+    color: white;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.qna_pagination span:hover {
+    background-color: #0056b3;
+}

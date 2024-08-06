@@ -1,88 +1,76 @@
 import React, { useState, useEffect } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams, useLocation, Link } from 'react-router-dom';
 import '../../components/css/shop/ShopList.css';
+
+const categoryMap = {
+    0: '위생용품',
+    1: '사료 및 간식',
+    2: '강아지 옷',
+    3: '악세서리',
+};
+
+const categoryReverseMap = {
+    위생용품: 0,
+    '사료 및 간식': 1,
+    '강아지 옷': 2,
+    악세서리: 3,
+    전체: '전체',
+};
 
 const ShopList = () => {
     const { category } = useParams();
-    const products = [
-        { id: 1, name: '위생용품 01', price: 7000, category: '위생용품', image: '/src/images/shop/doggoods00.png' },
-        {
-            id: 2,
-            name: '사료 및 간식 02',
-            price: 56400,
-            category: '사료 및 간식',
-            image: '/src/images/shop/doggoods01.png',
-        },
-        {
-            id: 3,
-            name: '강아지 옷 03',
-            price: 84537,
-            category: '강아지 옷',
-            image: '/src/images/shop/doggoods02.png',
-        },
-        { id: 4, name: '위생용품', price: 84423, category: '위생용품', image: '/src/images/shop/doggoods03.png' },
-        { id: 5, name: '악세서리 05', price: 8463, category: '악세서리', image: '/src/images/shop/doggoods00.png' },
-        {
-            id: 6,
-            name: '사료 및 간식 06',
-            price: 87462,
-            category: '사료 및 간식',
-            image: '/src/images/shop/doggoods01.png',
-        },
-        {
-            id: 7,
-            name: '사료 및 간식 07',
-            price: 8756,
-            category: '사료 및 간식',
-            image: '/src/images/shop/doggoods03.png',
-        },
-        {
-            id: 8,
-            name: '강아지 옷 08',
-            price: 15758,
-            category: '강아지 옷',
-            image: '/src/images/shop/doggoods02.png',
-        },
-        { id: 9, name: '위생용품 09', price: 14573, category: '위생용품', image: '/src/images/shop/doggoods00.png' },
-        {
-            id: 10,
-            name: '악세서리 10',
-            price: 78454,
-            category: '악세서리',
-            image: '/src/images/shop/doggoods01.png',
-        },
-    ];
-
-    const [selectedCategory, setSelectedCategory] = useState(category || '전체');
+    const location = useLocation();
+    const [products, setProducts] = useState([]);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState(null);
+    const [selectedCategory, setSelectedCategory] = useState(location.state?.selectedCategory || '전체');
 
     useEffect(() => {
+        const fetchProducts = async () => {
+            try {
+                const response = await fetch('http://localhost:8080/api/admin/productList'); // 백엔드 서버 주소
+                const data = await response.json(); // 응답 데이터 확인
+                console.log(data);
+                if (Array.isArray(data)) {
+                    setProducts(data);
+                } else {
+                    setProducts([]);
+                }
+            } catch (err) {
+                console.error(err);
+                setError(err);
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        fetchProducts();
         if (category) {
-            setSelectedCategory(category);
+            setSelectedCategory(categoryMap[category]);
         }
     }, [category]);
 
-    const handleCategoryClick = (category) => {
-        setSelectedCategory(category);
+    const handleCategoryClick = (categoryName) => {
+        setSelectedCategory(categoryName);
     };
 
     const filteredProducts =
-        selectedCategory === '전체' ? products : products.filter((product) => product.category === selectedCategory);
+        selectedCategory === '전체'
+            ? products
+            : products.filter((product) => categoryMap[product.pdCategory] === selectedCategory);
 
     return (
         <div className="product_list_container">
             <h1>카테고리</h1>
             <div className="category_buttons">
-                <button className="category_button" onClick={() => handleCategoryClick('신상품')}>
-                    신상품
+                <button className="category_button" onClick={() => handleCategoryClick('위생용품')}>
+                    위생용품
                 </button>
                 <button className="category_button" onClick={() => handleCategoryClick('사료 및 간식')}>
                     사료 및 간식
                 </button>
                 <button className="category_button" onClick={() => handleCategoryClick('강아지 옷')}>
                     강아지 옷
-                </button>
-                <button className="category_button" onClick={() => handleCategoryClick('위생용품')}>
-                    위생용품
                 </button>
                 <button className="category_button" onClick={() => handleCategoryClick('악세서리')}>
                     악세서리
@@ -91,17 +79,32 @@ const ShopList = () => {
                     전체
                 </button>
             </div>
-            <div className="product_grid">
-                {filteredProducts.map((product) => (
-                    <div className="product_card" key={product.id}>
-                        <img className="product_image" src={product.image} alt={product.name} />
-                        <div className="product_info">
-                            <h2 className="product_name">{product.name}</h2>
-                            <p className="product_price">{product.price.toLocaleString()}원</p>
-                        </div>
-                    </div>
-                ))}
-            </div>
+            {loading ? (
+                <p>Loading...</p>
+            ) : error ? (
+                <p>Error loading products: {error.message}</p>
+            ) : (
+                <div className="product_grid">
+                    {filteredProducts.map((product) => (
+                        <Link to={`/shop/product/${product.pdNo}`} key={product.pdNo}>
+                            <div className="product_card">
+                                <img
+                                    className="product_image"
+                                    src={`/public/product/${product.pdNo}/1.png`}
+                                    alt={product.pdName}
+                                />
+                                <div className="product_info">
+                                    <h2 className="product_name">{product.pdName}</h2>
+                                    <p className="product_price">{product.pdPrice.toLocaleString()}원</p>
+                                    <p className="product_discount">{product.pdDiscount}%</p>
+                                    <p className="product_explain">{product.pdExplain}</p>
+                                    <p className="product_mount">{product.pdMount} 개</p>
+                                </div>
+                            </div>
+                        </Link>
+                    ))}
+                </div>
+            )}
         </div>
     );
 };
