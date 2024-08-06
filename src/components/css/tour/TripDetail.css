@@ -1,0 +1,229 @@
+.TripDetail {
+  padding: 20px;
+  margin-top: 20px;
+}
+
+.day-selector {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 20px;
+}
+
+.day-selector button {
+  padding: 10px 20px;
+  margin: 0 10px;
+  border: none;
+  border-radius: 5px;
+  background-color: #f0f0f0;
+  cursor: pointer;
+}
+
+.day-selector button.active {
+  background-color: #1e90ff;
+  color: white;
+}
+
+.spots-container {
+  position: relative;
+  margin-bottom: 20px;
+  margin-top: 50px;
+}
+
+.spots {
+  display: flex;
+  gap: 20px;
+  overflow: hidden;
+  margin: 0 auto;
+  justify-content: center;
+}
+
+.spot {
+  flex: 0 0 calc((100% - 60px) / 4);
+  text-align: center;
+}
+
+.spot img {
+  width: 100%;
+  height: auto;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  transition: transform 0.3s, box-shadow 0.3s;
+}
+
+.spot img:hover {
+  transform: scale(1.05);
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+}
+
+.arrow {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 2rem;
+  cursor: pointer;
+  z-index: 2;
+}
+
+.left-arrow {
+  left: -40px;
+}
+
+.right-arrow {
+  right: -40px;
+}
+
+.section {
+  margin: 50px 0;
+  padding: 20px;
+  background-color: #f9f9f9;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.section h2 {
+  margin-bottom: 20px;
+}
+
+.hotel {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+.hotel img {
+  width: 100px;
+  height: auto;
+  border-radius: 10px;
+}
+
+.hotel-info {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.tour-details {
+  margin: 50px 0;
+  padding: 20px;
+  background-color: #f9f9f9;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.tour-details h2,
+.tour-details p {
+  margin: 10px 0;
+}
+
+.reviews {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+  position: relative;
+}
+
+.review {
+  display: flex;
+  gap: 20px;
+  width: calc(50% - 10px);
+  position: relative;
+  padding: 10px 0;
+  background-color: #f9f9f9;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  transition: transform 0.3s, box-shadow 0.3s;
+}
+
+.review:hover {
+  transform: scale(1.02);
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+}
+
+.review img {
+  width: 100px;
+  height: 100px;
+  border-radius: 10px;
+}
+
+.review-text {
+  flex: 1;
+}
+
+.review-text h3 {
+  margin: 0 0 10px 0;
+}
+
+.review::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  right: -10px;
+  width: 1px;
+  height: 100%;
+  background-color: #ddd;
+}
+
+.review::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  width: 100%;
+  height: 1px;
+  background-color: #ddd;
+}
+
+.reviews > .review:nth-child(2n)::after {
+  display: none;
+}
+
+.reviews > .review:nth-child(odd)::before {
+  display: none;
+}
+
+.reviews > .review:nth-child(even)::before {
+  display: none;
+}
+
+.load-more {
+  display: flex;
+  justify-content: center;
+  margin-top: 20px;
+}
+
+.load-more-text {
+  padding: 10px 20px;
+  cursor: pointer;
+  color: #1e90ff;
+  transition: color 0.3s;
+  margin-top: 20px;
+  text-align: center;
+}
+
+.load-more-text:hover {
+  color: #1c86ee;
+}
+
+.detail-actions {
+  display: flex;
+  justify-content: center;
+  margin-top: 20px;
+  gap: 30px;
+}
+
+.detail-actions button {
+  padding: 10px 20px;
+  border: none;
+  border-radius: 5px;
+  background-color: #1e90ff;
+  color: white;
+  cursor: pointer;
+  transition: background-color 0.3s, box-shadow 0.3s;
+  margin-top: 20px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.detail-actions button:hover {
+  background-color: #1c86ee;
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+}
