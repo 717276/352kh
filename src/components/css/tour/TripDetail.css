@@ -211,7 +211,7 @@
   gap: 30px;
 }
 
-.detail-actions button {
+.detail-actions button:not(:first-child) {
   padding: 10px 20px;
   border: none;
   border-radius: 5px;
@@ -223,7 +223,36 @@
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 
-.detail-actions button:hover {
+.detail-actions button:not(:first-child):hover {
   background-color: #1c86ee;
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+}
+
+.detail-actions button:first-child {
+  padding: 10px 20px;
+  border: none;
+  border-radius: 5px;
+  color: white;
+  cursor: pointer;
+  transition: background-color 0.3s, box-shadow 0.3s;
+  margin-top: 20px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.approvalDetailBtn{
+  background-color: #1e90ff;
+}
+
+.approvalDetailBtn:hover{
+  background-color: #1c86ee;
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+}
+
+.completedDetailBtn{
+  background-color: #979ba1;
+}
+
+.completedDetailBtn:hover {
+  background-color: #777a7e;
   box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
 }

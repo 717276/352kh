@@ -1,292 +1,152 @@
-import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import React, { useEffect, useState } from "react";
+import { useNavigate, useParams } from "react-router-dom";
 import "../../components/css/tour/TripDetail.css";
 
 const TripApproval = () => {
+  const { t_no } = useParams();
   const navigate = useNavigate();
   const [currentIndex, setCurrentIndex] = useState({ places: 0, foods: 0 });
-  const [visibleReviews, setVisibleReviews] = useState(10); // 초기에는 10개의 리뷰를 표시
-  const [selectedDay, setSelectedDay] = useState(0);
+  const [selectedDay, setSelectedDay] = useState(1);
+  const [tourDetail, setTourDetail] = useState(null);
 
-  const mockTourData = [
-    {
-      days: [
-        {
-          hotel: {
-            name: "호텔 A",
-            price: "100,000원",
-            image: "/images/tour/place1.png",
-          },
-          places: [
-            {
-              id: 1,
-              name: "명소 1",
-              address: "서울 강남구",
-              image: "/images/tour/place1.png",
-            },
-            {
-              id: 2,
-              name: "명소 2",
-              address: "서울 중구",
-              image: "/images/tour/place2.png",
-            },
-            {
-              id: 3,
-              name: "명소 3",
-              address: "서울 종로구",
-              image: "/images/tour/place3.png",
-            },
-            {
-              id: 4,
-              name: "명소 4",
-              address: "서울 서대문구",
-              image: "/images/tour/place1.png",
-            },
-            {
-              id: 5,
-              name: "명소 5",
-              address: "서울 마포구",
-              image: "/images/tour/place2.png",
-            },
-          ],
-          foods: [
-            {
-              id: 1,
-              name: "식당 1",
-              address: "서울 강남구",
-              image: "/images/tour/place1.png",
-            },
-            {
-              id: 2,
-              name: "식당 2",
-              address: "서울 중구",
-              image: "/images/tour/place2.png",
-            },
-            {
-              id: 3,
-              name: "식당 3",
-              address: "서울 종로구",
-              image: "/images/tour/place3.png",
-            },
-            {
-              id: 4,
-              name: "식당 4",
-              address: "서울 서대문구",
-              image: "/images/tour/place1.png",
-            },
-            {
-              id: 5,
-              name: "식당 5",
-              address: "서울 서대문구",
-              image: "/images/tour/place2.png",
-            },
-          ],
-        },
-        {
-          hotel: {
-            name: "호텔 B",
-            price: "120,000원",
-            image: "/images/tour/place2.png",
-          },
-          places: [
-            {
-              id: 1,
-              name: "명소 1",
-              address: "서울 강북구",
-              image: "/images/tour/place1.png",
-            },
-            {
-              id: 2,
-              name: "명소 2",
-              address: "서울 성동구",
-              image: "/images/tour/place2.png",
-            },
-          ],
-          foods: [
-            {
-              id: 1,
-              name: "식당 1",
-              address: "서울 강북구",
-              image: "/images/tour/place1.png",
-            },
-            {
-              id: 2,
-              name: "식당 2",
-              address: "서울 성동구",
-              image: "/images/tour/place2.png",
-            },
-            {
-              id: 3,
-              name: "식당 3",
-              address: "서울 동대문구",
-              image: "/images/tour/place3.png",
-            },
-            {
-              id: 4,
-              name: "식당 4",
-              address: "서울 서대문구",
-              image: "/images/tour/place1.png",
-            },
-            {
-              id: 5,
-              name: "식당 5",
-              address: "서울 중랑구",
-              image: "/images/tour/place2.png",
-            },
-            {
-              id: 6,
-              name: "식당 6",
-              address: "서울 마포구",
-              image: "/images/tour/place3.png",
-            },
-          ],
-        },
-        {
-          hotel: {
-            name: "호텔 C",
-            price: "150,000원",
-            image: "/images/tour/place3.png",
-          },
-          places: [
-            {
-              id: 1,
-              name: "명소 1",
-              address: "서울 용산구",
-              image: "/images/tour/place1.png",
-            },
-            {
-              id: 2,
-              name: "명소 2",
-              address: "서울 금천구",
-              image: "/images/tour/place2.png",
-            },
-            {
-              id: 3,
-              name: "명소 3",
-              address: "서울 동작구",
-              image: "/images/tour/place3.png",
-            },
-          ],
-          foods: [
-            {
-              id: 1,
-              name: "식당 1",
-              address: "서울 용산구",
-              image: "/images/tour/place1.png",
-            },
-            {
-              id: 2,
-              name: "식당 2",
-              address: "서울 금천구",
-              image: "/images/tour/place2.png",
-            },
-            {
-              id: 3,
-              name: "식당 3",
-              address: "서울 동작구",
-              image: "/images/tour/place3.png",
-            },
-          ],
-        },
-      ],
-    },
-  ];
-  const mockTourDetail = {
-    name: "서울 시티 투어",
-    description: "서울의 주요 명소를 둘러보는 시티 투어입니다.",
-    price: "50,000원",
-    startDate: "2024-08-01",
-    endDate: "2024-08-05",
-  };
-  const loadMoreReviews = () => {
-    setVisibleReviews((prevVisible) => prevVisible + 6);
-  };
+  useEffect(() => {
+    const url = `http://localhost:8080/api/tripDetail/${t_no}`;
+    fetch(url)
+      .then((response) => response.json())
+      .then((data) => {
+        setTourDetail(data);
+        console.log(data);
+      })
+      .catch((error) => console.error("Error fetching tour detail:", error));
+  }, [t_no]);
 
-  const handleReviewClick = (id) => {
-    navigate(`/reviewComment/${id}`);
-  };
+  if (!tourDetail) {
+    return <div>Loading...</div>;
+  }
+
+  const {
+    t_title,
+    t_explain,
+    t_totalPrice,
+    t_strDate,
+    t_endDate,
+    t_status,
+    hotels,
+    places,
+    restaurantes,
+  } = tourDetail;
 
   const handleDaySelect = (index) => {
-    setSelectedDay(index);
+    setSelectedDay(index + 1);
     setCurrentIndex({ places: 0, foods: 0 });
   };
 
-  const prevSpot = (type) => {
+  const prevSpot = (type, length) => {
     setCurrentIndex((prevIndex) => ({
       ...prevIndex,
-      [type]:
-        prevIndex[type] === 0
-          ? mockTourData[0].days[selectedDay][type].length - 4
-          : prevIndex[type] - 1,
+      [type]: prevIndex[type] === 0 ? length - 4 : prevIndex[type] - 1,
     }));
   };
 
-  const nextSpot = (type) => {
+  const nextSpot = (type, length) => {
     setCurrentIndex((prevIndex) => ({
       ...prevIndex,
-      [type]:
-        prevIndex[type] === mockTourData[0].days[selectedDay][type].length - 4
-          ? 0
-          : prevIndex[type] + 1,
+      [type]: prevIndex[type] === length - 4 ? 0 : prevIndex[type] + 1,
     }));
   };
 
-  const { hotel, places, foods } = mockTourData[0].days[selectedDay];
+  const getImageUrl = (img) => {
+    return `/images/tourdetail/${t_no}/${img.ti_category}/${img.ti_day}/${img.ti_order}.png`;
+  };
 
-  console.log("places length:", places.length);
-  console.log("currentIndex places:", currentIndex.places);
+  const formatDateToYYYYMMDD = (dateString) => {
+    const date = new Date(dateString);
+    const year = date.getFullYear();
+    const month = ("0" + (date.getMonth() + 1)).slice(-2);
+    const day = ("0" + date.getDate()).slice(-2);
+    return `${year}-${month}-${day}`;
+  };
+
+  const filteredHotels = hotels.filter((hotel) => hotel.h_day === selectedDay);
+  const filteredPlaces = places.filter((place) => place.pl_day === selectedDay);
+  const filteredRestaurantes = restaurantes.filter(
+    (res) => res.res_day === selectedDay
+  );
+
+  const handleApproval = () => {
+    if (t_status === 1) {
+      return; // t_status가 1이면 승인하기 동작을 막음
+    }
+
+    fetch(`http://localhost:8080/api/admin/tripStatusChange/${t_no}`, {
+      method: "PUT",
+    })
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error("Network response was not ok");
+        }
+        return response.text(); // JSON이 아닌 텍스트로 응답을 받음
+      })
+      .then((data) => {
+        console.log("Status updated:", data);
+        navigate(-1); // 이전 페이지로 돌아가기
+      })
+      .catch((error) => console.error("Error updating status:", error));
+  };
 
   return (
     <div className="TripDetail">
       <h1>투어 설명</h1>
       <div className="day-selector">
-        {mockTourData[0].days.map((day, index) => (
+        {[...Array(3)].map((_, index) => (
           <button
             key={index}
             onClick={() => handleDaySelect(index)}
-            className={selectedDay === index ? "active" : ""}
+            className={selectedDay === index + 1 ? "active" : ""}
           >
             Day {index + 1}
           </button>
         ))}
       </div>
-
       <div className="section">
         <h2>호텔</h2>
-        <div className="spot hotel">
-          <img src={hotel.image} alt="Hotel" />
-          <div className="hotel-info">
-            <p>{hotel.name}</p>
-            <p>{hotel.price}</p>
+        {filteredHotels.map((hotel, index) => (
+          <div key={index} className="spot hotel">
+            <img src={getImageUrl(hotel.img)} alt={hotel.h_name} />
+            <div className="hotel-info">
+              <p>{hotel.h_location}</p>
+              <p>{hotel.h_name}</p>
+            </div>
           </div>
-        </div>
+        ))}
       </div>
-
       <div className="section">
         <h2>관광지</h2>
         <div className="spots-container">
-          {places.length > 4 && (
+          {filteredPlaces.length > 4 && (
             <span
-              onClick={() => prevSpot("places")}
+              onClick={() => prevSpot("places", filteredPlaces.length)}
               className="arrow left-arrow"
             >
               &#10094;
             </span>
           )}
-          <div className={`spots ${places.length > 4 ? "carousel" : ""}`}>
-            {places
+          <div
+            className={`spots ${filteredPlaces.length > 4 ? "carousel" : ""}`}
+          >
+            {filteredPlaces
               .slice(currentIndex.places, currentIndex.places + 4)
               .map((spot, index) => (
                 <div key={index} className="spot">
-                  <img src={spot.image} alt={`Spot ${index}`} />
-                  <p>{spot.name}</p>
-                  <p>{spot.address}</p>
+                  <img src={getImageUrl(spot.img)} alt={`Spot ${index}`} />
+                  <p>{spot.pl_name}</p>
+                  <p>{spot.pl_location}</p>
                 </div>
               ))}
           </div>
-          {places.length > 4 && (
+          {filteredPlaces.length > 4 && (
             <span
-              onClick={() => nextSpot("places")}
+              onClick={() => nextSpot("places", filteredPlaces.length)}
               className="arrow right-arrow"
             >
               &#10095;
@@ -294,32 +154,35 @@ const TripApproval = () => {
           )}
         </div>
       </div>
-
       <div className="section">
         <h2>식당</h2>
         <div className="spots-container">
-          {foods.length > 4 && (
+          {filteredRestaurantes.length > 4 && (
             <span
-              onClick={() => prevSpot("foods")}
+              onClick={() => prevSpot("foods", filteredRestaurantes.length)}
               className="arrow left-arrow"
             >
               &#10094;
             </span>
           )}
-          <div className={`spots ${foods.length > 4 ? "carousel" : ""}`}>
-            {foods
+          <div
+            className={`spots ${
+              filteredRestaurantes.length > 4 ? "carousel" : ""
+            }`}
+          >
+            {filteredRestaurantes
               .slice(currentIndex.foods, currentIndex.foods + 4)
               .map((food, index) => (
                 <div key={index} className="spot">
-                  <img src={food.image} alt={`Food ${index}`} />
-                  <p>{food.name}</p>
-                  <p>{food.address}</p>
+                  <img src={getImageUrl(food.img)} alt={`Food ${index}`} />
+                  <p>{food.res_name}</p>
+                  <p>{food.res_location}</p>
                 </div>
               ))}
           </div>
-          {foods.length > 4 && (
+          {filteredRestaurantes.length > 4 && (
             <span
-              onClick={() => nextSpot("foods")}
+              onClick={() => nextSpot("foods", filteredRestaurantes.length)}
               className="arrow right-arrow"
             >
               &#10095;
@@ -327,18 +190,24 @@ const TripApproval = () => {
           )}
         </div>
       </div>
-
       <div className="tour-details">
-        <h2>투어 이름: {mockTourDetail.name}</h2>
-        <p>투어 설명: {mockTourDetail.description}</p>
-        <p>투어 가격: {mockTourDetail.price}</p>
+        <h2>투어 이름: {t_title}</h2>
+        <p>투어 설명: {t_explain}</p>
+        <p>투어 가격: {t_totalPrice}</p>
         <p>
-          투어 시작 날짜 - 종료 날짜: {mockTourDetail.startDate} ~{" "}
-          {mockTourDetail.endDate}
+          투어 시작 날짜 - 종료 날짜: {formatDateToYYYYMMDD(t_strDate)} ~{" "}
+          {formatDateToYYYYMMDD(t_endDate)}
         </p>
       </div>
       <div className="detail-actions">
-        <button>승인하기</button>
+        <button
+          onClick={t_status === 0 ? handleApproval : undefined}
+          className={
+            t_status === 0 ? "approvalDetailBtn" : "completedDetailBtn"
+          }
+        >
+          {t_status === 0 ? "승인하기" : "승인완료"}
+        </button>
         <button>삭제하기</button>
         <button onClick={() => navigate(-1)}>뒤로가기</button>
       </div>

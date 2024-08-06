@@ -45,3 +45,27 @@
 .trip-info p {
   margin: 5px 0;
 }
+
+.trip-item button {
+  margin-right: 20px;
+}
+
+.approvalBtn {
+  background-color: #4ec0e9;
+  color: white;
+  padding: 10px;
+  font-size: 20px;
+  border: none;
+  border-radius: 5px;
+  width: 150px;
+}
+
+.waitingBtn {
+  background-color: #979ba1;
+  color: white;
+  padding: 10px;
+  font-size: 20px;
+  border: none;
+  border-radius: 5px;
+  width: 150px;
+}
