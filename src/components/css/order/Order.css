@@ -1,0 +1,284 @@
+.Order {
+  display: flex;
+  justify-content: space-between;
+  gap: 20px;
+  padding: 20px;
+  background-color: #f9f9f9;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  margin: 20px 0px;
+}
+
+.main-content {
+  width: 65%;
+}
+
+.order-summary,
+.order-info,
+.payment-info {
+  border: 1px solid #ddd;
+  padding: 20px;
+  border-radius: 5px;
+  margin-bottom: 20px;
+  background-color: white;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.order-summary h2,
+.order-info h2,
+.payment-info h2 {
+  margin-bottom: 20px;
+  font-size: 1.2em;
+  color: #333;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.products {
+  display: flex;
+  flex-direction: column;
+}
+
+.product {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 10px;
+  padding: 20px 0;
+  border-bottom: 1px solid #e0e0e0;
+  transition: background-color 0.3s;
+}
+
+.product:hover {
+  background-color: #f0f0f0;
+}
+
+.product img {
+  width: 80px;
+  height: 80px;
+  border-radius: 5px;
+}
+
+.product-info-order {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 10px;
+}
+
+.product-info-order span {
+  margin: 0;
+  color: #555;
+}
+
+.order-total {
+  margin-top: 30px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.order-total .subtotal,
+.order-total .discount,
+.order-total .total {
+  display: flex;
+  justify-content: space-between;
+  font-size: 14px;
+  color: #888;
+}
+
+.order-total .total {
+  font-weight: bold;
+  font-size: 18px;
+  color: #333;
+}
+
+.discount-toggle {
+  cursor: pointer;
+  color: #888;
+  margin-left: 5px;
+}
+
+.discount span:last-child {
+  color: #32cd32;
+}
+
+.discount-details {
+  padding: 10px 0;
+  color: #888;
+  font-size: 14px;
+}
+
+.discount-details div {
+  display: flex;
+  justify-content: space-between;
+}
+
+.info-section {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  width: 100%;
+}
+
+.order-info > h2 > div {
+  display: flex;
+  gap: 15px;
+}
+
+.order-info-summary {
+  text-align: left;
+}
+
+.order-info-summary span:not(:last-child) {
+  margin-bottom: 10px;
+}
+
+.order-info-summary span {
+  display: block;
+  color: #555;
+}
+
+.edit-address-button {
+  padding: 5px 10px;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  background-color: #1e90ff;
+  color: white;
+  cursor: pointer;
+}
+
+.edit-address-button:hover {
+  background-color: #1c86ee;
+}
+
+.edit-address-section {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.edit-address-section input {
+  padding: 10px;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+}
+
+.edit-address-section div {
+  margin: 0 auto;
+  display: flex;
+  gap: 15px;
+}
+
+.edit-address-section button {
+  padding: 10px;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  background-color: #1e90ff;
+  width: 110px;
+  margin: 0 auto;
+  color: white;
+  cursor: pointer;
+}
+
+.edit-address-section button:hover {
+  background-color: #1c86ee;
+}
+
+.payment-method {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.payment-method span {
+  display: block;
+  color: #555;
+}
+
+.payment-method select {
+  width: 100%;
+}
+
+.payment-summary {
+  width: 30%;
+  position: sticky;
+  top: 20px;
+  height: fit-content;
+}
+
+.payment-summary .sticky {
+  border: 1px solid #ddd;
+  padding: 20px;
+  border-radius: 5px;
+  background: white;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.payment-summary .sticky .subtotal,
+.payment-summary .sticky .discount,
+.payment-summary .sticky .total {
+  display: flex;
+  justify-content: space-between;
+  font-size: 14px;
+  color: #888;
+}
+
+.payment-summary .sticky .total {
+  font-weight: bold;
+  font-size: 18px;
+  color: #333;
+}
+
+.payment-summary .sticky .discount-toggle {
+  cursor: pointer;
+  color: #888;
+}
+
+.payment-summary .sticky .discount-details span {
+  display: flex;
+  justify-content: space-between;
+}
+
+.payment-summary .sticky button {
+  padding: 10px;
+  border: none;
+  border-radius: 5px;
+  background-color: #1e90ff;
+  color: white;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.payment-summary .sticky button:hover {
+  background-color: #1c86ee;
+}
+
+.remove-button {
+  padding: 5px 10px;
+  border: none;
+  border-radius: 5px;
+  background-color: #ff4d4d;
+  color: white;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.remove-button:hover {
+  background-color: #e60000;
+}
+
+.item {
+  display: flex;
+  gap: 20px;
+}
+
+.divider {
+  border: none;
+  border-top: 2px solid #888;
+  margin: 10px 0;
+}
