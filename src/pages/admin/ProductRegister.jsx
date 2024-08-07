@@ -116,7 +116,7 @@ const ProductRegister = () => {
               nav('/admin/productList');
             });
           }}>등록</button>
-          <button id='deleteButton' onClick={() => { nav(-1) }}>취소</button>
+          <button id='deleteButton' onClick={() => { nav('/admin/productList') }}>취소</button>
         </div>
       </div>
     </>

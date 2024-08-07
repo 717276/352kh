@@ -52,6 +52,13 @@
   width: 40%;
 }
 
+.commentTable td:nth-child(2) {
+  width: 40%;
+}
+.commentTable td:nth-child(3) {
+  width: 25%;
+}
+
 /*댓글*/
 .comment-list {
   margin-top: 20px;
@@ -87,9 +94,7 @@
   width: 40px;
 }
 
-.commentTable td:nth-child(2) {
-  width: 50%;
-}
+
 
 #modifyButton {
   background-color: #ffce52;

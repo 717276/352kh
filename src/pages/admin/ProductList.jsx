@@ -2,48 +2,57 @@ import React, { useState, useEffect } from 'react';
 import '../../components/css/admin/ProductList.css';
 import { useNavigate } from 'react-router-dom';
 import Page from '../Pagination';
+import * as LoginFunc from '../../components/js/Login.js';
+import { jwtDecode } from 'jwt-decode';
 
 const ProductList = () => {
   const nav = useNavigate();
   const [items, setItemsList] = useState([]);
   const [error, setError] = useState(null); // 오류 상태 추가
-  const token = localStorage.getItem('accessToken');
+  // const token = localStorage.getItem('accessToken');
   const url = 'http://localhost:8080/api/admin/productList';
+
+  // useEffect(() => {
+  //   fetch("http://localhost:8080/admin/productList").catch(error => {
+  //     console.log(error);
+  //     nav("/");
+  //   })
+  // }, []);
 
   useEffect(() => {
     getList(url);
   }, []);
 
-  // const getList = (url) => {
-  //   fetch(url)
-  //     .then((response) => response.json())
-  //     .then((data) => {
-  //       setItemsList(data);
-  //     })
-  // };
-
   const getList = (url) => {
-    fetch(url, {
-      method: 'GET',
-      headers: {
-        'Authorization': `Bearer ${token}`, // JWT 토큰 추가
-        'Content-Type': 'application/json'
-      }
-    })
-      .then((response) => {
-        if (!response.ok) {
-          throw new Error('Network response was not ok');
-        }
-        return response.json();
-      })
+    fetch(url)
+      .then((response) => response.json())
       .then((data) => {
-        console.log(token);
         setItemsList(data);
       })
-      .catch((err) => {
-        setError(err.message); // 오류 메시지 상태 업데이트
-      });
   };
+
+  // const getList = (url) => {
+  //   fetch(url, {
+  //     method: 'GET',
+  //     headers: {
+  //       // 'Authorization': `Bearer ${token}`, // JWT 토큰 추가
+  //       'Content-Type': 'application/json'
+  //     }
+  //   })
+  //     .then((response) => {
+  //       if (!response.ok) {
+  //         throw new Error('Network response was not ok');
+  //       }
+  //       return response.json();
+  //     })
+  //     .then((data) => {
+  //       console.log(token);
+  //       setItemsList(data);
+  //     })
+  //     .catch((err) => {
+  //       setError(err.message); // 오류 메시지 상태 업데이트
+  //     });
+  // };
 
   // 페이징
   const [page, setPage] = useState(1);

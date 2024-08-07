@@ -22,8 +22,12 @@
   width: 10%;
 }
 
-.ReviewListTable th:nth-child(2) {
+.ReviewListTable th:nth-child(3) {
   width: 30%;
+}
+
+.ReviewListTable th:last-child {
+  width: 25%;
 }
 
 .ReviewListTable td {
