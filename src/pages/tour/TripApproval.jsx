@@ -10,6 +10,7 @@ const TripApproval = () => {
   const [tourDetail, setTourDetail] = useState(null);
 
   useEffect(() => {
+    console.log(t_no);
     const url = `http://localhost:8080/api/tripDetail/${t_no}`;
     fetch(url)
       .then((response) => response.json())
@@ -93,7 +94,19 @@ const TripApproval = () => {
       })
       .catch((error) => console.error("Error updating status:", error));
   };
-
+  const deleteTour = (t_no) => {
+    fetch(`http://localhost:8080/api/admin/tourDelete/${t_no}`, {
+      method: "DELETE",
+    })
+      .then((response) => {
+        if (response.ok) {
+          navigate(-1);
+        } else {
+          console.error("Failed to delete cart item");
+        }
+      })
+      .catch((error) => console.error("Error deleting tour:", error));
+  };
   return (
     <div className="TripDetail">
       <h1>투어 설명</h1>
@@ -208,7 +221,7 @@ const TripApproval = () => {
         >
           {t_status === 0 ? "승인하기" : "승인완료"}
         </button>
-        <button>삭제하기</button>
+        <button onClick={() => deleteTour(t_no)}>삭제하기</button>
         <button onClick={() => navigate(-1)}>뒤로가기</button>
       </div>
     </div>

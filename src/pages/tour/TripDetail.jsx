@@ -316,7 +316,7 @@ const TripDetail = () => {
         </div>
       )}
       <div className="detail-actions">
-        <button>신청하기</button>
+        <button className="detail-actions-register">신청하기</button>
         <button onClick={() => navigate(-1)}>뒤로가기</button>
         <button>수정하기</button>
       </div>

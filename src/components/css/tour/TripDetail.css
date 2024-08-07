@@ -256,3 +256,20 @@
   background-color: #777a7e;
   box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
 }
+
+.detail-actions-register {
+  background-color: #1e90ff;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 5px;
+  color: white;
+  cursor: pointer;
+  transition: background-color 0.3s, box-shadow 0.3s;
+  margin-top: 20px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.detail-actions-register:hover {
+  background-color: #1c86ee;
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+}

@@ -155,7 +155,6 @@ const Order = () => {
   const isOrderInfoComplete = () => {
     return (
       orderInfo.name &&
-      orderInfo.email &&
       orderInfo.phone &&
       orderInfo.postNo &&
       orderInfo.basicAddress &&
