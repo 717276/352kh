@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import "../../components/css/tour/TripDetail.css";
+import { jwtDecode } from "jwt-decode";
 
 const TripDetail = () => {
   const { t_no } = useParams();
@@ -44,95 +45,6 @@ const TripDetail = () => {
     }
     return text.slice(0, maxLength) + "...";
   };
-
-  // const mockReviews = [
-  //   {
-  //     id: 1,
-  //     img: "/images/tour/place1.png",
-  //     title: "리뷰 제목 1",
-  //     content:
-  //       "이것은 첫 번째 리뷰의 내용입니다. 리뷰에 대한 간단한 소개를 제공합니다.",
-  //   },
-  //   {
-  //     id: 2,
-  //     img: "/images/tour/place2.png",
-  //     title: "리뷰 제목 2",
-  //     content:
-  //       "이것은 두 번째 리뷰의 내용입니다. 리뷰에 대한 간단한 소개를 제공합니다.",
-  //   },
-  //   {
-  //     id: 3,
-  //     img: "/images/tour/place3.png",
-  //     title: "리뷰 제목 3",
-  //     content:
-  //       "이것은 세 번째 리뷰의 내용입니다. 리뷰에 대한 간단한 소개를 제공합니다.",
-  //   },
-  //   {
-  //     id: 4,
-  //     img: "/images/tour/place1.png",
-  //     title: "리뷰 제목 4",
-  //     content:
-  //       "이것은 네 번째 리뷰의 내용입니다. 리뷰에 대한 간단한 소개를 제공합니다.",
-  //   },
-  //   {
-  //     id: 5,
-  //     img: "/images/tour/place2.png",
-  //     title: "리뷰 제목 5",
-  //     content:
-  //       "이것은 다섯 번째 리뷰의 내용입니다. 리뷰에 대한 간단한 소개를 제공합니다.",
-  //   },
-  //   {
-  //     id: 6,
-  //     img: "/images/tour/place3.png",
-  //     title: "리뷰 제목 6",
-  //     content:
-  //       "이것은 여섯 번째 리뷰의 내용입니다. 리뷰에 대한 간단한 소개를 제공합니다.",
-  //   },
-  //   {
-  //     id: 7,
-  //     img: "/images/tour/place1.png",
-  //     title: "리뷰 제목 7",
-  //     content:
-  //       "이것은 일곱 번째 리뷰의 내용입니다. 리뷰에 대한 간단한 소개를 제공합니다.",
-  //   },
-  //   {
-  //     id: 8,
-  //     img: "/images/tour/place2.png",
-  //     title: "리뷰 제목 8",
-  //     content:
-  //       "이것은 여덟 번째 리뷰의 내용입니다. 리뷰에 대한 간단한 소개를 제공합니다.",
-  //   },
-  //   {
-  //     id: 9,
-  //     img: "/images/tour/place3.png",
-  //     title: "리뷰 제목 9",
-  //     content:
-  //       "이것은 아홉 번째 리뷰의 내용입니다. 리뷰에 대한 간단한 소개를 제공합니다.",
-  //   },
-  //   {
-  //     id: 10,
-  //     img: "/images/tour/place1.png",
-  //     title: "리뷰 제목 10",
-  //     content:
-  //       "이것은 열 번째 리뷰의 내용입니다. 리뷰에 대한 간단한 소개를 제공합니다.",
-  //   },
-  //   {
-  //     id: 11,
-  //     img: "/images/tour/place2.png",
-  //     title: "리뷰 제목 11",
-  //     content:
-  //       "이것은 열한 번째 리뷰의 내용입니다. 리뷰에 대한 간단한 소개를 제공합니다.",
-  //   },
-  //   {
-  //     id: 12,
-  //     img: "/images/tour/place3.png",
-  //     title: "리뷰 제목 12",
-  //     content:
-  //       "이것은 열두 번째 리뷰의 내용입니다. 리뷰에 대한 간단한 소개를 제공합니다.",
-  //   },
-
-  //   // 추가적인 리뷰 데이터를 여기에 추가
-  // ];
 
   const loadMoreReviews = () => {
     setVisibleReviews((prevVisible) => prevVisible + 6);
@@ -182,6 +94,40 @@ const TripDetail = () => {
   const filteredRestaurantes = restaurantes.filter(
     (res) => res.res_day === selectedDay
   );
+
+  const applyForTour = async () => {
+    const token = localStorage.getItem("accessToken");
+
+    if (!token) {
+      console.error("No access token found");
+      navigate("/login");
+      return;
+    }
+
+    const decodedToken = jwtDecode(token);
+    const userNo = decodedToken.userNo; // JWT에서 userNo 추출
+
+    try {
+      const response = await fetch(`http://localhost:8080/api/applyForTour`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ t_no: t_no, userNo: userNo }),
+      });
+
+      if (!response.ok) {
+        throw new Error("Network response was not ok");
+      }
+
+      const data = await response.json();
+      console.log("Application successful:", data);
+      // 추가적인 처리 로직 (예: 성공 메시지 표시, 페이지 이동 등)
+    } catch (error) {
+      console.error("Error applying for tour:", error);
+      // 오류 처리 로직 (예: 오류 메시지 표시)
+    }
+  };
 
   return (
     <div className="TripDetail">

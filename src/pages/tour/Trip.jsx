@@ -1,16 +1,17 @@
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import "../../components/css/tour/Trip.css";
+import { jwtDecode } from "jwt-decode";
 
 const Trip = () => {
-  const { userNo } = useParams();
+  //  const { userNo } = useParams();
   const [tours, setTours] = useState([]);
   const [filteredTours, setFilteredTours] = useState([]);
   const [visibleItems, setVisibleItems] = useState(6);
   const [userPre, setUserPre] = useState({});
   const navigate = useNavigate();
 
-  const getUserInfo = async () => {
+  const getUserInfo = async (userNo) => {
     const response = await fetch(`http://localhost:8080/api/getPre/${userNo}`, {
       method: "GET",
     });
@@ -60,8 +61,11 @@ const Trip = () => {
         return;
       }
 
+      const decodedToken = jwtDecode(token);
+      const userNo = decodedToken.userNo; // JWT에서 userNo 추출
+
       try {
-        const preferences = await getUserInfo();
+        const preferences = await getUserInfo(userNo);
         const toursData = await fetchTours();
         const filtered = filterTours(preferences, toursData);
         setFilteredTours(filtered);
