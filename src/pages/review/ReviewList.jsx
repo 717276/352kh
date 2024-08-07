@@ -3,6 +3,18 @@ import '../../components/css/review/ReviewList.css';
 import { useNavigate } from "react-router-dom";
 import Page from '../Pagination';
 
+const formatDate = (dateString) => {
+  const date = new Date(dateString);
+  return date.toLocaleString('ko-KR', {
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit',
+    hour: '2-digit',
+    minute: '2-digit',
+    second: '2-digit',
+  });
+};
+
 const ReviewList = () => {
   const nav = useNavigate();
 
@@ -63,6 +75,7 @@ const ReviewList = () => {
           <thead>
             <tr>
               <th hidden>no</th>
+              <th>투어</th>
               <th>제목</th>
               <th>작성자</th>
               <th>좋아요</th>
@@ -79,11 +92,12 @@ const ReviewList = () => {
               currentPageData.map((row) => (
                 <tr key={row.arNo}>
                   <td hidden>{row.arNo}</td>
+                  <td>{row.ttitle}</td>
                   <td onClick={() => { nav(`/reviewComment/${row.arNo}`) }}>{row.arTitle}</td>
                   <td>{row.arUserId}</td>
                   <td>{row.arLike}</td>
                   <td>{row.arView}</td>
-                  <td>{row.arCreatedDate}</td>
+                  <td>{formatDate(row.arCreatedDate)}</td>
                 </tr>
               ))
             )}

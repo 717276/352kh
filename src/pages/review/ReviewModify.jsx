@@ -4,10 +4,13 @@ import React, { useRef, useEffect, useState } from 'react';
 
 const ReviewModify = () => {
   const { arNo } = useParams();
+  const arTitle = useRef();
+  const arContent = useRef();
+  const imgRef = useRef();
   const nav = useNavigate();
   const [items, setItems] = useState({});
-
-
+  const [tours, setTours] = useState([]);
+  const userId = 'hkd01';//예시
 
   useEffect(() => {
     const url = `http://localhost:8080/api/reviewModify/${arNo}`;
@@ -18,10 +21,17 @@ const ReviewModify = () => {
       .then(data => {
         setItems(data);
       })
-  }, []);
 
-  const arTitle = useRef();
-  const arContent = useRef();
+    const url2 = `http://localhost:8080/api/getMyTours/${userId}`;
+    fetch(url2)
+      .then(response => {
+        return response.json();
+      })
+      .then(data => {
+        setTours(data);
+      })
+
+  }, []);
 
   return (
     <>
@@ -33,10 +43,9 @@ const ReviewModify = () => {
               <td>투어</td>
               <td>
                 <select>
-                  <option value="tour1">투어 1</option>
-                  <option value="tour2">투어 2</option>
-                  <option value="tour3">투어 3</option>
-                  <option value="tour4">투어 4</option>
+                  {tours.map((tour) => (
+                    <option key={tour.tno} value={tour.tno}>{tour.ttitle}</option>
+                  ))}
                 </select>
               </td>
               <td>작성자</td>
@@ -55,7 +64,7 @@ const ReviewModify = () => {
             </tr>
             <tr>
               <td colSpan={4}>
-                <input type="file" name="myfile" />
+                <input type="file" ref={imgRef} multiple />
               </td>
             </tr>
           </tbody>
@@ -66,6 +75,11 @@ const ReviewModify = () => {
             form.append('arNo', items.arNo);
             form.append('arTitle', arTitle.current.value);
             form.append('arContent', arContent.current.value);
+            if (imgRef.current.files.length > 0) {
+              Array.from(imgRef.current.files).forEach(file => {
+                form.append('img', file);
+              });
+            }
             fetch('http://localhost:8080/api/review/update', {
               method: 'post',
               body: form

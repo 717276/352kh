@@ -1,12 +1,25 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import '../../components/css/review/ReviewComment.css';
-import productImage from '../admin/test.jpg';
 import Modal from './Modal';
+
+const formatDate = (dateString) => {
+  const date = new Date(dateString);
+  return date.toLocaleString('ko-KR', {
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit',
+    hour: '2-digit',
+    minute: '2-digit',
+    second: '2-digit',
+  });
+};
 
 const ReviewComment = () => {
   const { arNo } = useParams();
   const nav = useNavigate();
+  const arTitle = useRef();
+  const arContent = useRef();
   const [like, setLike] = useState(false);
   const [isModalOpen, setModalOpen] = useState(false);
   const [modalImageSrc, setModalImageSrc] = useState('');
@@ -15,8 +28,22 @@ const ReviewComment = () => {
   const [editingComment, setEditingComment] = useState(null);
   const [editedContent, setEditedContent] = useState('');
   const [imageList, setImageList] = useState([]);
+  const cContent = useRef();
+  const [replyTo, setReplyTo] = useState(null);
 
-  const handleLike = () => setLike(!like);
+  const handleLike = () => {
+    setLike(!like);
+    const form = new FormData();
+    form.append('arNo', arNo);
+    fetch('http://localhost:8080/api/review/updateLike', {
+      method: 'post',
+      body: form
+    })
+      .then(() => {
+        window.location.reload();
+      })
+  };
+
   const handleImageClick = (src) => {
     setModalImageSrc(src);
     setModalOpen(true);
@@ -24,15 +51,28 @@ const ReviewComment = () => {
   const closeModal = () => setModalOpen(false);
 
   const handleEditClick = (comment) => {
-    setEditingComment(comment.cNo);
+    setEditingComment(comment.cno);
     setEditedContent(comment.ccontent);
   };
 
   const handleSaveClick = (comment) => {
-    // Save logic here
-    // For example, you might call a function to update the comment in your backend
-    console.log(`Saving comment ${comment.cNo} with content: ${editedContent}`);
-    setEditingComment(null);
+    const form = new FormData();
+    form.append('cNo', comment.cno);
+    form.append('cContent', editedContent);
+
+    fetch('http://localhost:8080/api/comment/update', {
+      method: 'post',
+      body: form
+    })
+      .then(() => {
+        setCommentList(prevComments =>
+          prevComments.map(c =>
+            c.cno === comment.cno ? { ...c, ccontent: editedContent } : c
+          )
+        );
+        setEditingComment(null);
+        window.location.reload();
+      })
   };
 
   const handleInputChange = (event) => {
@@ -40,57 +80,63 @@ const ReviewComment = () => {
   };
 
   const handleReplyToggle = (id) => {
-    setCommentList(prevComments =>
-      prevComments.map(comment =>
-        comment.cNo === id ? { ...comment, showReply: !comment.showReply } : comment
-      )
-    );
+    setReplyTo(replyTo === id ? null : id);
   };
 
+  const handleReplySubmit = (parentId) => {
+    const form = new FormData();
+    form.append('arNo', items.arNo);
+    form.append('cNo', parentId);
+    form.append('cContent', cContent.current.value);
+
+    fetch('http://localhost:8080/api/comment/insertReply', {
+      method: 'POST',
+      body: form,
+    })
+      .then(() => {
+        cContent.current.value = '';
+        setReplyTo(null);
+        window.location.reload();
+      })
+  };
+
+  const userId = 'hkd01'; //예시
   useEffect(() => {
     const reviewUrl = `http://localhost:8080/api/reviewComment/${arNo}`;
     const imageUrl = `http://localhost:8080/api/images/${arNo}`;
+    const likeUrl = `http://localhost:8080/api/review/${userId}`;
 
     fetch(reviewUrl)
       .then(response => response.json())
       .then(data => {
-        console.log('Fetched data:', data); // 데이터 확인
-        console.log(data.comList || []); // 데이터 확인
-
         setReviewList(data);
-        setCommentList(data.comList); // 댓글 목록 설정
+        setCommentList(data.comList || []);
       })
       .catch(error => {
-        console.error('Error fetching data:', error);
-        setCommentList([]); // 오류 발생 시 빈 배열로 설정
+        setCommentList([]);
       });
 
     fetch(imageUrl)
       .then(response => response.json())
       .then(data => {
-        console.log('Fetched image data:', data);
         setImageList(data);
       })
       .catch(error => {
-        console.error('Error fetching image data:', error);
         setImageList([]);
       });
 
+    fetch(likeUrl)
+      .then(response => response.json())
+      .then((data) => {
+        setLike(data);
+      })
+
   }, [arNo]);
-
-
-
-  useEffect(() => {
-    console.log('Comments state:', comments);
-  }, [comments]);
-
-  const arTitle = useRef();
-  const arContent = useRef();
 
   return (
     <>
       <div className='ReviewComment'>
-        <input value={items.arNo || ''} readOnly />
+        <input type='hidden' value={items.arNo || ''} readOnly />
         <table>
           <tbody>
             <tr>
@@ -102,7 +148,7 @@ const ReviewComment = () => {
             <tr>
               <td>제목</td>
               <td>
-                <input ref={arTitle} value={items.arTitle || ''} readOnly />
+                {items.arTitle || ''}
               </td>
               <td>조회/좋아요수</td>
               <td>{items.arView}</td>
@@ -141,8 +187,18 @@ const ReviewComment = () => {
               </svg>
             )}
           </div>
-          <textarea rows="1" placeholder="댓글을 입력하세요..." />
-          <button id="replyButton">댓글 작성</button>
+          <textarea ref={cContent} rows="1" placeholder="댓글을 입력하세요..." />
+          <button id="replyButton" onClick={() => {
+            const form = new FormData();
+            form.append('arNo', items.arNo);
+            form.append('cContent', cContent.current.value);
+            fetch('http://localhost:8080/api/comment/insert', {
+              method: 'post',
+              body: form
+            }).then(() => {
+              window.location.reload();
+            });
+          }}>댓글 작성</button>
         </div>
         <div className="comment-list">
           <table className="commentTable">
@@ -153,34 +209,79 @@ const ReviewComment = () => {
                 </tr>
               ) : (
                 comments.map(comment => (
-                  <tr key={comment.cno}>
-                    <td>{comment.cuserId}</td>
-                    <td>
-                      {editingComment === comment.cNo ? (
-                        <input
-                          type="text"
-                          value={editedContent}
-                          onChange={handleInputChange}
-                        />
-                      ) : (
-                        comment.ccontent
-                      )}
-                    </td>
-                    <td>{comment.ccreatedDate}</td>
-                    <td><button id="normalButton" onClick={handleEditClick}>수정</button></td>
-                    <td><button id="normalButton">삭제</button></td>
-                    <td><button id="normalButton" onClick={() => handleReplyToggle(comment.cNo)}>답글</button></td>
-                    <td>
-                      <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" fill="currentColor" viewBox="0 0 16 16">
-                        <path d="m8 2.748-.717-.737C5.6.281 2.514.878 1.4 3.053c-.523 1.023-.641 2.5.314 4.385.92 1.815 2.834 3.989 6.286 6.357 3.452-2.368 5.365-4.542 6.286-6.357.955-1.886.838-3.362.314-4.385C13.486.878 10.4.28 8.717 2.01zM8 15C-7.333 4.868 3.279-3.04 7.824 1.143q.09.083.176.171a3 3 0 0 1 .176-.17C12.72-3.042 23.333 4.867 8 15" />
-                      </svg>
-                    </td>
-                    <td>3</td>
-                  </tr>
+                  <React.Fragment key={comment.cno}>
+                    <tr>
+                      <td>{comment.cuserId}</td>
+                      <td>
+                        {editingComment === comment.cno ? (
+                          <input
+                            type="text"
+                            value={editedContent}
+                            onChange={handleInputChange}
+                          />
+                        ) : (
+                          comment.ccontent
+                        )}
+                      </td>
+                      <td>{formatDate(comment.ccreatedDate)}</td>
+                      <td>
+                        {editingComment === comment.cno ? (
+                          <button id="normalButton" onClick={() => handleSaveClick(comment)}>저장</button>
+                        ) : (
+                          <button id="normalButton" onClick={() => handleEditClick(comment)}>수정</button>
+                        )}
+                      </td>
+                      <td>
+                        <button id="normalButton" onClick={() => {
+                          if (window.confirm('삭제할까요?')) {
+                            const form = new FormData();
+                            form.append('cNo', comment.cno);
+                            fetch('http://localhost:8080/api/comment/delete', {
+                              method: 'POST',
+                              body: form
+                            }).then(() => {
+                              window.location.reload();
+                            });
+                          }
+                        }}>삭제</button>
+                      </td>
+                      <td>
+                        <button id="normalButton" onClick={() => handleReplyToggle(comment.cno)}>
+                          답글
+                        </button>
+                      </td>
+                      <td onClick={() => {
+                        const form = new FormData();
+                        form.append('cNo', comment.cno);
+                        fetch('http://localhost:8080/api/comment/updateLike', {
+                          method: 'post',
+                          body: form
+                        })
+                          .then(() => {
+                            window.location.reload();
+                          })
+                      }}>
+                        <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" fill="currentColor" viewBox="0 0 16 16">
+                          <path d="m8 2.748-.717-.737C5.6.281 2.514.878 1.4 3.053c-.523 1.023-.641 2.5.314 4.385.92 1.815 2.834 3.989 6.286 6.357 3.452-2.368 5.365-4.542 6.286-6.357.955-1.886.838-3.362.314-4.385C13.486.878 10.4.28 8.717 2.01zM8 15C-7.333 4.868 3.279-3.04 7.824 1.143q.09.083.176.171a3 3 0 0 1 .176-.17C12.72-3.042 23.333 4.867 8 15" />
+                        </svg>
+                      </td>
+                      <td>{comment.clike}</td>
+                    </tr>
+                    {/* 답글 입력 행 */}
+                    {replyTo === comment.cno && (
+                      <tr>
+                        <td colSpan="7">
+                          <input type="text" placeholder="답글을 입력하세요..." ref={cContent} />
+                          <button id="normalButton" onClick={() => handleReplySubmit(comment.cno)} >
+                            답글 작성
+                          </button>
+                        </td>
+                      </tr>
+                    )}
+                  </React.Fragment>
                 ))
               )}
             </tbody>
-
           </table>
         </div>
         <div className="modifyButton">
@@ -195,4 +296,3 @@ const ReviewComment = () => {
 };
 
 export default ReviewComment;
-
