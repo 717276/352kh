@@ -1,3 +1,4 @@
+/* Build */
 .Build{
     width:100%;
     height:60%;
@@ -11,7 +12,7 @@
     margin-right:20px;
     border-radius: 40px;    
 }
-
+/* 지도 */
 .build_map{
     width:50%;
     height:80%;    
@@ -19,6 +20,12 @@
     border:1px solid black;
     border-radius: 40px;
 }
+.google_map{
+    width:50%;
+    height:80%;
+    overflow:hidden;
+}
+/* 검색창 */
 .build_search{
     width:100%;
     height: 8%;
@@ -34,7 +41,8 @@
     width:50%;
     height:70%;
 }
-.build_list{
+/* 카테고리 버튼 */
+.build_category_list{
     width:100%;
     height:5%;
     display:flex;
@@ -43,16 +51,17 @@
     gap:10%;    
     margin:0;
 }
-.build_list li {
+.build_category_list li {
     cursor: pointer;    
 }
-.build_list li:hover {
+.build_category_list li:hover {
     color: #007bff;
 }
 
-.build_list li.selected {
+.build_category_list li.selected {
     color: #007bff;    
 }
+/* 달력 */
 .build_calendar{    
     width:100%;
     height:5%;
@@ -75,23 +84,21 @@
     font-weight: bold;    
     font-family: 'HSGaeulSenggak20', sans-serif;
 }
-.build_option_list{
-    width:100%;
-    height:90%;
-}
-.google_map{
-    width:50%;
-    height:80%;
-    overflow:hidden;
-}
-
+/* 검색된 데이터 출력 */
 .data_list {
     width: 100%;
     height: 70%;
-    display: flex;
+    display: flex;    
     justify-content: center;
     align-items: center;    
     overflow-y:scroll;
+}
+/* 출력된 데이터 목록 */
+.ress{
+    margin-top:20%;
+}
+.places{
+    margin-top:20%;
 }
 .build_selected_box{
     display:flex;
@@ -107,6 +114,9 @@
 .selected_places{
     overflow-y: scroll;
 }
+.selected_hotel{
+    overflow-y:scroll;
+}
 .selected_place_img img {
     width: 150px;
     height: 100px;
@@ -118,7 +128,11 @@
     width: 150px;
     height: 100px;
 }
-.data_list::-webkit-scrollbar, .selected_places::-webkit-scrollbar, .selected_res::-webkit-scrollbar {
+.selected_hotel_img img{
+    width: 150px;
+    height: 100px;
+}
+.data_list::-webkit-scrollbar, .selected_places::-webkit-scrollbar, .selected_res::-webkit-scrollbar, .selected_hotel::-webkit-scrollbar {
     display: none;
 }
 .tour_btn{

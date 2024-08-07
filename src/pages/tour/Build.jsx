@@ -1,42 +1,44 @@
 import '../../components/css/tour/Build.css';
 import { useState, useRef, useEffect, useReducer, useCallback  } from 'react';
 import DatePicker from 'react-datepicker';
+import { useNavigate } from 'react-router-dom';
 import Hotels from './Hotels';
-import Foods from'./Foods';
+import Restaurante from'./Restaurantes';
 import Places from './Places';
 import GetPlace from './GetPlace';
+import Trip from './Trip';
 import 'react-datepicker/dist/react-datepicker.css';
 
 class Tour {
-    constructor(hotel = null, places = [], foods = []) {
+    constructor(hotel = null, places = [], res = []) {
     this.hotel = hotel;
     this.places = places;
-    this.foods = foods;
+    this.res = res;
   }
 }
 
 // address
 class Hotel {
-  constructor(name, price, image) {
+  constructor(name, price, photo) {
     this.name = name;
     this.price = price;
-    this.image = image;
+    this.photo = photo;
   }
 }
 
 class Place {
-  constructor(name, address, image) {
+  constructor(name, address, photo) {
     this.name = name;
     this.address = address;
-    this.image = image;
+    this.photo = photo;
   }
 }
 
 class Res {
-  constructor(name, address, image) {
+  constructor(name, address, photo) {
     this.name = name;
     this.address = address;
-    this.image = image;
+    this.photo = photo;
   }
 }
 const SELECT_TYPES = {
@@ -44,7 +46,12 @@ const SELECT_TYPES = {
     ADD_PLACE: 'ADD_PLACE',
     ADD_RES: 'ADD_RES',
   };
-  
+const DELETE_TYPES ={
+    HOTEL: 'hotel',
+    PLACE: 'place',
+    RES: 'res'
+}
+// 일별 Tour 등록 reducer
 const reducer = (state, action) => {
     switch (action.type) {
         case SELECT_TYPES.SET_HOTEL:
@@ -53,6 +60,12 @@ const reducer = (state, action) => {
             return { ...state, places: [...state.places, action.payload] };
         case SELECT_TYPES.ADD_RES:
             return { ...state, res: [...state.res, action.payload] };
+        case DELETE_TYPES.HOTEL:            
+            return {...state, hotel:null};
+        case DELETE_TYPES.PLACE:
+            return {...state, places:state.places.filter(place=>place.name !== action.payload.name)}
+        case DELETE_TYPES.RES:
+            return {...state, res:state.res.filter(r => r.name !== action.payload.name)};
         default:
             return state;
     }
@@ -68,7 +81,7 @@ const Build = () => {
     // 카테고리, 검색어 설정
     const [category, setCategory] = useState(0);
     const [search, setSearch] = useState('');
-    
+    const navigator = useNavigate();
     const [resultSearch, setResultSearch] = useState('');
     const [resultCategory, setResultCategory] = useState(category);
 
@@ -78,39 +91,61 @@ const Build = () => {
     const [places, setPlaces] = useState([]);
     const [res, setRes] = useState([]);
 
+    // 달력
+    const [day, setDay]=useState(1);
+    const [startDate, setStartDate] = useState(null);
+    const [endDate, setEndDate] = useState(null);
+
+    // 투어목록
+    const [tours, setTours] = useState([]);
+
+    // 임시 개별 숙소, 장소, 식당 등록
+    const [state, dispatch] = useReducer(reducer, initialState);
+
     // Ref 
-    const mapRef = useRef(null);
     const inputRef = useRef();
-    const curTourRef = useRef(0);
+    const endIdxRef = useRef(0);
+    const strIdxRef = useRef(0);
     const handleCategory = (type) => {
         setCategory(type);
         setSelectedCategory(type);
-    };        
-    // 검색    useCallback 동작 수정 필요
-    const getSearch = useCallback((category, search) => {
-        console.log(category + " " + search);
+    };
+    // 검색 useCallback 동작 수정 필요
+    const getSearch = (category, search) => {
         if (search === '') {
             inputRef.current.focus();
             return;
         }
-
         const renderingSearch = async () => {
             if (category === 0) {
-                const filteredData = await fetchHotels(search);
-                setHotels(filteredData);
+                const response = await fetch("http://localhost:8080/api/hotel",{
+                    method:"POST",
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded', // 쿼리 문자열 형식
+                    },
+                    body: new URLSearchParams({ 
+                        strDate: startDate,
+                        endDate: endDate,
+                        region: search
+                    })
+                })
+                if (response.status === 200){
+                    const hotelData = await response.json();                                        
+                    setHotels(hotelData);                                
+                }else {
+                    console.log("search bad request : " , response.status);
+                    alert("검색 지역 반려견 동반 숙박 업소 없음");
+                    setSearch('');
+                    inputRef.current.focus();
+                }
             } else {
                 setResultSearch(search);
                 setResultCategory(category);
             }
         };
-
         renderingSearch();
-    }, []);
-
-    useEffect(() => {
-        console.log("rendering");
-    }, [resultSearch, resultCategory]);
-
+    };
+    
     function resultHandler(results){
         if (category === 1) {            
             setPlaces(results);
@@ -118,91 +153,147 @@ const Build = () => {
             setRes(results);
         }
     }
-    const fetchHotels = async (search) => {
-        const response = await fetch(`/api/tour/hotels?search=${search}&startDate=${startDate}`);
-        return response.json();
-    };
-            
-    // 날짜 설정
-    const [day, setDay]=useState(1);
-    const incrementDay = () => setDay(day + 1);
-    const decrementDay = () => setDay(day > 1 ? day - 1 : 1);    
-
+                
     // npm install react-datepicker 달력 라이브러리
-    const [startDate, setStartDate] = useState(null);
-    const [endDate, setEndDate] = useState(null);
-    const today = new Date();
+    const today = new Date();    
+    const tomorrow = new Date();
+    tomorrow.setDate(today.getDate() + 1);
     
-    // Tour등록
-    const [tours, setTours] = useState([]);
-    const saveTour = () => { 
-        if (state.hotel && state.places.length > 0 && state.res.length > 0){
-            curTourRef.current++;
-            if(tours[curTourRef.current]) {
-                const updatedTours = [...tours];
-                updatedTours[curTourRef.current - 1] = new Tour(state.hotel, state.places, state.res);
-                setTours(updatedTours);
+    // 다음 일정    
+    const nextTour=()=>{                      
+            
+            // 현재 데이터            
+            if (state.hotel !== null && state.places.length > 0 && state.res.length > 0){        
+                strIdxRef.current++
+                if (strIdxRef.current === (endIdxRef.current + 1)){                    
+                    endIdxRef.current = strIdxRef.current;
+                    setTours([...tours, new Tour(state.hotel, state.places, state.res)]);                                                                       
 
-                const curTour = updatedTours[curTourRef.current];
-                dispatch({ type: SELECT_TYPES.SET_HOTEL, payload: curTour.hotel });
-                dispatch({ type: SELECT_TYPES.ADD_PLACE, payload: curTour.places });
-                dispatch({ type: SELECT_TYPES.ADD_RES, payload: curTour.res });
+                    state.hotel = '';
+                    state.places = [];
+                    state.res = [];        
+                } else {                    
+                    let updatedTours = [...tours];
+                    // 수정 정보
+                    const temp = new Tour(state.hotel, state.places, state.res);
+                    updatedTours[strIdxRef.current - 1] = temp;
+                    setTours(updatedTours);
+
+                    if (strIdxRef.current < endIdxRef.current) {
+                        state.hotel = tours[strIdxRef.current].hotel;
+                        state.places = tours[strIdxRef.current].places;
+                        state.res = tours[strIdxRef.current].res;   
+
+                    } else {
+                        state.hotel = '';
+                        state.places = [];
+                        state.res = [];        
+                    }
+                }                           
+                setDay(strIdxRef.current);
             } else {
-                setTours([...tours, new Tour(state.hotel, state.places, state.res)]);
-                dispatch({ type: SELECT_TYPES.SET_HOTEL, payload: null });
-                dispatch({ type: SELECT_TYPES.ADD_PLACE, payload: [] });
-                dispatch({ type: SELECT_TYPES.ADD_RES, payload: [] });
+                console.log("빈 데이터");                
             }
-            incrementDay();
-        } 
-    };
+    }
     // 이전 일정
     const prevTour=()=>{
-        if (curTourRef.current > 0) {
-            curTourRef.current--;
-            const previousTour = tours[curTourRef.current];
-            dispatch({ type: SELECT_TYPES.SET_HOTEL, payload: previousTour.hotel });
-            dispatch({ type: SELECT_TYPES.ADD_PLACE, payload: previousTour.places });
-            dispatch({ type: SELECT_TYPES.ADD_RES, payload: previousTour.res });
-            decrementDay();
+        strIdxRef.current--;
+        if (strIdxRef.current < 0) {
+            strIdxRef.current = 0;
         } else {
-            console.log('이전 투어가 없습니다.');
+            const previousTour = tours[strIdxRef.current];            
+            state.hotel = tours[strIdxRef.current].hotel;
+            state.places = tours[strIdxRef.current].places;
+            state.res = tours[strIdxRef.current].res; 
+            // dispatch({ type: SELECT_TYPES.SET_HOTEL, payload: previousTour.hotel });
+            // for (let i = 0; i < previousTour.places.length; ++i){
+            //     dispatch({ type: SELECT_TYPES.ADD_PLACE, payload: previousTour.places[i]});
+            // }
+            // for (let i = 0; i < previousTour.res.length; ++i){
+            //     dispatch({ type: SELECT_TYPES.ADD_RES, payload: previousTour.res[i] }); 
+            // }                               
         }
+        setDay(strIdxRef.current);
     }
-    // 개별 숙소, 장소, 식당 등록
-    const [state, dispatch] = useReducer(reducer, initialState);
 
+    // 개별 Tour 등록
     function createdHotel(data){        
         dispatch({ type: SELECT_TYPES.SET_HOTEL, payload: new Hotel(data.name, data.price, data.image) });
     }
-    function createdPlace(data){
-        dispatch({ type: SELECT_TYPES.ADD_PLACE, payload: new Place(data.name, data.address, data.image) });        
+    function createdPlace(data){        
+        dispatch({ type: SELECT_TYPES.ADD_PLACE, payload: new Place(data.name, data.address, data.photo) });        
     }
-    function createdRes(data){        
-        dispatch({ type: SELECT_TYPES.ADD_RES, payload: new Res(data.name, data.address, data.image) });        
-    }
-
-
-    function deleteOption(index){
-        console.log("delete option");
-        setPlaces(places.filter((i)=> i !== index));
-
-        console.log(places.map((place)=>{
-            console.log(place.name);
-        }))        
+    function createdRes(data){                
+        dispatch({ type: SELECT_TYPES.ADD_RES, payload: new Res(data.name, data.address, data.photo) });        
     }
 
+    function deleteOption(category, data){
+        switch(category){
+            case 0:
+                dispatch({type:DELETE_TYPES.HOTEL, payload: data});
+                break;
+            case 1:
+                dispatch({type:DELETE_TYPES.PLACE, payload: data});
+                break;
+            case 2:
+                dispatch({type:DELETE_TYPES.RES, payload: data});
+                break;
+        }        
+    }
+    // 날짜 변경
+    const formatDate = (date, type) => {
+        let year;
+        let month;
+        let day;        
+        if (!date) return '';
+        if (type === 'str'){
+            year = date.getFullYear();
+            month = (date.getMonth() + 1).toString().padStart(2, '0');
+            day = date.getDate().toString().padStart(2, '0');            
+        } else {            
+            let newDate = new Date(date);
+            newDate.setDate(date.getDate()+1);
+            year = newDate.getFullYear();
+            month = (newDate.getMonth() + 1).toString().padStart(2, '0'); // getMonth is zero-based, so we add 1
+            day = newDate.getDate().toString().padStart(2, '0');                                     
+        }
+        return `${year}-${month}-${day}`;
+    };
+    const handleDateChange = (date) => {                
+        const strDate = formatDate(date,'str');
+        const endDate = formatDate(date,'end');
+        setStartDate(strDate);
+        setEndDate(endDate);
+    };
+    const handleNav=()=>{
+        if (state.hotel !== null && state.places.length > 0 && state.res.length > 0){        
+            console.log("save tour");
+            nextTour();
+        }
+        tours.forEach((tour, index) => {
+            if (tour.hotel) {
+                console.log(`Tour ${index + 1} hotel name: ${tour.hotel.name}`);
+            } else {
+                console.log(`Tour ${index + 1} has no hotel`);
+            }
+        });       
+        console.log("trip length", tours.length);
+        navigator('/trip',{state : {tours}});
+    }
+    useEffect(()=>{
+        console.log(tours.legnth);
+    },[tours]);
     return (
         <div className="Build">
             <div className="build build_list_box">
                 <div className="build_calendar">                    
-                    <DatePicker className='strDay'
-                        selected={startDate}
-                        onChange={(date) => setStartDate(date)}
+                    <DatePicker
+                        className='strDay'
+                        selected={startDate ? new Date(startDate) : null}
+                        onChange={handleDateChange}
                         selectsStart
-                        startDate={startDate}
-                        endDate={endDate}
-                        minDate={today}
+                        startDate={startDate ? new Date(startDate) : null}
+                        minDate={tomorrow}
                         placeholderText="여행시작일"
                         dateFormat="yyyy-MM-dd"
                     />
@@ -216,8 +307,8 @@ const Build = () => {
                         placeholderText="돌아오는날"
                         dateFormat="yyyy-MM-dd"
                     /> */}
-                </div>                
-                <ul className="build_list">
+                </div>
+                <ul className="build_category_list">
                     <li className={selectedCategory === 0 ? 'selected' : ''}
                         onClick={() => handleCategory(0)}>
                             호텔
@@ -251,19 +342,22 @@ const Build = () => {
                         <img src=""></img>
                     </button>
                 </div>
+                {/* 검색 데이터 출력 */}
                 <div className='data_list'>
                     {category === 0 && <Hotels createdHotel={createdHotel} hotels={hotels} width={150} height={100}/>}
                     {category === 1 && <Places createdPlace={createdPlace} places={places} width={150} height={100}/>}
-                    {category === 2 && <Foods createdRes={createdRes} res={res} width={150} height={100}/>}
+                    {category === 2 && <Restaurante createdRes={createdRes} res={res} width={150} height={100}/>}
                 </div>
             </div>
+            {/* 선택된 데이터 출력 */}
             <div className="build build_selected_box">
+                <h4>숙소</h4>
                 <div className="selected_item selected_hotel">
                     {state.hotel ? (
                         <div>
-                            <h4>숙소</h4>
-                            <div className="hotel_img">
-                                <img src={state.hotel.image} alt={state.hotel.name} />
+                            <div className="selected_hotel_img">
+                                <img src={state.hotel.photo} />
+                                <button onClick={()=>deleteOption(0, state.hotel)}>X</button>                                    
                             </div>
                             <span>{state.hotel.name}</span>
                             <div className="hotel_price">{state.hotel.price}</div>
@@ -272,14 +366,14 @@ const Build = () => {
                         <p>숙소를 선택해 주세요</p>
                     )}
                 </div>
-                <div className="selected_item selected_places">
-                    {state.places && state.places.length > 0 ? (
-                        places.map((place,index)=>(
-                            <div key={index}>
-                                <h4>장소</h4>
+                <h4>장소</h4>
+                <div className="selected_item selected_places">                                        
+                    {state.places && state.places.length > 0 ? (                        
+                        state.places.map((place,index)=>(
+                            <div key={index}>                                
                                 <div className='selected_place_img'>
-                                    <button onClick={()=>deleteOption(index)}>X</button>                                    
                                     <img src={place.photo}></img>
+                                    <button onClick={()=>deleteOption(1, place)}>X</button>                                    
                                 </div>
                                 <div className='selected_place_name'>
                                     <span>{place.name}</span>
@@ -289,15 +383,17 @@ const Build = () => {
                                 </div>
                             </div>
                         ))
-                    ):(<p>장소를 선택해 주세요</p>)}
+                    ):(<p>장소를 선택해 주세요</p>)                    
+                    }
                 </div>
+                <h4>음식</h4>
                 <div className='selected_item selected_res'>
                     {state.res && state.res.length > 0 ?(
-                        res.map((restaurante,index)=>(
+                        state.res.map((restaurante,index)=>(
                             <div key={index}>
-                                <h4>음식</h4>
                                 <div className='selected_res_img'>
                                     <img src={restaurante.photo}></img>
+                                    <button onClick={()=>deleteOption(2, restaurante)}>X</button> 
                                 </div>
                                 <div className='selected_res_name'>
                                     <span>{restaurante.name}</span>
@@ -309,13 +405,13 @@ const Build = () => {
                         ))):(<p>식당을 선택해 주세요..</p>)}
                 </div>
                 <div className="tour_btn">
-                    <div className="saveTour_prev_btn" onClick={prevTour}>
+                    <div className="saveTour_prev_btn" onClick={()=>prevTour()}>
                         이전 일정
                     </div>
                     <div>
-                        Day {day}
+                        Day {(strIdxRef.current + 1)}
                     </div>
-                    <div className="saveTour_next_btn" onClick={saveTour}>
+                    <div className="saveTour_next_btn" onClick={()=>nextTour()}>
                         다음 일정
                     </div>
                 </div>
@@ -323,6 +419,9 @@ const Build = () => {
             {/* npm install '@vis.gl/react-google-maps' */}
             <div className="build google_map">                
                 <GetPlace className="g_map" search={resultSearch} category={resultCategory} filteredData={resultHandler}></GetPlace>                                                                   
+            </div>
+            <div>
+                <button onClick={handleNav}>완료</button>
             </div>
         </div>
     );

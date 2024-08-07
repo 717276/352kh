@@ -24,8 +24,6 @@ function GetPlace({search, category, filteredData}) {
 
     const searchRef = useRef(search);
     const categoryRef = useRef(category);
-    console.log("Get place " + searchRef.current + "  " + categoryRef.current);
-
     useEffect(() => {
         searchRef.current = search;
         categoryRef.current = category;
@@ -79,9 +77,7 @@ function GetPlace({search, category, filteredData}) {
                 //     photo: place.photos && place.photos[0] ? place.photos[0].getUrl() : null,                                        
                 // }));
                 const newMarkers = results.map((place) => {
-                    const photoUrl = place.photos && place.photos[0] ? place.photos[0].getUrl() : null;        
-                    // photo 정보 콘솔에 출력
-                    console.log('Place:', place.name, 'Photo URL:', photoUrl);        
+                    const photoUrl = place.photos && place.photos[0] ? place.photos[0].getUrl() : null;              
                     return {
                         position: place.geometry.location,
                         name: place.name,
@@ -89,7 +85,9 @@ function GetPlace({search, category, filteredData}) {
                         photo: photoUrl,
                     };
                 });
-                filteredData (newMarkers);
+                if (category === 1 || category === 2){
+                    filteredData (newMarkers);
+                }
                 setMarkers(newMarkers);
                 
                 if (newMarkers.length > 0) {
@@ -106,7 +104,9 @@ function GetPlace({search, category, filteredData}) {
         setMap(null);
     }, []);
 
-    const mapKey = React.useMemo(() => search, [search]);
+    const mapKey = React.useMemo(() => 
+        `${search}-${category}`, [search, category]
+    );
 
     return isLoaded ? (
         <GoogleMap

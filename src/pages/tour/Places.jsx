@@ -1,13 +1,13 @@
 import { useState, useEffect } from 'react';
-
+import '../../components/css/tour/Place.css';
 const Places = ({ createdPlace, places, width, height }) => {    
     return (
-        <div>
+        <div className='data_list_places'>
             {places && places.length > 0 ? (places.map((place, index) => (
-                <div key={index} onClick={()=>{createdPlace(place)}}>
+                <div className='places' key={index}>
                     <span>{place.name}</span>
-                    <div className="place_img">                    
-                        <img src={place.photo} style={{ width: `${width}px`, height: `${height}px` }} />
+                    <div className="place_img">                
+                        <img src={place.photo} onClick={() => {createdPlace(place)}} style={{ width: `${width}px`, height: `${height}px` }} />
                     </div>                    
                     <div className='place_address'>
                         {place.address}

@@ -1,16 +1,16 @@
 import {useState,useEffect} from 'react';
-
-const Foods=({createdRes, res, width, height})=>{    
+import '../../components/css/tour/Res.css';
+const Restaurantes=({createdRes, res, width, height})=>{    
 
     return (
-        <div>
-            {res && res.length>0?(
+        <div className='data_list_res'>
+            {res && res.length > 0?(
                 res.map((res,index)=>(
-                    <div key={index} onClick={()=>{createdRes(res)}}>
+                    <div className='ress' key={index} onClick={()=>{createdRes(res)}}>
                         <span>{res.name}</span>
-                        <div className="place_img">
+                        <div className="res_img">
                             <img src={res.photo} style={{ width: `${width}px`, height: `${height}px` }}/>
-                        <div className="place_address">
+                        <div className="res_address">
                             {res.address}
                         </div>
                     </div>
@@ -21,4 +21,4 @@ const Foods=({createdRes, res, width, height})=>{
         </div>
     );
 }
-export default Foods;
+export default Restaurantes;
