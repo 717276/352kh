@@ -3,10 +3,10 @@ import { useNavigate, useParams } from "react-router-dom";
 import Payment from "./Payment"; // 결제 컴포넌트 임포트
 import "../../components/css/order/Order.css";
 
-const Order = () => {
+const TourOrder = () => {
   const { userNo } = useParams();
   const navigate = useNavigate();
-  const [products, setProducts] = useState([]);
+  const [tours, setTours] = useState([]);
   const [orderInfo, setOrderInfo] = useState({
     name: "",
     email: "",
@@ -20,22 +20,22 @@ const Order = () => {
     method: "card/easy", // 기본 결제 방법을 카드로 설정
   });
 
-  const [showDiscountDetails, setShowDiscountDetails] = useState(false);
   const [isEditingAddress, setIsEditingAddress] = useState(false);
 
   useEffect(() => {
-    fetchOrderItems();
+    fetchTourItems();
     loadDaumPostcodeScript();
   }, [userNo]);
 
-  const fetchOrderItems = () => {
-    const url = `http://localhost:8080/api/order/${userNo}`;
+  const fetchTourItems = () => {
+    const url = `http://localhost:8080/api/tourOrder/${userNo}`;
     fetch(url)
       .then((response) => response.json())
       .then((data) => {
-        setProducts(Array.isArray(data) ? data : []);
+        console.log(data);
+        setTours(Array.isArray(data) ? data : []);
       })
-      .catch((error) => console.error("Error fetching order items:", error));
+      .catch((error) => console.error("Error fetching tour items:", error));
   };
 
   const fetchUserInfo = () => {
@@ -82,41 +82,25 @@ const Order = () => {
     }
   };
 
-  const productTotal = products.reduce(
-    (total, product) => total + product.product.pd_price * product.ci_quantity,
-    0
-  );
-
-  const discountTotal = products.reduce(
-    (total, product) =>
-      total +
-      (product.product.pd_price *
-        product.ci_quantity *
-        product.product.pd_discount) /
-        100,
-    0
-  );
-
-  const removeProduct = (ciNo) => {
-    const url = `http://localhost:8080/api/deleteCart/${ciNo}`;
+  const removeTour = (utl_no) => {
+    const url = `http://localhost:8080/api/deleteTourCart/${utl_no}`;
     fetch(url, {
       method: "DELETE",
     })
       .then((response) => {
         if (response.ok) {
-          setProducts(products.filter((product) => product.ci_no !== ciNo));
+          setTours(tours.filter((tour) => tour.utl_no !== utl_no));
         } else {
-          console.error("Failed to delete cart item");
+          console.error("Failed to delete tour item");
         }
       })
-      .catch((error) => console.error("Error deleting cart item:", error));
+      .catch((error) => console.error("Error deleting tour item:", error));
   };
 
-  const total = productTotal - discountTotal;
-
-  const toggleDiscountDetails = () => {
-    setShowDiscountDetails(!showDiscountDetails);
-  };
+  const tourTotal = tours.reduce(
+    (total, tour) => total + tour.tour.t_totalPrice,
+    0
+  );
 
   const toggleAddressEditing = () => {
     setIsEditingAddress(!isEditingAddress);
@@ -136,7 +120,11 @@ const Order = () => {
     let postNo = document.getElementById("postNo").value;
     let basicAddress = document.getElementById("basicAddress").value;
     let detailAddress = document.getElementById("detailAddress").value;
-
+    console.log(name);
+    console.log(phone);
+    console.log(postNo);
+    console.log(basicAddress);
+    console.log(detailAddress);
     setOrderInfo({
       name,
       phone,
@@ -147,14 +135,16 @@ const Order = () => {
 
     setIsEditingAddress(false);
   };
-
+  //이미지 url
   const getImageUrl = (img) => {
-    return `/images/${img.i_category}/${img.i_category}_${img.i_ref_no}_${img.i_order}.png`;
+    return `/images/${img.i_category}/${img.i_ref_no}/${img.i_order}.png`;
   };
 
   const isOrderInfoComplete = () => {
+    console.log(orderInfo);
     return (
       orderInfo.name &&
+      orderInfo.email &&
       orderInfo.phone &&
       orderInfo.postNo &&
       orderInfo.basicAddress &&
@@ -169,24 +159,18 @@ const Order = () => {
     }
 
     const paymentData = {
-      userNo: userNo, // orderInfo.userNo 대신 userNo 사용
-      orderItems: products.map((product) => ({
-        pd_no: product.product.pd_no,
-        oi_price: Math.round(
-          product.product.pd_price * (1 - product.product.pd_discount / 100)
-        ),
-        oi_quantity: product.ci_quantity,
-        oi_basicAddress: orderInfo.basicAddress,
-        oi_detailAddress: orderInfo.detailAddress,
-        oi_postNo: orderInfo.postNo,
+      userNo: userNo,
+      orderItems: tours.map((tour) => ({
+        t_no: tour.tour.t_no,
+        ot_price: tour.tour.t_totalPrice,
       })),
       payment: {
-        pay_type: paymentInfo.method,
-        pay_total: total,
+        payt_type: paymentInfo.method,
+        payt_total: tourTotal,
       },
     };
 
-    fetch("http://localhost:8080/api/order/save", {
+    fetch("http://localhost:8080/api/tourOrder/save", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -208,34 +192,41 @@ const Order = () => {
         console.error("Error saving order:", error);
       });
   };
-
+  const formatDateToYYYYMMDD = (dateString) => {
+    const date = new Date(dateString);
+    const year = date.getFullYear();
+    const month = ("0" + (date.getMonth() + 1)).slice(-2);
+    const day = ("0" + date.getDate()).slice(-2);
+    return `${year}-${month}-${day}`;
+  };
   return (
     <div className="Order">
       <div className="main-content">
         <div className="order-summary">
-          <h2>주문상품 {products.length}개</h2>
+          <h2>주문상품 {tours.length}개</h2>
           <div className="products">
-            {Array.isArray(products) &&
-              products.map((product) => (
-                <div key={product.ci_no} className="product">
+            {Array.isArray(tours) &&
+              tours.map((tour) => (
+                <div key={tour.t_no} className="product">
                   <div className="item">
                     <img
-                      src={getImageUrl(product.product.img)}
-                      alt={product.product.pd_name}
+                      src={getImageUrl(tour.tour.img)}
+                      alt={tour.tour.t_title}
                     />
                     <div className="product-info-order">
-                      <span>{product.product.pd_name}</span>
+                      <span>{tour.tour.t_title}</span>
+                      <span>{tour.tour.t_totalPrice}원</span>
                       <span>
-                        {product.product.pd_price.toLocaleString()}원 /{" "}
-                        {product.ci_quantity}개
+                        {formatDateToYYYYMMDD(tour.tour.t_strDate)} ~{" "}
+                        {formatDateToYYYYMMDD(tour.tour.t_endDate)}
                       </span>
                     </div>
                   </div>
                   <button
                     className="remove-button"
-                    onClick={() => removeProduct(product.ci_no)}
+                    onClick={() => removeTour(tour.utl_no)}
                   >
-                    구매 취소
+                    결제 취소
                   </button>
                 </div>
               ))}
@@ -243,16 +234,12 @@ const Order = () => {
           <div className="order-total">
             <div className="subtotal">
               <span>상품금액</span>
-              <span>{productTotal.toLocaleString()}원</span>
-            </div>
-            <div className="discount">
-              <span>할인금액</span>
-              <span>-{discountTotal.toLocaleString()}원</span>
+              <span>{tourTotal}원</span>
             </div>
             <hr className="divider" />
             <div className="total">
               <span>총 결제금액</span>
-              <span>{total.toLocaleString()}원</span>
+              <span>{tourTotal}원</span>
             </div>
           </div>
         </div>
@@ -344,42 +331,16 @@ const Order = () => {
           </div>
           <div className="subtotal">
             <span>상품금액</span>
-            <span>{productTotal.toLocaleString()}원</span>
+            <span>{tourTotal.toLocaleString()}원</span>
           </div>
-          <div className="discount">
-            <span>
-              할인금액
-              <span className="discount-toggle" onClick={toggleDiscountDetails}>
-                {showDiscountDetails ? "▲" : "▼"}
-              </span>
-            </span>
-            <span>-{discountTotal.toLocaleString()}원</span>
-          </div>
-          {showDiscountDetails && (
-            <div className="discount-details">
-              {products.map((product, index) => {
-                const discountAmount =
-                  (product.product.pd_price *
-                    product.ci_quantity *
-                    product.product.pd_discount) /
-                  100;
-                return (
-                  <div key={index}>
-                    <span>{product.product.pd_name} 할인</span>
-                    <span>-{discountAmount.toLocaleString()}원</span>
-                  </div>
-                );
-              })}
-            </div>
-          )}
           <hr className="divider" />
           <div className="total">
             <span>총 결제금액</span>
-            <span>{total.toLocaleString()}원</span>
+            <span>{tourTotal.toLocaleString()}원</span>
           </div>
           <Payment
             userNo={userNo}
-            total={total}
+            total={tourTotal}
             orderInfo={{
               ...orderInfo,
               address: `${orderInfo.basicAddress} ${orderInfo.detailAddress}`,
@@ -396,4 +357,4 @@ const Order = () => {
   );
 };
 
-export default Order;
+export default TourOrder;

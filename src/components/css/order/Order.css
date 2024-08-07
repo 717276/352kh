@@ -282,3 +282,7 @@
   border-top: 2px solid #888;
   margin: 10px 0;
 }
+
+.product-info-order > span:last-child{
+  font-size: 12px;
+}

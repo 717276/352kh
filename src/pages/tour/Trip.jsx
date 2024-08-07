@@ -1,63 +1,82 @@
 import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import "../../components/css/tour/Trip.css";
+import { jwtDecode } from "jwt-decode";
 
 const Trip = () => {
+  //  const { userNo } = useParams();
   const [tours, setTours] = useState([]);
+  const [filteredTours, setFilteredTours] = useState([]);
   const [visibleItems, setVisibleItems] = useState(6);
+  const [userPre, setUserPre] = useState({});
   const navigate = useNavigate();
 
-  const fetchTours = (token) => {
-    fetch("http://localhost:8080/api/trip", {
+  const getUserInfo = async (userNo) => {
+    const response = await fetch(`http://localhost:8080/api/getPre/${userNo}`, {
+      method: "GET",
+    });
+    const data = await response.json();
+    console.log("User Preference:", data);
+    setUserPre(data); // 객체로 직접 설정
+    return data;
+  };
+
+  const fetchTours = async () => {
+    const response = await fetch("http://localhost:8080/api/trip", {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
       },
-    })
-      .then((response) => {
-        if (!response.ok) {
-          if (response.status === 401) {
-            // 새로운 토큰이 발급되었을 경우
-            const newToken = response.headers.get("Authorization");
-            if (newToken) {
-              localStorage.setItem(
-                "accessToken",
-                newToken.replace("Bearer ", "")
-              );
-              fetchTours(newToken.replace("Bearer ", ""));
-              return;
-            }
+    });
+    const data = await response.json();
+    console.log("Tours:", data);
+    setTours(data);
+    return data;
+  };
 
-            // 토큰이 만료된 경우 처리
-            console.error("Access token expired");
-            localStorage.removeItem("accessToken");
-            navigate("/login"); // 로그인 페이지로 이동
-            return;
-          }
-          throw new Error("Network response was not ok");
-        }
-        return response.json();
-      })
-      .then((data) => {
-        setTours(data);
-      })
-      .catch((error) => {
-        console.error("Error fetching tours:", error);
-      });
+  const filterTours = (preferences, tours) => {
+    if (!preferences || tours.length === 0) return [];
+
+    console.log("Filtering tours based on user preference...");
+    const filtered = tours.filter((tour) => {
+      return (
+        (preferences.pf_rest === 1 && tour.pre.pf_rest === 1) ||
+        (preferences.pf_sport === 1 && tour.pre.pf_sport === 1) ||
+        (preferences.pf_walk === 1 && tour.pre.pf_walk === 1) ||
+        (preferences.pf_cafe === 1 && tour.pre.pf_cafe === 1) ||
+        (preferences.pf_spot === 1 && tour.pre.pf_spot === 1)
+      );
+    });
+    console.log("Filtered Tours:", filtered);
+    return filtered;
   };
 
   useEffect(() => {
-    const token = localStorage.getItem("accessToken");
+    const fetchData = async () => {
+      const token = localStorage.getItem("accessToken");
 
-    if (!token) {
-      console.error("No access token found");
-      navigate("/login"); // 로그인 페이지로 이동
-      return;
-    }
+      if (!token) {
+        console.error("No access token found");
+        navigate("/login");
+        return;
+      }
 
-    fetchTours(token);
+      const decodedToken = jwtDecode(token);
+      const userNo = decodedToken.userNo; // JWT에서 userNo 추출
+
+      try {
+        const preferences = await getUserInfo(userNo);
+        const toursData = await fetchTours();
+        const filtered = filterTours(preferences, toursData);
+        setFilteredTours(filtered);
+      } catch (error) {
+        console.error("Error fetching data:", error);
+      }
+    };
+
+    fetchData();
   }, []);
+
   const loadMore = () => {
     setVisibleItems((prev) => prev + 6);
   };
@@ -66,7 +85,6 @@ const Trip = () => {
     navigate(`/tripDetail/${t_no}`);
   };
 
-  // 글이 길 때 ...으로 생략
   const truncateText = (text, maxLength) => {
     if (text.length <= maxLength) {
       return text;
@@ -74,13 +92,11 @@ const Trip = () => {
     return text.slice(0, maxLength) + "...";
   };
 
-  // mockData를 3개씩 묶어서 그룹화
   const groupedData = [];
-  for (let i = 0; i < tours.length; i += 3) {
-    groupedData.push(tours.slice(i, i + 3));
+  for (let i = 0; i < filteredTours.length; i += 3) {
+    groupedData.push(filteredTours.slice(i, i + 3));
   }
 
-  //이미지 url
   const getImageUrl = (img) => {
     return `/images/${img.i_category}/${img.i_ref_no}/${img.i_order}.png`;
   };
@@ -122,7 +138,7 @@ const Trip = () => {
             ))}
           </div>
         ))}
-        {visibleItems < tours.length && (
+        {visibleItems < filteredTours.length && (
           <div className="loadMore">
             <button onClick={loadMore}>+ 더보기</button>
           </div>
