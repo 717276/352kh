@@ -41,7 +41,7 @@ const CreateChatRoom = () => {
     return (
         <div>
             <h1>Create Chat Room</h1>
-            <input type="text" value={roomName} onChange={handleInputChange} placeholder="Enter room name" />
+            <input type="text" value={roomName} onChange={handleInputChange} placeholder="1대1 채팅 생성하기" />
             <button onClick={handleCreateRoom}>Create Room</button>
             {response && (
                 <div>
