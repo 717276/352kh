@@ -1,13 +1,13 @@
 import '../../components/css/tour/Build.css';
-import { useState, useRef, useEffect, useReducer, useCallback  } from 'react';
+import { useState, useRef, useReducer,useContext } from 'react';
 import DatePicker from 'react-datepicker';
 import { useNavigate } from 'react-router-dom';
 import Hotels from './Hotels';
 import Restaurante from'./Restaurantes';
 import Places from './Places';
 import GetPlace from './GetPlace';
-import Trip from './Trip';
 import 'react-datepicker/dist/react-datepicker.css';
+import { AuthContext } from '../../components/Auth.jsx'; // context.js 파일에서 import
 
 class Tour {
     constructor(hotel = null, places = [], res = []) {
@@ -78,6 +78,7 @@ const initialState={
 }
 
 const Build = () => {
+    const {isAuthorized, setIsAuthorized} = useContext(AuthContext);        
     // 카테고리, 검색어 설정
     const [category, setCategory] = useState(0);
     const [search, setSearch] = useState('');
@@ -90,7 +91,7 @@ const Build = () => {
     const [hotels, setHotels] = useState([]);
     const [places, setPlaces] = useState([]);
     const [res, setRes] = useState([]);
-
+    const [address, setAddress] = useState('');
     // 달력
     const [day, setDay]=useState(1);
     const [startDate, setStartDate] = useState(null);
@@ -218,9 +219,11 @@ const Build = () => {
 
     // 개별 Tour 등록
     function createdHotel(data){        
+        setAddress(data.name);
         dispatch({ type: SELECT_TYPES.SET_HOTEL, payload: new Hotel(data.name, data.price, data.image) });
     }
-    function createdPlace(data){        
+    function createdPlace(data){
+        setAddress(data.name);        
         dispatch({ type: SELECT_TYPES.ADD_PLACE, payload: new Place(data.name, data.address, data.photo) });        
     }
     function createdRes(data){                
@@ -265,24 +268,17 @@ const Build = () => {
         setStartDate(strDate);
         setEndDate(endDate);
     };
-    const handleNav=()=>{
-        if (state.hotel !== null && state.places.length > 0 && state.res.length > 0){        
-            console.log("save tour");
-            nextTour();
-        }
-        tours.forEach((tour, index) => {
-            if (tour.hotel) {
-                console.log(`Tour ${index + 1} hotel name: ${tour.hotel.name}`);
-            } else {
-                console.log(`Tour ${index + 1} has no hotel`);
-            }
-        });       
-        console.log("trip length", tours.length);
-        navigator('/trip',{state : {tours}});
+    // 데이터 전송
+    const handleNav= async()=>{
+        if (state.hotel !== null && state.places.length > 0 && state.res.length > 0){                    
+            console.log("async ");
+            await nextTour();
+        }              
+        navigator('/trip',{state : {
+            data:tours
+        }});
     }
-    useEffect(()=>{
-        console.log(tours.legnth);
-    },[tours]);
+    
     return (
         <div className="Build">
             <div className="build build_list_box">
@@ -335,12 +331,9 @@ const Build = () => {
                         value={search}
                         onChange={(e) => setSearch(e.target.value)}
                     />
-                    <button
-                        className="build_search_btn"
-                        onClick={() => getSearch(category, search)}
-                    >
-                        <img src=""></img>
-                    </button>
+                                             
+                    <img className='search_btn_img' src="/images/util/search.png" onClick={() => getSearch(category, search)}></img>
+                    
                 </div>
                 {/* 검색 데이터 출력 */}
                 <div className='data_list'>
@@ -418,7 +411,7 @@ const Build = () => {
             </div>
             {/* npm install '@vis.gl/react-google-maps' */}
             <div className="build google_map">                
-                <GetPlace className="g_map" search={resultSearch} category={resultCategory} filteredData={resultHandler}></GetPlace>                                                                   
+                <GetPlace className="g_map" search={resultSearch} category={resultCategory} address={address} filteredData={resultHandler}></GetPlace>                                                                   
             </div>
             <div>
                 <button onClick={handleNav}>완료</button>

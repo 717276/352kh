@@ -8,10 +8,7 @@ const Places = ({ createdPlace, places, width, height }) => {
                     <span>{place.name}</span>
                     <div className="place_img">                
                         <img src={place.photo} onClick={() => {createdPlace(place)}} style={{ width: `${width}px`, height: `${height}px` }} />
-                    </div>                    
-                    <div className='place_address'>
-                        {place.address}
-                    </div>
+                    </div>                                        
                 </div>
             ))) : (<p>Waiting...</p>)}
         </div>

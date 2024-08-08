@@ -1,5 +1,5 @@
-import { Routes, Route } from 'react-router-dom';
-import { useState } from 'react';
+import { Routes, Route , useLocation} from 'react-router-dom';
+import { useState, useEffect, useContext  } from 'react';
 import './App.css';
 import Header from './components/Header';
 import Footer from './components/Footer';
@@ -22,35 +22,42 @@ import Product from './pages/shop/Product';
 import ShopList from './pages/shop/ShopList';
 import QnA from './pages/csr/QnA';
 import Managerment from './pages/admin/Management';
-function App() {  
+import { AuthProvider, DataProvider } from './components/Auth.jsx'; // context.js 파일에서 import
+
+
+function App() {   
   return (
     <>    
-    <div className="Full">
-      <Header></Header>          
-        <Routes>        
-          <Route path="/" element={<Main />} />
-          <Route path="/trip" element={<Trip />} />
-          <Route path="/tripDetail/:no" element={<TripDetail />} />
-          <Route path="/build" element={<Build />} />
-          <Route path="/review" element={<Review />} />
-          <Route path="/reviewWrite" element={<ReviewWrite/>}/> 
-          <Route path="/ReviewComment/:id" element={<ReviewComment/>}/>
-          <Route path="/notice" element={<Notice />} />
-          <Route path="/shop" element={<Shop />} />      
-          <Route path="/login" element={<Login />} />      
-          <Route path="/register" element={<Register />} />   
-          <Route path="/admin/productList" element={<ProductList />} />    
-          <Route path="/admin/ProductRegister" element={<ProductRegister />} /> 
-          <Route path="/reviewComment/:id" element={<ReviewComment/>}/>
-          <Route path="/reviewModify/:id" element={<ReviewModify/>}/>
-          <Route path="/shop" element={<Shop />} />
-          <Route path="/shoplist/:category" element={<ShopList />} />
-          <Route path="/mypage" element={<MyPage />} />
-          <Route path="/qna" element={<QnA/>}/>
-          <Route path="/mg" element={<Managerment/>}/>
-        </Routes>          
-      <Footer></Footer>
-    </div>
+    <AuthProvider>
+    <DataProvider>
+      <div className="Full">
+        <Header></Header>          
+          <Routes>        
+            <Route path="/" element={<Main />} />
+            <Route path="/trip" element={<Trip />} />
+            <Route path="/tripDetail/:no" element={<TripDetail />} />
+            <Route path="/build" element={<Build />} />
+            <Route path="/review" element={<Review />} />
+            <Route path="/reviewWrite" element={<ReviewWrite/>}/> 
+            <Route path="/ReviewComment/:id" element={<ReviewComment/>}/>
+            <Route path="/notice" element={<Notice />} />
+            <Route path="/shop" element={<Shop />} />      
+            <Route path="/login" element={<Login />} />      
+            <Route path="/register" element={<Register />} />   
+            <Route path="/admin/productList" element={<ProductList />} />    
+            <Route path="/admin/ProductRegister" element={<ProductRegister />} /> 
+            <Route path="/reviewComment/:id" element={<ReviewComment/>}/>
+            <Route path="/reviewModify/:id" element={<ReviewModify/>}/>
+            <Route path="/shop" element={<Shop />} />
+            <Route path="/shoplist/:category" element={<ShopList />} />
+            <Route path="/mypage" element={<MyPage />} />
+            <Route path="/qna" element={<QnA/>}/>
+            <Route path="/mg" element={<Managerment/>}/>
+          </Routes>          
+        <Footer></Footer>
+        </div>
+      </DataProvider>
+      </AuthProvider>
     </>
   )
 }
