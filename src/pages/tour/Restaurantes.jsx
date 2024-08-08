@@ -10,9 +10,9 @@ const Restaurantes=({createdRes, res, width, height})=>{
                         <span>{res.name}</span>
                         <div className="res_img">
                             <img src={res.photo} style={{ width: `${width}px`, height: `${height}px` }}/>
-                        <div className="res_address">
+                        {/* <div className="res_address">
                             {res.address}
-                        </div>
+                        </div> */}
                     </div>
 
                     </div>                    

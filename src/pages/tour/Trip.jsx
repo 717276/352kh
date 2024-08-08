@@ -12,13 +12,16 @@ const Trip = () => {
   const navigate = useNavigate();
 
   const getUserInfo = async (userNo) => {
+    const accessToken = localStorage.getItem('accessToken');
     const response = await fetch(`http://localhost:8080/api/getPre/${userNo}`, {
+      headers: {
+        'authorization': accessToken,
+      },
+      credentials:'include',
       method: "GET",
-    });
-    const data = await response.json();
-    console.log("User Preference:", data);
-    setUserPre(data); // 객체로 직접 설정
-    return data;
+    }).catch(error=>{
+      console.log(error);
+    });        
   };
 
   const fetchTours = async () => {

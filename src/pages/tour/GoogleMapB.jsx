@@ -10,43 +10,31 @@ import {
 
 const containerStyle = {
     width: "100%",
-    height: "100vh",
+    height: "100%",
 };
 
 const center = {
     lat: 37.5665,
     lng: 126.9780,
 };
-
-const radius = 5000;
-
 const libraries = ["places"];
 
-function GetPlace({search, category, address, filteredData}) {              
+function GoogleMapB({address}) {   
+    console.log(address);
     const { isLoaded } = useJsApiLoader({
         id: "google-map-script",
         googleMapsApiKey: "AIzaSyBRZQy7nY-LfiTF9w9GdgQE81CvnGAKp9I",
         libraries,
     });
-
-    let query = React.useMemo(() => {
-        let baseQuery = "반려동물 동반 ";
-        if (search === '') {
-            return "서울역";
-        } else {
-            if (category === 1) {
-                return baseQuery + "명소 " + search;
-            } else if (category === 2) {
-                return baseQuery + "레스토랑 " + search;
-            }
-        }
-        return baseQuery;
-    }, [search, category]);
         
+    let query = React.useMemo(() => {
+        return address;
+    }, [address]);
+
     const [map, setMap] = React.useState(null);
     const [markers, setMarkers] = React.useState([]);
     let mapKey = React.useMemo(() => 
-        `${search}-${category}`, [search, category]
+        `${address}`, [address]
     );    
 
     const onLoad = React.useCallback(function callback(map) {
@@ -73,10 +61,8 @@ function GetPlace({search, category, address, filteredData}) {
                         address: place.formatted_address,
                         photo: photoUrl,
                     };
-                });
-                if (category === 1 || category === 2){
-                    filteredData (newMarkers);
-                }                
+                });   
+                                 
                 setMarkers(newMarkers);
                 
                 if (newMarkers.length > 0) {
@@ -84,6 +70,11 @@ function GetPlace({search, category, address, filteredData}) {
                     const bounds = new window.google.maps.LatLngBounds();
                     newMarkers.forEach(marker => bounds.extend(marker.position));
                     map.fitBounds(bounds);
+
+                    const listener = window.google.maps.event.addListener(map, "bounds_changed", function() {
+                        this.setZoom(Math.min(map.getZoom(), 15));
+                        window.google.maps.event.removeListener(listener);
+                    });
                 }
             }                                    
         });                
@@ -93,14 +84,13 @@ function GetPlace({search, category, address, filteredData}) {
     const onUnmount = React.useCallback(function callback(map) {
         setMap(null);
     }, []);
-    
-    
+        
     return isLoaded ? (
         <GoogleMap
             key={mapKey}
             mapContainerStyle={containerStyle}
             center={center}
-            zoom={15}
+            zoom={5}
             onLoad={onLoad}
             onUnmount={onUnmount}
             options={{
@@ -110,7 +100,7 @@ function GetPlace({search, category, address, filteredData}) {
         >
             {markers.map((marker,index)=>(
                 <MarkerF key={index} position={marker.position} title={marker.name} 
-                onClick={() => {
+                onMouseOver={() => {
                     // info Window marker 정보 표시
                     const infowindow = new window.google.maps.InfoWindow({
                     content: `<div>
@@ -130,4 +120,4 @@ function GetPlace({search, category, address, filteredData}) {
     );
 }
 
-export default GetPlace;
+export default GoogleMapB;
