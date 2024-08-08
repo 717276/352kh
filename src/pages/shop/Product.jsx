@@ -39,7 +39,9 @@ const Product = () => {
             setQuantity(value);
         }
     };
-
+    const addCart = () => {
+        alert('gdgd');
+    };
     const handleImageClick = (src) => {
         setMainImage(src);
     };
@@ -89,7 +91,9 @@ const Product = () => {
                             총 상품금액(수량): {(product.pdPrice * quantity).toLocaleString()}원 ({quantity}개)
                         </div>
                         <div className="pay_btn">
-                            <button className="custom_button">장바구니</button>
+                            <button onClick={addCart} className="custom_button">
+                                장바구니
+                            </button>
                             <button className="custom_button">바로구매</button>
                         </div>
                     </div>

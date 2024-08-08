@@ -3,12 +3,13 @@ import { Link, useNavigate, useLocation } from 'react-router-dom';
 import GoogleLogin from 'react-google-login';
 import { gapi } from 'gapi-script';
 import '../../components/css/login/Login.css';
+import * as LoginFunctions from '../../components/js/Login';
 
 const clientId = '810488455404-mih0ne2g3dnmauotl2g7488h6igpek23.apps.googleusercontent.com';
 
 const Login = ({ login }) => {
-    const [userId, setUserId] = useState('');
-    const [userPW, setUserPW] = useState('');
+    const [username, setUserId] = useState('');
+    const [password, setUserPW] = useState('');
     const navigate = useNavigate();
     const location = useLocation();
 
@@ -64,34 +65,38 @@ const Login = ({ login }) => {
         fetchNaverToken();
     }, [location, navigate, login]);
 
+    const handleNaverLogin = () => {
+        const clientId = '5rO900R1MymwoUweWWHT';
+        const redirectURI = encodeURIComponent('http://localhost:5173/login');
+        const state = Math.random().toString(36).substr(2, 11);
+        const apiURL = `https://nid.naver.com/oauth2.0/authorize?response_type=code&client_id=${clientId}&redirect_uri=${redirectURI}&state=${state}`;
+        window.location.href = apiURL;
+    };
+
     const handleSubmit = async (event) => {
         event.preventDefault();
-        const user = { m_userId: userId, m_password: userPW };
-
         try {
-            const response = await fetch('http://localhost:8080/api/members/login', {
+            const response = await fetch('http://localhost:8080/login', {
                 method: 'POST',
                 headers: {
-                    'Content-Type': 'application/json',
+                    'Content-Type': 'application/x-www-form-urlencoded',
                 },
-                body: JSON.stringify(user),
+                body: new URLSearchParams({
+                    username, //유저의 이메일
+                    password, //유저의 패스워드
+                }).toString(),
+                credentials: 'include',
             });
-
-            if (response.ok) {
-                const data = await response.json();
-                if (data.message === 'Login successful') {
-                    login(); // 로그인 성공 시 상태 변경
-                    navigate('/');
-                } else {
-                    alert('로그인 실패: ' + data.message);
-                }
+            if (response.status === 200) {
+                LoginFunctions.setAccessToken(response);
+                console.log('response 200');
+                navigate('/');
             } else {
-                const errorData = await response.json();
-                alert('로그인 실패: ' + errorData.message);
-                console.error('Failed to login', errorData);
+                console.log('form login error');
+                return;
             }
         } catch (error) {
-            console.error('There was an error!', error);
+            console.log('form login catch error: ' + error);
         }
     };
 
@@ -113,7 +118,7 @@ const Login = ({ login }) => {
                     alert('일치하는 회원 정보가 없습니다. 회원가입으로 넘어갑니다.');
                     navigate('/register/user', { state: { googleName: data.name, googleEmail: data.email } });
                 } else {
-                    login(); // Google 로그인 성공 시 상태 변경
+                    login(); //Google 로그인 성공 시 상태 변경
                     navigate('/');
                 }
             })
@@ -126,14 +131,6 @@ const Login = ({ login }) => {
         console.log(error);
     };
 
-    const handleNaverLogin = () => {
-        const clientId = '5rO900R1MymwoUweWWHT';
-        const redirectURI = encodeURIComponent('http://localhost:5173/login');
-        const state = Math.random().toString(36).substr(2, 11);
-        const apiURL = `https://nid.naver.com/oauth2.0/authorize?response_type=code&client_id=${clientId}&redirect_uri=${redirectURI}&state=${state}`;
-        window.location.href = apiURL;
-    };
-
     return (
         <div className="login-container">
             <h2>로그인</h2>
@@ -142,16 +139,16 @@ const Login = ({ login }) => {
                     <input
                         onChange={(e) => setUserId(e.target.value)}
                         type="text"
-                        name="userId"
-                        id="userId"
-                        placeholder="ID"
+                        name="username"
+                        id="username"
+                        placeholder="이메일"
                         className="input-field"
                     />
                     <input
                         onChange={(e) => setUserPW(e.target.value)}
                         type="password"
-                        name="userPW"
-                        id="userPW"
+                        name="password"
+                        id="password"
                         placeholder="PASSWORD"
                         className="input-field"
                     />
@@ -168,15 +165,17 @@ const Login = ({ login }) => {
                         />
                     </div>
                     <div className="naver-login">
-                        <button onClick={handleNaverLogin} className="naver-login-button">
-                            <img className="n_logo" src="public/images/login/naverlogo.png" alt="Naver Logo" /> 네이버
-                            아이디로 로그인하기
-                        </button>
+                        {
+                            <button onClick={handleNaverLogin} className="naver-login-button">
+                                <img className="n_logo" src="public/images/login/naverlogo.png" alt="Naver Logo" />{' '}
+                                네이버 아이디로 로그인하기
+                            </button>
+                        }
                     </div>
                 </div>
                 <div className="footer-links">
-                    <a href="#">비밀번호 찾기</a>
-                    <a href="#">아이디 찾기</a>
+                    <Link to="/findemail">이메일 찾기</Link>
+                    <Link to="/findpassword">비밀번호 찾기</Link>
                     <Link to="/register/user">회원가입</Link>
                 </div>
             </div>

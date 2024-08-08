@@ -99,18 +99,19 @@ const Register = () => {
             .then((response) => {
                 if (response.ok) {
                     return response.json();
+                } else if (response.status === 409) {
+                    return response.json().then((data) => {
+                        throw new Error(data.message);
+                    });
+                } else {
+                    throw new Error(`Unexpected status code: ${response.status}`);
                 }
-                throw new Error('Network response was not ok');
             })
             .then((data) => {
                 alert(data.message);
             })
             .catch((error) => {
-                if (error.message.includes('409')) {
-                    alert('ID가 이미 존재합니다.');
-                } else {
-                    alert('오류가 발생했습니다. 다시 시도해주세요.');
-                }
+                alert(error.message);
             });
     };
 

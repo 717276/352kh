@@ -1,69 +1,72 @@
 import React, { useState, useEffect } from 'react';
+import { useParams } from 'react-router-dom';
+import '../../components/css/chat/ChatRoom.css';
 
 const ChatRoom = () => {
-    const [rooms, setRooms] = useState([]);
-    const [currentRoom, setCurrentRoom] = useState(null);
+    const { roomId } = useParams();
     const [messages, setMessages] = useState([]);
     const [message, setMessage] = useState('');
     const [ws, setWs] = useState(null);
 
     useEffect(() => {
-        fetch('http://localhost:8080/chat/rooms')
+        // Fetch chat messages for the room
+        fetch(`http://localhost:8080/chat/messages/${roomId}`)
             .then((response) => {
                 if (!response.ok) {
-                    throw new Error('Network response was not ok');
+                    throw new Error('Failed to fetch chat messages');
                 }
                 return response.json();
             })
             .then((data) => {
-                setRooms(data);
+                if (Array.isArray(data)) {
+                    setMessages(data);
+                } else {
+                    throw new Error('Chat messages are not in an array format');
+                }
             })
             .catch((error) => {
-                console.error('There was an error fetching the chat rooms!', error);
+                console.error('Error fetching chat messages:', error);
             });
-    }, []);
 
-    const connect = (roomId) => {
-        try {
-            const socket = new WebSocket(`ws://localhost:8080/ws/chat`);
+        // Initialize WebSocket connection
+        const socket = new WebSocket(`ws://localhost:8080/ws/chat`);
 
-            socket.onopen = () => {
-                console.log('Connected to the WebSocket server');
-                setWs(socket);
-                setCurrentRoom(roomId);
-            };
+        socket.onopen = () => {
+            console.log('Connected to the WebSocket server');
+            setWs(socket);
+        };
 
-            socket.onmessage = (event) => {
-                const receivedMessage = JSON.parse(event.data);
-                setMessages((prevMessages) => [...prevMessages, receivedMessage]);
-            };
+        socket.onmessage = (event) => {
+            const receivedMessage = JSON.parse(event.data);
+            setMessages((prevMessages) => [...prevMessages, receivedMessage]);
+        };
 
-            socket.onclose = (event) => {
-                if (event.wasClean) {
-                    console.log(`Connection closed cleanly, code=${event.code}, reason=${event.reason}`);
-                } else {
-                    console.log('Connection died');
-                }
-                setWs(null);
-                setCurrentRoom(null);
-            };
+        socket.onclose = (event) => {
+            if (event.wasClean) {
+                console.log(`Connection closed cleanly, code=${event.code}, reason=${event.reason}`);
+            } else {
+                console.log('Connection died');
+            }
+            setWs(null);
+        };
 
-            socket.onerror = (error) => {
-                console.error('WebSocket error observed:', error.message);
-                // 여기서 추가로 상태를 설정하여 오류 메시지를 UI에 표시할 수도 있습니다.
-            };
-        } catch (error) {
-            console.error('WebSocket connection failed:', error.message);
-        }
-    };
+        socket.onerror = (error) => {
+            console.error('WebSocket error observed:', error.message);
+        };
+
+        return () => {
+            socket.close();
+        };
+    }, [roomId]);
 
     const sendMessage = () => {
         if (ws && message.trim() !== '') {
             const chatMessage = {
                 type: 'TALK',
-                roomId: currentRoom,
+                roomId: roomId,
                 sender: 'User',
                 message: message,
+                m_no: 1,
             };
             try {
                 ws.send(JSON.stringify(chatMessage));
@@ -75,35 +78,36 @@ const ChatRoom = () => {
     };
 
     return (
-        <div>
-            <h1>Chat Rooms</h1>
-            <ul>
-                {rooms.map((room) => (
-                    <li key={room.room_Id}>
-                        <button onClick={() => connect(room.room_Id)}>{room.room_Name}</button>
-                    </li>
-                ))}
-            </ul>
-
-            {currentRoom && (
-                <div>
-                    <h2>Chat Room: {currentRoom}</h2>
-                    <div>
-                        {messages.map((msg, index) => (
-                            <div key={index}>
-                                {msg.sender}: {msg.message}
-                            </div>
-                        ))}
-                    </div>
-                    <input
-                        type="text"
-                        value={message}
-                        onChange={(e) => setMessage(e.target.value)}
-                        onKeyPress={(e) => e.key === 'Enter' && sendMessage()}
-                    />
-                    <button onClick={sendMessage}>Send</button>
-                </div>
-            )}
+        <div className="chat-room">
+            <h2 className="chat-room-current-title">1:1 채팅방</h2>
+            <div className="chat-room-messages">
+                {Array.isArray(messages) && messages.length > 0 ? (
+                    messages.map((msg, index) => (
+                        <div
+                            key={index}
+                            className={`chat-room-message ${
+                                msg.sender === '댕트립' ? 'chat-room-message-other' : 'chat-room-message-user'
+                            }`}
+                        >
+                            <span className="chat-room-message-sender">{msg.sender}:</span> {msg.message}
+                        </div>
+                    ))
+                ) : (
+                    <p>No messages yet</p>
+                )}
+            </div>
+            <div className="chat-room-input">
+                <input
+                    type="text"
+                    value={message}
+                    onChange={(e) => setMessage(e.target.value)}
+                    onKeyPress={(e) => e.key === 'Enter' && sendMessage()}
+                    className="chat-room-input-field"
+                />
+                <button onClick={sendMessage} className="chat-room-send-button">
+                    Send
+                </button>
+            </div>
         </div>
     );
 };
