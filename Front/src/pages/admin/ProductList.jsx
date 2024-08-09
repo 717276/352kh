@@ -9,7 +9,7 @@ const ProductList = () => {
   const [sortedData, setSortedData] = useState([]);
   const [sortType, setSortType] = useState(""); // 카테고리 선택 상태
 
-  const url = 'http://localhost:8080/api/admin/getProductList';
+  const url = 'http://localhost:8080/api/admin/productList';
 
   useEffect(() => {
     getList(url);
@@ -22,7 +22,6 @@ const ProductList = () => {
         setItemsList(data);
         setSortedData(data); // 초기 데이터는 정렬된 데이터로 설정
         console.log(data);
-        console.log(data[0].img);
       });
   };
 
@@ -60,7 +59,7 @@ const ProductList = () => {
             <ul>
               <li onClick={() => { nav() }}>회원관리</li>
               <li onClick={() => { nav() }}>여행관리</li>
-              <li onClick={() => { nav('/admin/getProductList') }}>상품관리</li>
+              <li onClick={() => { nav('/admin/productList') }}>상품관리</li>
               <li onClick={() => { nav('/admin/chart') }}>분석</li>
             </ul>
           </div>
@@ -90,7 +89,7 @@ const ProductList = () => {
                     {row.img ? (
                       <img src={`/images/shop/product_${row.img.i_ref_no}_1.jpg`} alt="image" width={50} />
                     ) : (
-                      <img src="/images/shop/default.jpg" alt="default" width={50} />
+                      <img src={`/images/shop/product_default.jpg`} alt="default" width={50} />
                     )}
                   </td>
                   <td onClick={() => { nav(`/admin/productModify/${row.pd_no}`) }}>{row.pd_name}</td>

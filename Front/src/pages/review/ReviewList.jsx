@@ -60,9 +60,9 @@ const ReviewList = () => {
 
   const handleSearch = () => {
     const filteredData = items.filter(item =>
-      item.arTitle.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      item.ttitle.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      item.arUserId.toLowerCase().includes(searchTerm.toLowerCase())
+      item.ar_title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      item.t_title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      item.ar_userId.toLowerCase().includes(searchTerm.toLowerCase())
     );
     setSortedData(filteredData);
     setPage(1); // 검색 후 첫 페이지로 이동
