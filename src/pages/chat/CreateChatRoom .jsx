@@ -7,7 +7,7 @@ const CreateChatRoom = () => {
     const handleInputChange = (e) => {
         setRoomName(e.target.value);
     };
-
+    // Initialize WebSocket connection
     const handleCreateRoom = async () => {
         if (!roomName) {
             alert('Please enter a room name');

@@ -27,7 +27,7 @@ const ChatRoom = () => {
             .catch((error) => {
                 console.error('Error fetching chat messages:', error);
             });
-
+        // Initialize WebSocket connection
         // Initialize WebSocket connection
         const socket = new WebSocket(`ws://localhost:8080/ws/chat`);
 

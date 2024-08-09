@@ -3,7 +3,7 @@ import '../../components/css/chat/ChatRoomList.css';
 
 const ChatRoomList = () => {
     const [rooms, setRooms] = useState([]);
-
+    // Initialize WebSocket connection
     useEffect(() => {
         fetch('http://localhost:8080/chat')
             .then((response) => {
