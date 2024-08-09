@@ -10,7 +10,7 @@ const categoryMap = {
 };
 
 const Product = () => {
-    const { pdNo } = useParams();
+    const { pd_no } = useParams();
     const [product, setProduct] = useState(null);
     const [mainImage, setMainImage] = useState('');
     const [quantity, setQuantity] = useState(1);
@@ -18,22 +18,22 @@ const Product = () => {
     useEffect(() => {
         const fetchProduct = async () => {
             try {
-                const response = await fetch(`http://localhost:8080/api/product/${pdNo}`);
+                const response = await fetch(`http://localhost:8080/api/product/${pd_no}`);
                 const data = await response.json();
                 setProduct(data);
-                setMainImage(`/public/product/${data.pdNo}/1.png`);
+                setMainImage(`/public/images/shop/${product.pd_category}_${product.pd_no}_0.png`);
             } catch (err) {
                 console.error(err);
             }
         };
 
         fetchProduct();
-    }, [pdNo]);
+    }, [pd_no]);
 
     const handleQuantityChange = (event) => {
         const value = parseInt(event.target.value, 10);
-        if (value < 1 || value > product.pdMount) {
-            alert(`최대 주문 가능 수량을 확인해주세요. 재고갯수: ${product.pdMount}`);
+        if (value < 1 || value > product.pd_mount) {
+            alert(`최대 주문 가능 수량을 확인해주세요. 재고갯수: ${product.pd_mount}`);
             setQuantity(1);
         } else {
             setQuantity(value);
@@ -51,11 +51,11 @@ const Product = () => {
     }
 
     const productImages = [
-        `/public/product/${product.pdNo}/1.png`,
-        `/public/product/${product.pdNo}/2.png`,
-        `/public/product/${product.pdNo}/3.png`,
-        `/public/product/${product.pdNo}/4.png`,
-        `/public/product/${product.pdNo}/5.png`,
+        `/public/images/shop/${product.pd_category}_${product.pd_no}_0.png`,
+        `/public/images/shop/${product.pd_category}_${product.pd_no}_1.png`,
+        `/public/images/shop/${product.pd_category}_${product.pd_no}_2.png`,
+        `/public/images/shop/${product.pd_category}_${product.pd_no}_3.png`,
+        `/public/images/shop/${product.pd_category}_${product.pd_no}_4.png`,
     ];
 
     return (
@@ -67,13 +67,13 @@ const Product = () => {
                         <img className="mainImage" src={mainImage} alt="Main product" />
                     </div>
                     <div className="product_text">
-                        <div className="product_title">{product.pdName}</div>
-                        <div className="product_price">{product.pdPrice.toLocaleString()}원</div>
+                        <div className="product_title">{product.pd_name}</div>
+                        <div className="product_price">{product.pd_price}원</div>
                         <hr />
                         <div className="product_details">
-                            <div>설명 : {product.pdExplain}</div>
-                            <div>등록일 : {new Date(product.pdRegistrationDate).toLocaleDateString()}</div>
-                            <div>카테고리 : {categoryMap[product.pdCategory]}</div>
+                            <div>설명 : {product.pd_explain}</div>
+                            <div>등록일 : {new Date(product.pd_registrationDate).toLocaleDateString()}</div>
+                            <div>카테고리 : {categoryMap[product.pd_category]}</div>
                         </div>
                         <div className="product_quantity">
                             <span>수량을 선택해주세요:</span>
@@ -83,12 +83,12 @@ const Product = () => {
                                 value={quantity}
                                 onChange={handleQuantityChange}
                                 min="1"
-                                max={product.pdMount}
+                                max={product.pd_mount}
                             />
                         </div>
                         <hr />
                         <div className="total_price">
-                            총 상품금액(수량): {(product.pdPrice * quantity).toLocaleString()}원 ({quantity}개)
+                            총 상품금액(수량): {(product.pd_price * quantity).toLocaleString()}원 ({quantity}개)
                         </div>
                         <div className="pay_btn">
                             <button onClick={addCart} className="custom_button">

@@ -90,3 +90,30 @@
 .qna_pagination span:hover {
     background-color: #0056b3;
 }
+
+/* 카테고리 필터 버튼 스타일 */
+.category-filter {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 20px;
+}
+
+.category-filter button {
+    background-color: #007bff;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    margin: 0 5px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+}
+
+.category-filter button:hover {
+    background-color: #0056b3;
+}
+
+.category-filter button.active {
+    background-color: #0056b3;
+    font-weight: bold;
+}

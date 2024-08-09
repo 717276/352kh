@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-
+import '../../components/css/login/FindEmail.css';
 const FindEmail = () => {
     const [user, setUser] = useState({ userTel: '' });
     const [foundEmail, setFoundEmail] = useState('');

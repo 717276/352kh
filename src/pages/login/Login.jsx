@@ -5,7 +5,9 @@ const Login = ({ login }) => {
     const [username, setUserId] = useState('');
     const [password, setUserPW] = useState('');
     const navigate = useNavigate();
-
+    function googleLoginHandler() {
+        window.location.href = 'http://localhost:8080/oauth2/authorization/google';
+    }
     const formLogin = async () => {
         try {
             const response = await fetch('http://localhost:8080/login', {
@@ -51,8 +53,13 @@ const Login = ({ login }) => {
                 />
                 <input type="submit" value="로그인" className="login-button" onClick={() => formLogin()} />
                 <div className="login-buttons">
-                    <div className="google-login">
-                        <a href="/oauth2/authorization/google">구글 로그인</a>
+                    <div
+                        className="google-login"
+                        onClick={() => {
+                            googleLoginHandler();
+                        }}
+                    >
+                        구글 로그인
                     </div>
                     <div className="naver-login">
                         <a href="/oauth2/authorization/naver">
@@ -61,9 +68,9 @@ const Login = ({ login }) => {
                     </div>
                 </div>
                 <div className="footer-links">
-                    <div onClick={navigate('/findemail')}>이메일 찾기</div>
-                    <div onClick={navigate('//findpassword')}>비밀번호 찾기</div>
-                    <div onClick={navigate('/register/user')}>회원가입</div>
+                    <div onClick={() => navigate('/findemail')}>이메일 찾기</div>
+                    <div onClick={() => navigate('/findpassword')}>비밀번호 찾기</div>
+                    <div onClick={() => navigate('/register/user')}>회원가입</div>
                 </div>
             </div>
         </div>

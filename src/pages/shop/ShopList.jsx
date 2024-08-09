@@ -57,7 +57,7 @@ const ShopList = () => {
     const filteredProducts =
         selectedCategory === '전체'
             ? products
-            : products.filter((product) => categoryMap[product.pdCategory] === selectedCategory);
+            : products.filter((product) => categoryMap[product.pd_category] === selectedCategory);
 
     return (
         <div className="product_list_container">
@@ -86,19 +86,19 @@ const ShopList = () => {
             ) : (
                 <div className="product_grid">
                     {filteredProducts.map((product) => (
-                        <Link to={`/shop/product/${product.pdNo}`} key={product.pdNo}>
+                        <Link to={`/shop/product/${product.pd_no}`} key={product.pd_no}>
                             <div className="product_card">
                                 <img
                                     className="product_image"
-                                    src={`/public/product/${product.pdNo}/1.png`}
-                                    alt={product.pdName}
+                                    src={`/public/iamges/${product.pd_category}_${product.pd_no}_0.png`}
+                                    alt={product.pd_name}
                                 />
                                 <div className="product_info">
-                                    <h2 className="product_name">{product.pdName}</h2>
-                                    <p className="product_price">{product.pdPrice.toLocaleString()}원</p>
-                                    <p className="product_discount">{product.pdDiscount}%</p>
-                                    <p className="product_explain">{product.pdExplain}</p>
-                                    <p className="product_mount">{product.pdMount} 개</p>
+                                    <h2 className="product_name">{product.pd_name}</h2>
+                                    <p className="product_price">{product.pd_price}원</p>
+                                    <p className="product_discount">{product.pd_discount}%</p>
+                                    <p className="product_explain">{product.pd_explain}</p>
+                                    <p className="product_mount">{product.pd_mount} 개</p>
                                 </div>
                             </div>
                         </Link>

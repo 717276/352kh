@@ -22,15 +22,6 @@
   width: 10%;
 }
 
-.ProductListTable th:nth-child(2) {
-  width: 20%;
-}
-
-.ProductListTable td:nth-child(3) {
-  width: 40%;
-  text-align: left;
-}
-
 .ProductListTable td {
   padding: 8px;
   text-align: center;
@@ -134,9 +125,4 @@
 
 .mg_mangeMenu li:hover {
   background-color: #e0e0e0;
-}
-
-.ProductList select {
-  margin-left: 40%;
-  width: 200px;
 }

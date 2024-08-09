@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-
+import '../../components/css/login/FindPassword.css';
 const FindPassword = () => {
     const [user, setUser] = useState({ userEmail: '', userTel: '' });
     const [findError, setFindError] = useState('');
