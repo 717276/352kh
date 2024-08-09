@@ -1,3 +1,7 @@
 .data_list_places{
     text-align: center;    
 }
+.places{
+    object-fit: cover; /* or 'contain' depending on your preference */
+    object-position: center top;    
+}

@@ -1,56 +1,42 @@
 import React from "react";
 import {useState,useEffect, useRef} from 'react';
+import '../../components/css/tour/Map.css';
 import {
     GoogleMap,    
     useJsApiLoader,
     MarkerF,
 } from "@react-google-maps/api";
 
+
 const containerStyle = {
     width: "100%",
-    height: "100vh",
+    height: "100%",
 };
 
 const center = {
     lat: 37.5665,
     lng: 126.9780,
 };
-
-const radius = 5000;
-
 const libraries = ["places"];
 
-function GetPlace({search, category, filteredData}) {
-
-    const searchRef = useRef(search);
-    const categoryRef = useRef(category);
-    useEffect(() => {
-        searchRef.current = search;
-        categoryRef.current = category;
-    }, [search, category]);
-
-    const query = React.useMemo(() => {
-        let baseQuery = "반려동물 동반 ";
-        if (search === '') {
-            return "서울역";
-        } else {
-            if (category === 1) {
-                return baseQuery + "명소 " + search;
-            } else if (category === 2) {
-                return baseQuery + "레스토랑 " + search;
-            }
-        }
-        return baseQuery;
-    }, [search, category]);
-
+function GoogleMapB({address}) {   
+    console.log(address);
     const { isLoaded } = useJsApiLoader({
         id: "google-map-script",
         googleMapsApiKey: "AIzaSyBRZQy7nY-LfiTF9w9GdgQE81CvnGAKp9I",
         libraries,
     });
+        
+    let query = React.useMemo(() => {
+        return address;
+    }, [address]);
+
     const [map, setMap] = React.useState(null);
     const [markers, setMarkers] = React.useState([]);
-    
+    let mapKey = React.useMemo(() => 
+        `${address}`, [address]
+    );    
+
     const onLoad = React.useCallback(function callback(map) {
         const bounds = new window.google.maps.LatLngBounds(center);
         map.fitBounds(bounds);
@@ -61,21 +47,12 @@ function GetPlace({search, category, filteredData}) {
         const request = {
             query: query,
             region: 'kr' 
-        };
-        // 장소 검색 요청
+        };    
         service.textSearch(request, (results, status) => {
             if (
                 status === window.google.maps.places.PlacesServiceStatus.OK &&
                 results
-            ) {
-                // 검색된 장소에 대한 마커 추가
-                // const newMarkers = results.map((place) => 
-                //     ({
-                //     position: place.geometry.location,
-                //     name: place.name,
-                //     address: place.formatted_address,
-                //     photo: place.photos && place.photos[0] ? place.photos[0].getUrl() : null,                                        
-                // }));
+            ) {                    
                 const newMarkers = results.map((place) => {
                     const photoUrl = place.photos && place.photos[0] ? place.photos[0].getUrl() : null;              
                     return {
@@ -84,10 +61,8 @@ function GetPlace({search, category, filteredData}) {
                         address: place.formatted_address,
                         photo: photoUrl,
                     };
-                });
-                if (category === 1 || category === 2){
-                    filteredData (newMarkers);
-                }
+                });   
+                                 
                 setMarkers(newMarkers);
                 
                 if (newMarkers.length > 0) {
@@ -95,25 +70,27 @@ function GetPlace({search, category, filteredData}) {
                     const bounds = new window.google.maps.LatLngBounds();
                     newMarkers.forEach(marker => bounds.extend(marker.position));
                     map.fitBounds(bounds);
+
+                    const listener = window.google.maps.event.addListener(map, "bounds_changed", function() {
+                        this.setZoom(Math.min(map.getZoom(), 15));
+                        window.google.maps.event.removeListener(listener);
+                    });
                 }
-            }                    
-        });
+            }                                    
+        });                
+        // 장소 검색 요청
     },[query]);
 
     const onUnmount = React.useCallback(function callback(map) {
         setMap(null);
     }, []);
-
-    const mapKey = React.useMemo(() => 
-        `${search}-${category}`, [search, category]
-    );
-
+        
     return isLoaded ? (
         <GoogleMap
             key={mapKey}
             mapContainerStyle={containerStyle}
             center={center}
-            zoom={15}
+            zoom={5}
             onLoad={onLoad}
             onUnmount={onUnmount}
             options={{
@@ -123,7 +100,7 @@ function GetPlace({search, category, filteredData}) {
         >
             {markers.map((marker,index)=>(
                 <MarkerF key={index} position={marker.position} title={marker.name} 
-                onClick={() => {
+                onMouseOver={() => {
                     // info Window marker 정보 표시
                     const infowindow = new window.google.maps.InfoWindow({
                     content: `<div>
@@ -143,4 +120,4 @@ function GetPlace({search, category, filteredData}) {
     );
 }
 
-export default GetPlace;
+export default GoogleMapB;

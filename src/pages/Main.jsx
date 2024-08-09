@@ -1,7 +1,8 @@
 import '../components/css/Main.css'
 import React, { useState, useEffect } from 'react';
+import MainTrip from '../pages/tour/MainTrip.jsx';
 import { Link } from 'react-router-dom';
-import * as LoginFunctions from '../components/js/Login.js';
+import * as LoginFunctions from '../components/Auth.jsx';
 const Main=()=>{    
     useEffect(()=>{                
         const accessToken = localStorage.getItem('accessToken');        
@@ -66,12 +67,13 @@ const Main=()=>{
             <div className="tourList">                
                 <div className='tour_wrapper'>                                            
                     {
-                        tourImgs.length > 0 ? (
-                        tourImgs.map(tourVo => (
-                            <div key={tourVo.no} className="tour_img_div">                            
-                                <Link to={`/tripDetail?no=${tourVo.no}`}><img className="tour_img" src={tourVo.url}/></Link>
-                            </div>
-                        ))) : (<p>No Data</p>)
+                        // tourImgs.length > 0 ? (
+                        // tourImgs.map(tourVo => (
+                        //     <div key={tourVo.no} className="tour_img_div">                            
+                        //         <Link to={`/tripDetail?no=${tourVo.no}`}><img className="tour_img" src={tourVo.url}/></Link>
+                        //     </div>
+                        // ))) : (<p>No Data</p>)
+                        <MainTrip></MainTrip>
                     }
                 </div>
             </div>
