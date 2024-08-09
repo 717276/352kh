@@ -12,6 +12,7 @@ const Payment = ({
   const navigate = useNavigate();
 
   const isOrderInfoComplete = () => {
+    console.log(orderInfo);
     return (
       orderInfo.name &&
       orderInfo.phone &&

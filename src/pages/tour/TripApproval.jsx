@@ -57,7 +57,10 @@ const TripApproval = () => {
   };
 
   const getImageUrl = (img) => {
-    return `/images/tourdetail/${t_no}/${img.ti_category}/${img.ti_day}/${img.ti_order}.png`;
+    if (!img || !img.ti_category) {
+      return "/images/default.png"; // 기본 이미지 경로 또는 빈 문자열 반환
+    }
+    return `/images/tourimg/${img.ti_category}/${img.ti_category}_${img.ti_ref_no}_${img.ti_day}_${img.ti_order}.jpg`;
   };
 
   const formatDateToYYYYMMDD = (dateString) => {
@@ -71,7 +74,7 @@ const TripApproval = () => {
   const filteredHotels = hotels.filter((hotel) => hotel.h_day === selectedDay);
   const filteredPlaces = places.filter((place) => place.pl_day === selectedDay);
   const filteredRestaurantes = restaurantes.filter(
-    (res) => res.res_day === selectedDay
+    (res) => res.pl_day === selectedDay
   );
 
   const handleApproval = () => {
@@ -107,11 +110,18 @@ const TripApproval = () => {
       })
       .catch((error) => console.error("Error deleting tour:", error));
   };
+
+  // 최대 day 값 계산
+  const maxDay = Math.max(
+    ...hotels.map((hotel) => hotel.h_day),
+    ...places.map((place) => place.pl_day),
+    ...restaurantes.map((res) => res.pl_day)
+  );
   return (
     <div className="TripDetail">
       <h1>투어 설명</h1>
       <div className="day-selector">
-        {[...Array(3)].map((_, index) => (
+        {[...Array(maxDay)].map((_, index) => (
           <button
             key={index}
             onClick={() => handleDaySelect(index)}
@@ -127,8 +137,8 @@ const TripApproval = () => {
           <div key={index} className="spot hotel">
             <img src={getImageUrl(hotel.img)} alt={hotel.h_name} />
             <div className="hotel-info">
-              <p>{hotel.h_location}</p>
               <p>{hotel.h_name}</p>
+              <p>{hotel.h_price}원</p>
             </div>
           </div>
         ))}
@@ -188,8 +198,8 @@ const TripApproval = () => {
               .map((food, index) => (
                 <div key={index} className="spot">
                   <img src={getImageUrl(food.img)} alt={`Food ${index}`} />
-                  <p>{food.res_name}</p>
-                  <p>{food.res_location}</p>
+                  <p>{food.pl_name}</p>
+                  <p>{food.pl_location}</p>
                 </div>
               ))}
           </div>

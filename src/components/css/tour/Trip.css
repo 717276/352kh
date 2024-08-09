@@ -17,14 +17,31 @@
 }
 
 .listItem {
+  position: relative; /* Positioning for the badge */
   width: 270px;
-  background-color: white; /* 배경색을 흰색으로 변경 */
+  background-color: white;
   border-radius: 15px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* 그림자 효과 추가 */
-  transition: all 0.3s ease; /* 트랜지션을 더 부드럽게 */
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s ease;
   opacity: 0;
   animation: fadeIn 0.5s forwards;
 }
+
+.recommendation-badge {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  background-color: #ff6347;
+  color: white;
+  padding: 5px 10px;
+  border-radius: 5px;
+  font-weight: bold;
+  font-size: 14px;
+  z-index: 10;
+}
+
+/* ... (기존 스타일) ... */
+
 
 @keyframes fadeIn {
   to {
@@ -38,12 +55,15 @@
 }
 
 .listItem > img {
-  width: 100%;
+  width: 100%; /* 고정 너비 설정 */
+  height: 250px; /* 고정 높이 설정 */
+  object-fit: cover; /* 이미지를 컨테이너에 맞게 자르기 */
   border-top-left-radius: 15px; /* 왼쪽 위 모서리 */
   border-top-right-radius: 15px; /* 오른쪽 위 모서리 */
   border-bottom: 1px solid #e0e0e0; /* 이미지 아래 구분선 추가 */
   transition: transform 0.3s; /* 이미지 호버 시 트랜지션 추가 */
 }
+
 
 .listItem > img:hover {
   transform: scale(1.05); /* 이미지 호버 시 확대 효과 */

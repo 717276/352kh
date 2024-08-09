@@ -1,12 +1,13 @@
 import React, { useEffect, useState } from "react";
-import { useNavigate, useParams } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import Payment from "./Payment"; // 결제 컴포넌트 임포트
 import "../../components/css/order/Order.css";
+import { jwtDecode } from "jwt-decode";
 
 const TourOrder = () => {
-  const { userNo } = useParams();
   const navigate = useNavigate();
   const [tours, setTours] = useState([]);
+  const [selectedTours, setSelectedTours] = useState([]);
   const [orderInfo, setOrderInfo] = useState({
     name: "",
     email: "",
@@ -15,7 +16,9 @@ const TourOrder = () => {
     basicAddress: "",
     detailAddress: "",
   });
-
+  const token = localStorage.getItem("accessToken");
+  const decodedToken = jwtDecode(token);
+  const userNo = decodedToken.userNo;
   const [paymentInfo, setPaymentInfo] = useState({
     method: "card/easy", // 기본 결제 방법을 카드로 설정
   });
@@ -23,11 +26,11 @@ const TourOrder = () => {
   const [isEditingAddress, setIsEditingAddress] = useState(false);
 
   useEffect(() => {
-    fetchTourItems();
+    fetchTourItems(userNo);
     loadDaumPostcodeScript();
   }, [userNo]);
 
-  const fetchTourItems = () => {
+  const fetchTourItems = (userNo) => {
     const url = `http://localhost:8080/api/tourOrder/${userNo}`;
     fetch(url)
       .then((response) => response.json())
@@ -82,6 +85,14 @@ const TourOrder = () => {
     }
   };
 
+  const handleSelectTour = (utl_no) => {
+    if (selectedTours.includes(utl_no)) {
+      setSelectedTours(selectedTours.filter((id) => id !== utl_no));
+    } else {
+      setSelectedTours([...selectedTours, utl_no]);
+    }
+  };
+
   const removeTour = (utl_no) => {
     const url = `http://localhost:8080/api/deleteTourCart/${utl_no}`;
     fetch(url, {
@@ -90,6 +101,7 @@ const TourOrder = () => {
       .then((response) => {
         if (response.ok) {
           setTours(tours.filter((tour) => tour.utl_no !== utl_no));
+          setSelectedTours(selectedTours.filter((id) => id !== utl_no));
         } else {
           console.error("Failed to delete tour item");
         }
@@ -97,10 +109,9 @@ const TourOrder = () => {
       .catch((error) => console.error("Error deleting tour item:", error));
   };
 
-  const tourTotal = tours.reduce(
-    (total, tour) => total + tour.tour.t_totalPrice,
-    0
-  );
+  const tourTotal = tours
+    .filter((tour) => selectedTours.includes(tour.utl_no))
+    .reduce((total, tour) => total + tour.tour.t_totalPrice, 0);
 
   const toggleAddressEditing = () => {
     setIsEditingAddress(!isEditingAddress);
@@ -135,9 +146,9 @@ const TourOrder = () => {
 
     setIsEditingAddress(false);
   };
-  //이미지 url
+
   const getImageUrl = (img) => {
-    return `/images/${img.i_category}/${img.i_ref_no}/${img.i_order}.png`;
+    return `/images/${img.i_category}/${img.i_category}_${img.i_ref_no}_${img.i_order}.jpg`;
   };
 
   const isOrderInfoComplete = () => {
@@ -153,6 +164,11 @@ const TourOrder = () => {
   };
 
   const handlePaymentSuccess = (response) => {
+    if (selectedTours.length === 0) {
+      alert("선택하신 투어가 없습니다.");
+      return;
+    }
+
     if (!isOrderInfoComplete()) {
       alert("주문자 정보 및 배송지 정보를 모두 입력해주세요.");
       return;
@@ -160,10 +176,12 @@ const TourOrder = () => {
 
     const paymentData = {
       userNo: userNo,
-      orderItems: tours.map((tour) => ({
-        t_no: tour.tour.t_no,
-        ot_price: tour.tour.t_totalPrice,
-      })),
+      orderItems: tours
+        .filter((tour) => selectedTours.includes(tour.utl_no))
+        .map((tour) => ({
+          t_no: tour.tour.t_no,
+          ot_price: tour.tour.t_totalPrice,
+        })),
       payment: {
         payt_type: paymentInfo.method,
         payt_total: tourTotal,
@@ -186,12 +204,13 @@ const TourOrder = () => {
       .then((data) => {
         console.log("Order saved successfully:", data);
         alert("결제에 성공하였습니다.");
-        navigate(`/mypage/${userNo}`);
+        navigate(`/mypage`);
       })
       .catch((error) => {
         console.error("Error saving order:", error);
       });
   };
+
   const formatDateToYYYYMMDD = (dateString) => {
     const date = new Date(dateString);
     const year = date.getFullYear();
@@ -199,6 +218,7 @@ const TourOrder = () => {
     const day = ("0" + date.getDate()).slice(-2);
     return `${year}-${month}-${day}`;
   };
+
   return (
     <div className="Order">
       <div className="main-content">
@@ -207,15 +227,20 @@ const TourOrder = () => {
           <div className="products">
             {Array.isArray(tours) &&
               tours.map((tour) => (
-                <div key={tour.t_no} className="product">
+                <div key={tour.utl_no} className="product">
                   <div className="item">
+                    <input
+                      type="checkbox"
+                      checked={selectedTours.includes(tour.utl_no)}
+                      onChange={() => handleSelectTour(tour.utl_no)}
+                    />
                     <img
                       src={getImageUrl(tour.tour.img)}
                       alt={tour.tour.t_title}
                     />
                     <div className="product-info-order">
                       <span>{tour.tour.t_title}</span>
-                      <span>{tour.tour.t_totalPrice}원</span>
+                      <span>{tour.tour.t_totalPrice.toLocaleString()}원</span>
                       <span>
                         {formatDateToYYYYMMDD(tour.tour.t_strDate)} ~{" "}
                         {formatDateToYYYYMMDD(tour.tour.t_endDate)}
@@ -234,12 +259,12 @@ const TourOrder = () => {
           <div className="order-total">
             <div className="subtotal">
               <span>상품금액</span>
-              <span>{tourTotal}원</span>
+              <span>{tourTotal.toLocaleString()}원</span>
             </div>
             <hr className="divider" />
             <div className="total">
               <span>총 결제금액</span>
-              <span>{tourTotal}원</span>
+              <span>{tourTotal.toLocaleString()}원</span>
             </div>
           </div>
         </div>

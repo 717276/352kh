@@ -1,15 +1,15 @@
-.TripDetail {
+.tc-TripDetail {
   padding: 20px;
   margin-top: 20px;
 }
 
-.day-selector {
+.tc-day-selector {
   display: flex;
   justify-content: center;
   margin-bottom: 20px;
 }
 
-.day-selector button {
+.tc-day-selector button {
   padding: 10px 20px;
   margin: 0 10px;
   border: none;
@@ -18,18 +18,18 @@
   cursor: pointer;
 }
 
-.day-selector button.active {
+.tc-day-selector button.tc-active {
   background-color: #1e90ff;
   color: white;
 }
 
-.spots-container {
+.tc-spots-container {
   position: relative;
   margin-bottom: 20px;
   margin-top: 50px;
 }
 
-.spots {
+.tc-spots {
   display: flex;
   gap: 20px;
   overflow: hidden;
@@ -37,7 +37,7 @@
   justify-content: center;
 }
 
-.spot {
+.tc-spot {
   flex: 0 0 calc((100% - 60px) / 4);
   text-align: center;
   display: flex;
@@ -45,7 +45,7 @@
   align-items: center;
 }
 
-.spot img {
+.tc-spot img {
   width: 200px; /* 고정 너비 설정 */
   height: 150px; /* 고정 높이 설정 */
   object-fit: cover; /* 이미지를 컨테이너에 맞게 자르기 */
@@ -54,12 +54,12 @@
   transition: transform 0.3s, box-shadow 0.3s;
 }
 
-.spot img:hover {
+.tc-spot img:hover {
   transform: scale(1.05);
   box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
 }
 
-.arrow {
+.tc-arrow {
   position: absolute;
   top: 50%;
   transform: translateY(-50%);
@@ -68,15 +68,15 @@
   z-index: 2;
 }
 
-.left-arrow {
+.tc-left-arrow {
   left: -40px;
 }
 
-.right-arrow {
+.tc-right-arrow {
   right: -40px;
 }
 
-.section {
+.tc-section {
   margin: 50px 0;
   padding: 20px;
   background-color: #f9f9f9;
@@ -84,32 +84,32 @@
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 
-.section h2 {
+.tc-section h2 {
   margin-bottom: 20px;
 }
 
-.hotel {
+.tc-hotel {
   display: flex;
   flex-direction: column;
   align-items: center;
   text-align: center;
 }
 
-.hotel img {
+.tc-hotel img {
   width: 300px;
   height: auto;
   border-radius: 10px;
 }
 
-.hotel-info {
+.tc-hotel-info {
   display: flex;
   flex-direction: column;
   gap: 10px;
   align-items: center;
   text-align: center;
 }
-
-.tour-details {
+/*************************************************************/
+.tc-tour-details {
   margin: 50px 0;
   padding: 20px;
   background-color: #f9f9f9;
@@ -117,108 +117,82 @@
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 
-.tour-details h2,
-.tour-details p {
-  margin: 10px 0;
-}
-
-.reviews {
+.tc-tour-details-fdiv {
   display: flex;
-  flex-wrap: wrap;
-  gap: 20px;
-  position: relative;
+  justify-content: space-between;
 }
 
-.review {
-  display: flex;
-  gap: 20px;
-  width: calc(50% - 10px);
-  position: relative;
-  padding: 10px 0;
-  background-color: #f9f9f9;
-  border-radius: 10px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  transition: transform 0.3s, box-shadow 0.3s;
+.tc-tour-details-fdiv > div:first-child {
+  width: 70%;
 }
 
-.review:hover {
-  transform: scale(1.02);
-  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
-}
-
-.review img {
-  width: 100px;
-  height: 100px;
-  border-radius: 10px;
-}
-
-.review-text {
-  flex: 1;
-}
-
-.review-text h3 {
-  margin: 0 0 10px 0;
-}
-
-.review::after {
-  content: "";
-  position: absolute;
-  top: 0;
-  right: -10px;
-  width: 1px;
-  height: 100%;
-  background-color: #ddd;
-}
-
-.review::before {
-  content: "";
-  position: absolute;
-  left: 0;
-  bottom: 0;
-  width: 100%;
-  height: 1px;
-  background-color: #ddd;
-}
-
-.reviews > .review:nth-child(2n)::after {
-  display: none;
-}
-
-.reviews > .review:nth-child(odd)::before {
-  display: none;
-}
-
-.reviews > .review:nth-child(even)::before {
-  display: none;
-}
-
-.load-more {
-  display: flex;
-  justify-content: center;
-  margin-top: 20px;
-}
-
-.load-more-text {
-  padding: 10px 20px;
-  cursor: pointer;
-  color: #1e90ff;
-  transition: color 0.3s;
-  margin-top: 20px;
+.tc-tour-details-fdiv > div:last-child {
   text-align: center;
 }
 
-.load-more-text:hover {
-  color: #1c86ee;
+.tc-tour-details p {
+  margin: 10px 0;
 }
 
-.detail-actions {
+.tc-tour-details div {
+  margin-bottom: 20px;
+}
+
+.tc-tour-details label {
+  display: block;
+  margin-bottom: 5px;
+  font-weight: bold;
+}
+
+.tc-tour-details input[type="text"] {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  box-sizing: border-box;
+}
+
+.tc-tour-details p {
+  font-weight: bold;
+}
+
+.tc-preview-image {
+  width: 200px;
+  height: auto;
+  margin-top: 10px;
+  border-radius: 10px;
+}
+
+.tc-category-selection {
+  margin-top: 20px;
+}
+
+.tc-category-selection label {
+  display: block;
+  margin-bottom: 10px;
+  font-weight: bold;
+}
+
+.tc-category-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 15px;
+}
+
+.tc-category-label {
+  margin-left: 5px;
+}
+
+
+/*************************************************************/
+.tc-detail-actions {
   display: flex;
   justify-content: center;
   margin-top: 20px;
   gap: 30px;
 }
 
-.detail-actions button:not(:first-child) {
+.tc-detail-actions button:not(:first-child) {
   padding: 10px 20px;
   border: none;
   border-radius: 5px;
@@ -230,12 +204,12 @@
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 
-.detail-actions button:not(:first-child):hover {
+.tc-detail-actions button:not(:first-child):hover {
   background-color: #1c86ee;
   box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
 }
 
-.detail-actions button:first-child {
+.tc-detail-actions button:first-child {
   padding: 10px 20px;
   border: none;
   border-radius: 5px;
@@ -246,25 +220,25 @@
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 
-.approvalDetailBtn{
+.tc-approvalDetailBtn {
   background-color: #1e90ff;
 }
 
-.approvalDetailBtn:hover{
+.tc-approvalDetailBtn:hover {
   background-color: #1c86ee;
   box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
 }
 
-.completedDetailBtn{
+.tc-completedDetailBtn {
   background-color: #979ba1;
 }
 
-.completedDetailBtn:hover {
+.tc-completedDetailBtn:hover {
   background-color: #777a7e;
   box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
 }
 
-.detail-actions-register {
+.tc-detail-actions-register {
   background-color: #1e90ff;
   padding: 10px 20px;
   border: none;
@@ -276,16 +250,7 @@
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 
-.detail-actions-register:hover {
+.tc-detail-actions-register:hover {
   background-color: #1c86ee;
-  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
-}
-
-.detail-actions-applied {
-  background-color: rgb(226, 41, 41);
-}
-
-.detail-actions-applied:hover {
-  background-color: rgb(252, 10, 10);
   box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
 }

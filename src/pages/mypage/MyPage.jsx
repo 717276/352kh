@@ -1,22 +1,35 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
+import { jwtDecode } from "jwt-decode";
 import "../../components/css/mypage/MyPage.css";
 import profileImg from "../../images/profile/profile.png";
 
 const MyPage = () => {
-  const { userNo } = useParams();
   const [editField, setEditField] = useState("");
+  const [tourListPage, setTourListPage] = useState(1);
   const [currentPage, setCurrentPage] = useState(1);
   const [productPage, setProductPage] = useState(1);
+  const [cartPage, serCartPage] = useState(1);
   const [sortType, setSortType] = useState("latest");
   const [productSortType, setProductSortType] = useState("latest");
   const itemsPerPage = 5;
   const [user, setUser] = useState(null);
   const [sortedData, setSortedData] = useState([]);
+  const [tourListData, setTourListData] = useState([]);
   const [sortedProductData, setSortedProductData] = useState([]);
+  const [cartProductData, serCartProductData] = useState([]);
   const [updateValues, setUpdateValues] = useState({});
   const nav = useNavigate();
+  const token = localStorage.getItem("accessToken");
+  const decodedToken = jwtDecode(token);
+  const userNo = decodedToken.userNo;
   useEffect(() => {
+    if (!token) {
+      console.error("No access token found");
+      nav("/login");
+      return;
+    }
+
     const url = `http://localhost:8080/api/mypage/${userNo}`;
     fetch(url)
       .then((response) => response.json())
@@ -24,11 +37,13 @@ const MyPage = () => {
         setUser(data);
         setSortedData(data.tours);
         setSortedProductData(data.orderItems);
+        serCartProductData(data.cartItems);
+        setTourListData(data.tourList);
       })
       .catch((error) => {
         console.error("Error fetching user data:", error);
       });
-  }, [userNo]);
+  }, [userNo, nav, token]);
 
   useEffect(() => {
     const sorted = [...(user?.tours || [])].sort((a, b) => {
@@ -41,12 +56,12 @@ const MyPage = () => {
     setSortedData(sorted);
   }, [sortType, user]);
 
-  const getTourImageUrl = (img) => {
-    return `/images/${img.i_category}/${img.i_ref_no}/${img.i_order}.png`;
+  const getImageUrl = (img) => {
+    return `/images/${img.i_category}/${img.i_category}_${img.i_ref_no}_${img.i_order}.jpg`;
   };
 
   const getProImageUrl = (img) => {
-    return `/images/${img.i_category}/${img.i_ref_no}/${img.i_order}.png`;
+    return `/images/${img.i_category}/${img.i_category}_${img.i_ref_no}_${img.i_order}.png`;
   };
 
   const formatDateToYYYYMMDD = (dateString) => {
@@ -113,8 +128,14 @@ const MyPage = () => {
     }).open();
   };
 
+  const totalTourListPages = Math.ceil(tourListData.length / itemsPerPage);
   const totalPages = Math.ceil(sortedData.length / itemsPerPage);
   const totalProductPages = Math.ceil(sortedProductData.length / itemsPerPage);
+  const totalCartPages = Math.ceil(cartProductData.length / itemsPerPage);
+
+  const handleChangeTourListPage = (page) => {
+    setTourListPage(page);
+  };
 
   const handleChangePage = (page) => {
     setCurrentPage(page);
@@ -124,9 +145,19 @@ const MyPage = () => {
     setProductPage(page);
   };
 
+  const handleChangeCartPage = (page) => {
+    serCartPage(page);
+  };
+
   const toggleEditField = (field) => {
     setEditField(editField === field ? "" : field);
   };
+
+  const tourListstartIndex = (tourListPage - 1) * itemsPerPage;
+  const selectedTourListItems = tourListData.slice(
+    tourListstartIndex,
+    tourListstartIndex + itemsPerPage
+  );
 
   const startIndex = (currentPage - 1) * itemsPerPage;
   const selectedItems = sortedData.slice(startIndex, startIndex + itemsPerPage);
@@ -135,6 +166,12 @@ const MyPage = () => {
   const selectedProductItems = sortedProductData.slice(
     productStartIndex,
     productStartIndex + itemsPerPage
+  );
+
+  const cartStartIndex = (cartPage - 1) * itemsPerPage;
+  const selectedcartItems = cartProductData.slice(
+    cartStartIndex,
+    cartStartIndex + itemsPerPage
   );
 
   const getDogSizeText = (size) => {
@@ -245,6 +282,59 @@ const MyPage = () => {
 
   const handleItemClick = (t_no) => {
     nav(`/tripDetail/${t_no}`);
+  };
+
+  const removeProduct = (ciNo) => {
+    const url = `http://localhost:8080/api/deleteCart/${ciNo}`;
+    fetch(url, {
+      method: "DELETE",
+    })
+      .then((response) => {
+        if (response.ok) {
+          serCartProductData(
+            cartProductData.filter((product) => product.ci_no !== ciNo)
+          );
+        } else {
+          console.error("Failed to delete cart item");
+        }
+      })
+      .catch((error) => console.error("Error deleting cart item:", error));
+  };
+
+  const cancleTour = async (t_no) => {
+    const token = localStorage.getItem("accessToken");
+    console.log(token, "왜 안찍히니");
+    if (!token) {
+      console.error("No access token found");
+      return;
+    }
+
+    const decodedToken = jwtDecode(token);
+    const userNo = decodedToken.userNo; // JWT에서 userNo 추출
+
+    try {
+      const response = await fetch(`http://localhost:8080/api/cancleTour`, {
+        method: "DELETE",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ t_no: t_no, userNo: userNo }),
+      });
+
+      if (!response.ok) {
+        throw new Error("Network response was not ok");
+      } else {
+        setTourListData(tourListData.filter((tour) => tour.t_no !== t_no));
+      }
+
+      const data = await response.json();
+      console.log("Application successful:", data);
+
+      // 추가적인 처리 로직 (예: 성공 메시지 표시, 페이지 이동 등)
+    } catch (error) {
+      console.error("Error applying for tour:", error);
+      // 오류 처리 로직 (예: 오류 메시지 표시)
+    }
   };
 
   return (
@@ -658,37 +748,93 @@ const MyPage = () => {
             </div>
           </div>
         </div>
+
         <div className="section">
-          <h1 className="section-title">나의 투어리스트</h1>
-          <ul className="sort-type trip-ul">
-            <li onClick={() => setSortType("latest")}>최신순</li>
-            <li onClick={() => setSortType("oldest")}>오래된 순</li>
-          </ul>
-          <div className="trip-list">
-            {selectedItems.map((item) => (
+          <h1 className="section-title">투어 신청 목록</h1>
+          <div className="move-order">
+            <button onClick={() => nav("/tourOrder")}>구매하러 가기</button>
+          </div>
+          <div className="mytrip-list">
+            {selectedTourListItems.map((item) => (
               <div
                 key={item.t_no}
-                className="trip-item"
+                className="mytrip-item"
                 onClick={() => handleItemClick(item.t_no)}
               >
-                <img src={getTourImageUrl(item.img)} alt={item.t_title} />
-                <div className="trip-details">
-                  <div className="trip-name">{item.t_title}</div>
-                  <div className="trip-description">{item.t_explain}</div>
-                  <div className="trip-date">
-                    {formatDateToYYYYMMDD(item.t_strDate)} ~{" "}
-                    {formatDateToYYYYMMDD(item.t_endDate)}
+                <div className="mytriplist-details">
+                  <img src={getImageUrl(item.img)} alt={item.t_title} />
+                  <div className="mytrip-details">
+                    <div className="mytrip-name">{item.t_title}</div>
+                    <div className="mytrip-description">{item.t_explain}</div>
+                    <div className="mytrip-date">
+                      {formatDateToYYYYMMDD(item.t_strDate)} ~{" "}
+                      {formatDateToYYYYMMDD(item.t_endDate)}
+                    </div>
+                    <div className="mytrip-price">{item.t_totalPrice}원</div>
                   </div>
-                  <div className="trip-price">{item.t_totalPrice}</div>
+                </div>
+                <div className="mydeletecart">
+                  <button
+                    className="myremove-button"
+                    onClick={(e) => {
+                      e.stopPropagation(); // 이벤트 전파 중지
+                      cancleTour(item.t_no);
+                    }}
+                  >
+                    신청 취소
+                  </button>
                 </div>
               </div>
             ))}
           </div>
-          <div className="pagination">
+          <div className="mypagination">
+            {Array.from({ length: totalTourListPages }, (_, index) => (
+              <span
+                key={index + 1}
+                className={`mypage-span ${
+                  tourListPage === index + 1 ? "active" : ""
+                }`}
+                onClick={() => handleChangeTourListPage(index + 1)}
+              >
+                {index + 1}
+              </span>
+            ))}
+          </div>
+        </div>
+
+        <div className="section">
+          <h1 className="section-title">투어 결제 목록</h1>
+          <ul className="mysort-type mytrip-ul">
+            <li onClick={() => setSortType("latest")}>최신순</li>
+            <li onClick={() => setSortType("oldest")}>오래된 순</li>
+          </ul>
+          <div className="mytrip-list">
+            {selectedItems.map((item) => (
+              <div
+                key={item.t_no}
+                className="mytrip-item"
+                onClick={() => handleItemClick(item.t_no)}
+              >
+                <div className="mytriplist-details">
+                  <img src={getImageUrl(item.img)} alt={item.t_title} />
+                  <div className="mytrip-details">
+                    <div className="mytrip-name">{item.t_title}</div>
+                    <div className="mytrip-description">{item.t_explain}</div>
+                    <div className="mytrip-date">
+                      {formatDateToYYYYMMDD(item.t_strDate)} ~{" "}
+                      {formatDateToYYYYMMDD(item.t_endDate)}
+                    </div>
+                    <div className="mytrip-price">{item.t_totalPrice}원</div>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+          <div className="mypagination">
             {Array.from({ length: totalPages }, (_, index) => (
               <span
                 key={index + 1}
-                className={`page-span ${
+                className={`mypage-span ${
                   currentPage === index + 1 ? "active" : ""
                 }`}
                 onClick={() => handleChangePage(index + 1)}
@@ -698,38 +844,93 @@ const MyPage = () => {
             ))}
           </div>
         </div>
+
         <div className="section">
-          <h1 className="section-title">구매한 상품 목록</h1>
-          <ul className="sort-type">
+          <h1 className="section-title">장바구니</h1>
+          <div className="move-order">
+            <button onClick={() => nav("/order")}>구매하러 가기</button>
+          </div>
+          <div className="myproduct-list">
+            {selectedcartItems.map((item) => (
+              <div key={item.ci_no} className="myproduct-item-mypage">
+                <div className="myproduct-info">
+                  <img
+                    src={getProImageUrl(item.product.img)}
+                    alt={item.product.pd_name}
+                  />
+                  <div className="myproduct-details">
+                    <div className="myproduct-name">{item.product.pd_name}</div>
+                    <div className="myproduct-quantity">
+                      수량: {item.ci_quantity}
+                    </div>
+                    <div className="myproduct-quantity">
+                      가격:{" "}
+                      {Math.floor(
+                        item.product.pd_price *
+                          (1 - item.product.pd_discount * 0.01)
+                      )}
+                      원
+                    </div>
+                  </div>
+                  <div className="mydeletecart">
+                    <button
+                      className="myremove-button"
+                      onClick={() => removeProduct(item.ci_no)}
+                    >
+                      구매 취소
+                    </button>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+          <div className="mypagination">
+            {Array.from({ length: totalCartPages }, (_, index) => (
+              <span
+                key={index + 1}
+                className={`mypage-span ${
+                  cartPage === index + 1 ? "active" : ""
+                }`}
+                onClick={() => handleChangeCartPage(index + 1)}
+              >
+                {index + 1}
+              </span>
+            ))}
+          </div>
+        </div>
+
+        <div className="section">
+          <h1 className="section-title">상품 결제 목록</h1>
+          <ul className="mysort-type">
             <li onClick={() => setProductSortType("latest")}>전체</li>
             <li onClick={() => setProductSortType("ready")}>상품준비중</li>
             <li onClick={() => setProductSortType("shipping")}>배송중</li>
             <li onClick={() => setProductSortType("completion")}>배송완료</li>
           </ul>
-          <div className="product-list">
+          <div className="myproduct-list">
             {selectedProductItems.map((item) => (
-              <div key={item.oi_no} className="product-item-mypage">
-                <div className="purchase-date">
+              <div key={item.oi_no} className="myproduct-item-mypage">
+                <div className="mypurchase-date">
                   {formatDate(item.oi_orderDate)}
                 </div>
-                <div className="product-info">
+                <div className="myproduct-info">
                   <img
                     src={getProImageUrl(item.product.img)}
                     alt={item.product.pd_name}
                   />
-                  <div className="product-details">
+                  <div className="myproduct-details">
                     <div
-                      className={`product-status ${getOrderStatusText(
+                      className={`myproduct-status ${getOrderStatusText(
                         item.oi_status
                       )}`}
                     >
                       {getOrderStatusText(item.oi_status)} <hr />
                     </div>
-                    <div className="product-name">{item.product.pd_name}</div>
-                    <div className="product-quantity">
+                    <div className="myproduct-name">{item.product.pd_name}</div>
+                    <div className="myproduct-quantity">
                       수량: {item.oi_quantity}
                     </div>
-                    <div className="product-price">
+                    <div className="myproduct-price">
                       결제금액(타입): {item.oi_price}
                       원({getPaymentTypeText(item.paymentItem.pay_type)})
                     </div>
@@ -738,11 +939,11 @@ const MyPage = () => {
               </div>
             ))}
           </div>
-          <div className="pagination">
+          <div className="mypagination">
             {Array.from({ length: totalProductPages }, (_, index) => (
               <span
                 key={index + 1}
-                className={`page-span ${
+                className={`mypage-span ${
                   productPage === index + 1 ? "active" : ""
                 }`}
                 onClick={() => handleChangeProductPage(index + 1)}
