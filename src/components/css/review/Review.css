@@ -1,3 +1,7 @@
+.Review {
+  min-height: 1100px;
+}
+
 .Review table {
   width: 100%;  
 }
@@ -7,36 +11,18 @@
   margin-top: 50px;
 }
 
-.ReviewButton {
-  display: flex; 
-  align-items: center; 
-  justify-content: space-between;
-  padding: 10px; 
-  margin-top: 20px; 
-  margin-bottom: 50px;
-}
-
 .ReviewSearch {
   display: flex; 
   align-items: center; 
   padding: 10px; 
-  margin-left: 400px;
+  margin-left: 25%;
 }
 
 .ReviewSearch input[type="text"] {
-  flex: 1; 
   padding: 8px; 
-  border: none;
+  /*border: none;*/
   outline: none;
-  width: 100%;
-}
-
-.ReviewSearch button {
-  padding: 8px 16px;
-  margin-left: 8px;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer; 
+  width: 300px;  
 }
 
 .ReviewButton button {
@@ -44,7 +30,7 @@
   border: none; 
   border-radius: 5px; 
   cursor: pointer; 
-  margin-right: 100px;
+  margin: 10px;
 }
 
 .ReviewButton button.primary {

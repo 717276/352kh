@@ -1,5 +1,5 @@
 .ReviewList {
-  width: 80%;
+  width: 100%;
   margin: 20px auto;
 }
 
@@ -27,7 +27,7 @@
 }
 
 .ReviewListTable th:last-child {
-  width: 25%;
+  width: 20%;
 }
 
 .ReviewListTable td {

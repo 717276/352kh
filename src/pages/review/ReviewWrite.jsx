@@ -11,11 +11,11 @@ const ReviewWrite = () => {
   const [items, setItems] = useState([]);
   const token = localStorage.getItem('accessToken');
   const decodedToken = jwtDecode(token);
-  const userNo = decodedToken.userNo;
+  const mNo = decodedToken.userNo;
   const [selectedTour, setSelectedTour] = useState('');
 
   useEffect(() => {
-    const url = `http://localhost:8080/api/getMyTours/${userNo}`;
+    const url = `http://localhost:8080/api/getMyTours/${mNo}`;
     fetch(url)
       .then(response => {
         return response.json();
@@ -40,24 +40,22 @@ const ReviewWrite = () => {
               <select value={selectedTour} onChange={handleTourChange}>
                 <option value="">선택하세요</option>
                 {items.map((tour) => (
-                  <option key={tour.tno} value={tour.tno}>{tour.ttitle}</option>
+                  <option key={tour.t_no} value={tour.t_no}>{tour.t_title}</option>
                 ))}
               </select>
             </td>
-            <td>작성자</td>
-            <td>홍길동</td>
           </tr>
           <tr>
             <td>제목</td>
-            <td colSpan={3}><input type="text" ref={arTitle} /></td>
+            <td><input type="text" ref={arTitle} /></td>
           </tr>
           <tr>
-            <td colSpan={4}>
+            <td colSpan={3}>
               <textarea ref={arContent}></textarea>
             </td>
           </tr>
           <tr>
-            <td colSpan={4}>
+            <td colSpan={3}>
               <input type="file" ref={imgRef} multiple />
             </td>
           </tr>
@@ -65,10 +63,10 @@ const ReviewWrite = () => {
         <div className='subButton'>
           <button type="submit" onClick={() => {
             const form = new FormData();
-            form.append('arTitle', arTitle.current.value);
-            form.append('arContent', arContent.current.value);
-            form.append('tNo', items.tno.value);
-            form.append('mNo', userNo);
+            form.append('ar_title', arTitle.current.value);
+            form.append('ar_content', arContent.current.value);
+            form.append('t_no', selectedTour);
+            form.append('m_no', mNo);
             if (imgRef.current.files.length > 0) {
               Array.from(imgRef.current.files).forEach(file => {
                 form.append('img', file);
