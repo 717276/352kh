@@ -25,7 +25,10 @@ export const AuthProvider = ({ children }) => {
     async function sendAccess() {
         const accessToken = localStorage.getItem('accessToken');
         console.log("send access token: " + accessToken);
-        if (location.pathname !== '/'){
+        if (location.pathname === '/register/user'){
+            return true;
+        }
+        if (location.pathname !== '/' ){
             if (accessToken === null || accessToken === 'null'){
                 sendRefresh();
             }else {
