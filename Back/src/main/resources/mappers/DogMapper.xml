@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.kh.daeng.mapper.DogMapper">
+ <insert id="insertDog" parameterType="Dog">
+        INSERT INTO dog (d_no, m_no, d_name, d_breed, d_size)
+        VALUES (d_seq.NEXTVAL, #{m_no}, #{d_name}, #{d_breed}, #{d_size})
+    </insert>
+</mapper>

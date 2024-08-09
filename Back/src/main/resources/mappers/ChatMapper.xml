@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.kh.daeng.mapper.ChatMapper">
+    <resultMap id="ChatRoomResult" type="ChatRoom">       
+    </resultMap>
+
+    <select id="findChatRoomById" resultType="ChatRoom">
+        SELECT room_id, room_name FROM ChatRoom WHERE room_id = #{roomId}
+    </select>
+
+    <select id="findAllChatRooms" resultType="ChatRoom">
+        SELECT * FROM ChatRoom
+    </select>
+
+    <insert id="insertChatRoom">
+        INSERT INTO ChatRoom (room_id, room_name) 
+        VALUES (#{room_Id}, #{room_Name})
+    </insert>
+    <insert id="insertChat" parameterType="ChatMessage">
+        INSERT INTO ChatMessage (c_no, c_type, room_Id, sender, message, m_no, message_date)
+        VALUES (chat_message_seq.NEXTVAL, #{type}, #{roomId}, #{sender}, #{message}, #{m_no}, SYSDATE)
+    </insert>
+     <select id="findChatByRoomId" resultType="ChatMessage">
+        SELECT * FROM ChatMessage where room_Id=#{room_Id}
+    </select>
+</mapper>

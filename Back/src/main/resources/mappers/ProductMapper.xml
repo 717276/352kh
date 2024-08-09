@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.kh.daeng.mapper.ProductMapper">
+	<resultMap id="ItemResultMap" type="Product">
+        <id property="pd_no" column="pd_no"/>
+            <result property="pd_name" column="pd_name"/>
+            <result property="pd_explain" column="pd_explain"/>
+            <result property="pd_mount" column="pd_mount"/>
+            <result property="pd_price" column="pd_price"/>
+            <result property="pd_discount" column="pd_discount"/>
+            <result property="pd_registrationDate" column="pd_registrationDate"/>
+            <result property="pd_category" column="pd_category"/>
+
+            <association property="img" javaType="Img">
+                <id property="i_no" column="i_no"/>
+                <result property="i_ref_no" column="i_ref_no"/>
+                <result property="i_category" column="i_category"/>
+                <result property="i_order" column="i_order"/>
+            </association>
+    </resultMap>
+	<select id="selectProductList" resultMap="ItemResultMap">
+		 SELECT 
+		    pd_no, pd_name, pd_explain, pd_mount, pd_price, pd_discount, pd_registrationDate, pd_category, i.i_ref_no as i_ref_no
+		 FROM product p left outer join img i
+			 on p.pd_no = i.i_ref_no
+			 and i.I_CATEGORY = 'product'
+			 and i.i_order = 1
+    	 order by pd_no desc
+	</select>
+	
+	<select id="selectProductDetail" parameterType="int" resultMap="ItemResultMap">
+		 SELECT pd_no, pd_name, pd_explain, pd_mount, pd_price, pd_discount, pd_registrationDate, pd_category, i.i_ref_no as i_ref_no
+		 FROM product p left outer join img i
+			 on p.pd_no = i.i_ref_no
+			 and i.I_CATEGORY = 'product'
+			 and i.i_order = 1
+		 where pd_no = #{pd_no}
+	</select>
+	
+	<insert id="insertProduct" parameterType="Product">
+		insert into product
+		values (pd_seq.nextVal, #{pd_name}, #{pd_explain}, #{pd_mount}, #{pd_price}, #{pd_discount}, SYSDATE, #{pd_category})
+	</insert>
+
+	<update id="updateProduct">
+	 	update product
+	 	set pd_name = #{pd_name}, pd_explain = #{pd_explain}, pd_mount = #{pd_mount}, pd_price = #{pd_price}, pd_discount = #{pd_discount}, pd_category = #{pd_category}
+	 	where pd_no = #{pd_no}
+	</update>
+	
+	<delete id="deleteProduct" parameterType="int">
+		delete from product
+		where pd_no = #{pd_no}
+	</delete>
+	
+	<delete id="deleteImg" parameterType="int">
+		delete from img
+		where i_ref_no = #{pd_no}
+	</delete>
+	
+	<insert id="insertImg">
+		insert into img
+		values (img_seq.nextval, pd_seq.currVal, 'product', #{no}+1)
+	</insert>
+	
+	<insert id="updateImg">
+		insert into img
+		values (img_seq.nextval, #{pd_no}, 'product', #{index})
+	</insert>
+	
+	<select id="getMaxPdNo" resultType="int">
+		select nvl(max(pd_no),0)+1 as pd_no from product
+	</select>
+	
+</mapper>

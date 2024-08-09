@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+    PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.kh.daeng.mapper.PreferenceMapper">
+    <select id="selectAllPreferences" resultType="Preference">
+        SELECT * FROM preference
+    </select>
+    <insert id="insertPreference" parameterType="Preference">
+        INSERT INTO preference (pf_no, pf_rest, pf_sport, pf_walk, pf_cafe, pf_spot)
+        VALUES (pf_seq.NEXTVAL, #{pf_rest}, #{pf_sport}, #{pf_walk}, #{pf_cafe}, #{pf_spot})
+    </insert>
+</mapper>

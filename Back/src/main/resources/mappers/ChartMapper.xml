@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.kh.daeng.mapper.ChartMapper">	
+	<select id="getChart1" resultType="java.util.Map">
+		WITH CategoryNames AS (
+		    SELECT 0 AS PF_NO, '힐링' AS category_name FROM dual
+		    UNION ALL
+		    SELECT 1, '스포츠' FROM dual
+		    UNION ALL
+		    SELECT 2, '여유' FROM dual
+		    UNION ALL
+		    SELECT 3, '산책' FROM dual
+		    UNION ALL
+		    SELECT 4, '명소' FROM dual
+		),
+		TotalCounts AS (
+		    SELECT COUNT(*) AS totalTours
+		    FROM tour t
+		    JOIN ordertour ot ON t.T_NO = ot.T_NO
+		),
+		CategoryCounts AS (
+		    SELECT
+		        t.PF_NO,
+		        COUNT(t.T_NO) AS bookedTours
+		    FROM
+		        ordertour ot
+		    JOIN
+		        tour t ON ot.T_NO = t.T_NO
+		    GROUP BY
+		        t.PF_NO
+		)
+		SELECT
+		    cn.category_name as category,
+		    COALESCE(cc.bookedTours, 0) AS booking,
+		    ROUND((COALESCE(cc.bookedTours, 0) * 100.0 / tc.totalTours), 2) AS value
+		FROM
+		    CategoryNames cn
+		LEFT JOIN
+		    CategoryCounts cc ON cn.PF_NO = cc.PF_NO
+		CROSS JOIN
+		    TotalCounts tc
+	</select>
+	
+</mapper>

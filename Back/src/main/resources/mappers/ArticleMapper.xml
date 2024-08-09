@@ -1,0 +1,143 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.kh.daeng.mapper.ArticleMapper">
+	<select id="list" resultType="Article">
+		 select a.ar_no as ar_no,
+           a.m_no as m_no,
+           a.t_no as t_no,
+           t.t_title as t_title,
+           a.ar_title as ar_title,
+           a.ar_content as ar_content,
+           a.ar_userId as ar_userId,
+           a.ar_createdDate as ar_createdDate,
+           a.ar_like as ar_like,
+           a.ar_view as ar_view
+	    from article a inner join tour t
+	    on a.t_no = t.t_no
+	    order by ar_no desc
+	</select>
+	
+	<select id="detail" parameterType="int" resultType="Article">
+		 select a.ar_no as ar_no,
+	           a.m_no as m_no,
+	           a.t_no as t_no,
+	           t.t_title as t_title,
+	           a.ar_title as ar_title,
+	           a.ar_content as ar_content,
+	           a.ar_userId as ar_userId,
+	           a.ar_createdDate as ar_createdDate,
+	           a.ar_like as ar_like,
+	           a.ar_view as ar_view
+	    from article a inner join tour t
+	    on a.t_no = t.t_no
+	    where a.ar_no = #{ar_no}
+	    order by ar_no desc
+	</select>
+	
+	<insert id="insert">
+		insert into article
+		values (ar_seq.nextVal, #{m_no}, #{t_no}, #{ar_title}, #{ar_content,jdbcType=CLOB}, #{ar_userId}, SYSDATE, 0, 0)
+	</insert>
+	
+	<update id="update">
+	 	update article
+	 	set ar_title = #{ar_title}, ar_content = #{ar_content,jdbcType=CLOB}, AR_CREATEDDATE = SYSDATE
+	 	where ar_no = #{ar_no}
+	</update>
+	
+	<delete id="delete" parameterType="int">
+		delete from article
+		where ar_no = #{ar_no}
+	</delete>
+	
+	<update id="updateViewCount" parameterType="int">
+		update article set ar_view = ar_view + 1 where ar_no = #{ar_no}
+	</update>
+	
+	<select id="getReviewComments" parameterType="int" resultType="Comments">
+		 SELECT 
+		    c_no, ar_no, c_userId, c_content,
+		    to_char(c_createdDate, 'YYYY-MM-DD HH24:MI:SS') AS c_createdDate, c_parentNo, c_like, c_dept
+		FROM 
+		    comments
+		WHERE 
+		    ar_no = #{ar_no}
+		START WITH 
+		    c_parentNo = 0
+		CONNECT BY 
+		    PRIOR c_no = c_parentNo
+		ORDER BY 
+		    SYS_CONNECT_BY_PATH(c_no, '/')
+	</select>
+	
+	<select id="getMaxArNo" resultType="int">
+		select nvl(max(ar_no),0)+1 as pd_no from article
+	</select>
+	
+	<insert id="insertImg">
+		insert into img
+		values (img_seq.nextval, ar_seq.currVal, 'review', #{index})
+	</insert>
+	
+	<delete id="deleteImg" parameterType="int">
+		delete from img
+		where i_ref_no = #{ar_no}
+	</delete>
+	
+	<insert id="updateImg">
+		insert into img
+		values (img_seq.nextval, #{ar_no}, 'review', #{index})
+	</insert>
+	
+	<select id="selectImgList" parameterType="int" resultType="java.util.Map">
+		select 'review_' || i_ref_no || '_' || i_order as filename
+		from img
+		where i_ref_no = #{ar_no} and i_category = 'review'
+	</select>
+	
+	<insert id="insertCommentList">
+		insert into comments
+		values (c_seq.nextVal, #{ar_no}, #{m_no}, 0, #{c_userId}, 0, #{c_content}, SYSDATE, 0)
+	</insert>
+	
+	<delete id="deleteCommentList" parameterType="int">
+		delete from comments
+		where c_no = #{c_no}
+	</delete>
+	
+	<update id="updateCommentList">
+		update comments
+		set c_content = #{c_content}
+		where c_no = #{c_no}
+	</update>
+	
+	<insert id="insertCommentReply">
+		insert into comments
+		values (c_seq.nextVal, #{ar_no}, #{m_no}, #{c_no}, #{c_userId}, #{c_dept}, #{c_content}, SYSDATE, 0)
+	</insert>
+	
+	<update id="updateLike">
+		update article
+		set ar_like = ar_like + 1
+		where ar_no = #{ar_no}
+	</update>
+	
+	<update id="updateCommentLike">
+		update comments
+		set c_like = c_like + 1
+		where c_no = #{c_no}
+	</update>
+	
+	<select id="getMyTours" resultType="Tour">
+		select t.t_no as t_no,t.t_title as t_title
+        from ordertour o inner join tour t
+        on o.t_no = t.t_no
+        where o.m_no = #{m_no}
+	</select>
+	
+	<select id="getUserInfo">
+		select m_userid as userid
+		from member
+		where m_no = #{m_no}
+	</select>
+</mapper>

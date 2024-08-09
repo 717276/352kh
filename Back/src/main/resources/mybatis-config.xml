@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE configuration
+  PUBLIC "-//mybatis.org//DTD Config 3.0//EN" "http://mybatis.org/dtd/mybatis-3-config.dtd">
+<configuration>
+    <typeAliases>
+        <typeAlias type="com.kh.daeng.domain.dto.web.Refresh" alias="Refresh"/>
+    
+        <typeAlias type="com.kh.daeng.domain.dto.user.Member" alias="Member"/>
+        <typeAlias type="com.kh.daeng.domain.dto.user.Preference" alias="Preference"/>
+        <typeAlias type="com.kh.daeng.domain.dto.user.Dog" alias="Dog"/>
+        <typeAlias type="com.kh.daeng.domain.dto.user.OrderItem" alias="OrderItem"/>
+        <typeAlias type="com.kh.daeng.domain.dto.user.OrderTour" alias="OrderTour"/>
+        <typeAlias type="com.kh.daeng.domain.dto.user.PaymentItem" alias="PaymentItem"/>        
+        
+        <typeAlias type="com.kh.daeng.domain.dto.chat.ChatRoom" alias="ChatRoom"/>
+        <typeAlias type="com.kh.daeng.domain.dto.chat.ChatMessage" alias="ChatMessage"/>
+        
+        <typeAlias type="com.kh.daeng.domain.dto.board.Article" alias="Article"/>
+        <typeAlias type="com.kh.daeng.domain.dto.board.Comments" alias="Comments"/>
+        
+        <typeAlias type="com.kh.daeng.domain.dto.shop.Product" alias="Product"/>
+        <typeAlias type="com.kh.daeng.domain.dto.shop.CartItem" alias="CartItem"/>
+                        
+        <typeAlias type="com.kh.daeng.domain.dto.util.Img" alias="Img"/>
+        <typeAlias type="com.kh.daeng.domain.dto.tour.Tour" alias="Tour"/>
+        <typeAlias type="com.kh.daeng.domain.dto.tour.Hotel" alias="Hotel"/>
+        <typeAlias type="com.kh.daeng.domain.dto.tour.Place" alias="Place"/>
+        <typeAlias type="com.kh.daeng.domain.dto.tour.Restaurante" alias="Restaurante"/>
+        <typeAlias type="com.kh.daeng.domain.dto.tour.TourImg" alias="TourImg"/>
+        <typeAlias type="com.kh.daeng.domain.dto.tour.TourList" alias="TourList"/>
+               
+    </typeAliases>
+    <mappers>
+        <mapper resource="mappers/MemberMapper.xml"/>
+    </mappers>
+    
+</configuration>

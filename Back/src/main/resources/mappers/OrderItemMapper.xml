@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.kh.daeng.mapper.OrderItemMapper">
+    <select id="getCartItems" resultMap="OrderItemResultMap">
+        SELECT 
+            ci.ci_no, ci.pd_no, ci.m_no, ci.ci_quantity,
+            p.pd_no AS p_pd_no, p.pd_name AS p_pd_name, p.pd_explain AS p_pd_explain,
+            p.pd_mount AS p_pd_mount, p.pd_price AS p_pd_price, p.pd_discount AS p_pd_discount,
+            p.pd_registrationDate AS p_pd_registrationDate, p.pd_category AS p_pd_category,
+            i.i_no AS i_i_no, i.i_ref_no AS i_i_ref_no, i.i_category AS i_i_category, i.i_order AS i_i_order
+        FROM CartItem ci
+        JOIN Product p ON ci.pd_no = p.pd_no
+        LEFT JOIN Img i ON p.pd_no = i.i_ref_no AND i.i_category = 'product' AND i.i_order = 1
+        WHERE ci.m_no = #{userNo}
+    </select>
+
+    <resultMap id="OrderItemResultMap" type="CartItem">
+        <id property="ci_no" column="ci_no"/>
+        <result property="pd_no" column="pd_no"/>
+        <result property="m_no" column="m_no"/>
+        <result property="ci_quantity" column="ci_quantity"/>
+        
+        <association property="product" javaType="Product">
+            <id property="pd_no" column="p_pd_no"/>
+            <result property="pd_name" column="p_pd_name"/>
+            <result property="pd_explain" column="p_pd_explain"/>
+            <result property="pd_mount" column="p_pd_mount"/>
+            <result property="pd_price" column="p_pd_price"/>
+            <result property="pd_discount" column="p_pd_discount"/>
+            <result property="pd_registrationDate" column="p_pd_registrationDate"/>
+            <result property="pd_category" column="p_pd_category"/>
+            
+            <association property="img" javaType="Img">
+                <id property="i_no" column="i_i_no"/>
+                <result property="i_ref_no" column="i_i_ref_no"/>
+                <result property="i_category" column="i_i_category"/>
+                <result property="i_order" column="i_i_order"/>
+            </association>
+        </association>
+    </resultMap>
+    
+    <!-- 장바구니 삭제 -->
+    <delete id="deleteCart">
+    	DELETE FROM CartItem WHERE ci_no = #{ciNo}
+    </delete>
+    
+    <!-- order 페이지에서 사용자 정보 불러오기 -->
+    <select id="getUserInfo" resultType="Member">
+        SELECT * FROM member WHERE m_no = #{userNo}
+    </select>
+    
+    <!-- 결제 성공 시 orderItem, paymentItem에 데이터 추가 -->
+    <insert id="insertPaymentItem" parameterType="PaymentItem">
+        INSERT INTO PaymentItem (pay_no, pay_type, pay_Date, pay_total) 
+        VALUES (PAY_SEQ.NEXTVAL, #{pay_type}, SYSDATE, #{pay_total})
+    </insert>
+
+    <select id="getLatestPaymentId" resultType="int">
+        SELECT MAX(pay_no) FROM PaymentItem
+    </select>
+
+    <insert id="insertOrderItem" parameterType="OrderItem">
+        INSERT INTO OrderItem 
+        (oi_no, pd_no, m_no, oi_price, oi_quantity, oi_orderDate,oi_basicAddress, 
+        	oi_detailAddress, oi_postNo, oi_status, pay_no) 
+        VALUES 
+        (OI_SEQ.NEXTVAL, #{pd_no}, #{m_no}, #{oi_price}, #{oi_quantity}, SYSDATE, 
+            #{oi_basicAddress}, #{oi_detailAddress}, #{oi_postNo}, 0, #{pay_no})
+    </insert>
+    
+</mapper>

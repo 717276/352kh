@@ -1,0 +1,287 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.kh.daeng.mapper.TourMapper">
+	<!-- 투어리스트 불러오기 -->
+	<select id="getAllTours" resultMap="TourResultMap">
+		SELECT t.*, i.*, p.*
+		FROM Tour t
+		LEFT JOIN Img i ON t.t_no = i.i_ref_no
+		LEFT JOIN Preference p ON t.pf_no = p.pf_no
+		WHERE i.i_category = 'tour'
+	</select>
+	<resultMap id="TourResultMap" type="Tour">
+		<id property="t_no" column="t_no" />
+		<result property="t_title" column="t_title" />
+		<result property="t_explain" column="t_explain" />
+		<result property="t_totalPrice" column="t_totalPrice" />
+		<result property="t_strDate" column="t_strDate" />
+		<result property="t_endDate" column="t_endDate" />
+		<result property="t_status" column="t_status"/>
+		
+		<association property="pre"
+			javaType="Preference">
+			<id property="pf_no" column="pf_no"/>
+			<result property="pf_rest" column="pf_rest"/>
+			<result property="pf_sport" column="pf_sport"/>
+			<result property="pf_walk" column="pf_walk"/>
+			<result property="pf_cafe" column="pf_cafe"/>
+			<result property="pf_spot" column="pf_spot"/>
+		</association>
+		<association property="img"
+			javaType="Img">
+			<id property="i_no" column="i_no" />
+			<result property="i_ref_no" column="i_ref_no" />
+			<result property="i_category" column="i_category" />
+			<result property="i_order" column="i_order" />
+		</association>
+	</resultMap>
+	
+	<!-- 유저 선호도 불러오기 -->
+	<select id="getUserPrNo">
+		SELECT pf_no FROM MEMBER WHERE m_no = #{userNo}
+	</select>
+	<select id="getUserPre">
+		SELECT * FROM Preference WHERE pf_no = #{pf_no}
+	</select>
+
+	<!-- t_no로 투어 상세정보 불러오기 -->
+	<select id="getTourDetail" resultMap="TourResultDetailMap">
+	    SELECT 
+	        t.*, 
+	        h.*, tih.ti_no AS tih_ti_no, tih.ti_category AS tih_ti_category, tih.ti_order AS tih_ti_order, tih.ti_day AS tih_ti_day, tih.ti_ref_no AS tih_ti_ref_no,
+	        pl.*, tip.ti_no AS tip_ti_no, tip.ti_category AS tip_ti_category, tip.ti_order AS tip_ti_order, tip.ti_day AS tip_ti_day, tip.ti_ref_no AS tip_ti_ref_no,
+	        r.*, tir.ti_no AS tir_ti_no, tir.ti_category AS tir_ti_category, tir.ti_order AS tir_ti_order, tir.ti_day AS tir_ti_day, tir.ti_ref_no AS tir_ti_ref_no,
+	        a.*, i.i_no AS i_i_no, i.i_category AS i_i_category, i.i_order AS i_i_order, i.i_ref_no AS i_i_ref_no
+	    FROM Tour t
+	    LEFT JOIN Hotel h ON t.t_no = h.t_no
+	    LEFT JOIN Place pl ON t.t_no = pl.t_no
+	    LEFT JOIN Restaurante r ON t.t_no = r.t_no
+	    LEFT JOIN TourImg tih ON (tih.ti_category = 'hotel' AND tih.t_no = t.t_no AND tih.ti_ref_no = h.h_no)
+	    LEFT JOIN TourImg tip ON (tip.ti_category = 'place' AND tip.t_no = t.t_no AND tip.ti_ref_no = pl.pl_no)
+	    LEFT JOIN TourImg tir ON (tir.ti_category = 'res' AND tir.t_no = t.t_no AND tir.ti_ref_no = r.res_no)
+	    LEFT JOIN Article a ON t.t_no = a.t_no
+	    LEFT JOIN Img i ON (i.i_category = 'article' AND i.i_ref_no = a.ar_no AND i.i_order = 1)
+	    WHERE t.t_no = #{t_no}
+	</select>
+	
+	<resultMap id="TourResultDetailMap" type="Tour">
+	    <id property="t_no" column="t_no"/>
+	    <result property="t_title" column="t_title"/>
+	    <result property="t_explain" column="t_explain"/>
+	    <result property="t_totalPrice" column="t_totalPrice"/>
+	    <result property="t_strDate" column="t_strDate"/>
+	    <result property="t_endDate" column="t_endDate"/>
+	    <result property="t_status" column="t_status"/>
+	    
+	    <collection property="hotels" ofType="Hotel">
+	        <id property="h_no" column="h_no"/>
+	        <result property="t_no" column="t_no"/>
+	        <result property="h_name" column="h_name"/>
+	        <result property="h_price" column="h_price"/>
+	        <result property="h_day" column="h_day"/>
+	        
+	        <association property="img" javaType="TourImg">
+	            <id property="ti_no" column="tih_ti_no"/>
+	            <result property="ti_category" column="tih_ti_category"/>
+	            <result property="ti_order" column="tih_ti_order"/>
+	            <result property="ti_day" column="tih_ti_day"/>
+	            <result property="ti_ref_no" column="tih_ti_ref_no"/>
+	        </association>
+	    </collection>
+	
+	    <collection property="places" ofType="Place">
+	        <id property="pl_no" column="pl_no"/>
+	        <result property="t_no" column="t_no"/>
+	        <result property="pl_location" column="pl_location"/>
+	        <result property="pl_name" column="pl_name"/>
+	        <result property="pl_day" column="pl_day"/>
+	        
+	        <association property="img" javaType="TourImg">
+	            <id property="ti_no" column="tip_ti_no"/>
+	            <result property="ti_category" column="tip_ti_category"/>
+	            <result property="ti_order" column="tip_ti_order"/>
+	            <result property="ti_day" column="tip_ti_day"/>
+	            <result property="ti_ref_no" column="tip_ti_ref_no"/>
+	        </association>
+	    </collection>
+	
+	    <collection property="restaurantes" ofType="Place">
+	        <id property="pl_no" column="res_no"/>
+	        <result property="t_no" column="t_no"/>
+	        <result property="pl_location" column="res_location"/>
+	        <result property="pl_name" column="res_name"/>
+	        <result property="pl_day" column="res_day"/>
+	        
+	        <association property="img" javaType="TourImg">
+	            <id property="ti_no" column="tir_ti_no"/>
+	            <result property="ti_category" column="tir_ti_category"/>
+	            <result property="ti_order" column="tir_ti_order"/>
+	            <result property="ti_day" column="tir_ti_day"/>
+	            <result property="ti_ref_no" column="tir_ti_ref_no"/>
+	        </association>
+	    </collection>
+	    
+	    <collection property="articles" ofType="Article">
+	        <id property="ar_no" column="ar_no"/>
+	        <result property="m_no" column="m_no"/>
+	        <result property="t_no" column="t_no"/>
+	        <result property="ar_title" column="ar_title"/>
+	        <result property="ar_content" column="ar_content"/>
+	        <result property="ar_userId" column="ar_userId"/>
+	        <result property="ar_createdDate" column="ar_createdDate"/>
+	        <result property="ar_like" column="ar_like"/>
+	        <result property="ar_view" column="ar_view"/>
+	        
+	        <association property="img" javaType="Img">
+	            <id property="i_no" column="i_i_no"/>
+	            <result property="i_category" column="i_i_category"/>
+	            <result property="i_order" column="i_i_order"/>
+	            <result property="i_ref_no" column="i_i_ref_no"/>
+	        </association>
+	    </collection>
+	</resultMap>
+	
+	<!-- 유저가 신청한 t_no 가져오기 -->
+	<select id="getUserTourList" resultType="java.lang.Integer">
+		SELECT t_no FROM UserTourList WHERE m_no = #{userNo}
+	</select>
+	<!-- usertourlist 추가 -->
+	<insert id="insertTourList">
+		INSERT INTO UserTourList VALUES (utl_seq.NEXTVAL, #{userNo}, #{t_no}, 0)
+	</insert>
+	
+	<delete id="deleteTourList">
+		DELETE FROM UserTourList WHERE m_no = #{userNo} AND t_no = #{t_no}
+	</delete>
+	
+	<update id="statusUpdate">
+		UPDATE Tour SET t_status = 1 WHERE t_no = #{t_no}
+	</update>
+	
+	<delete id="deleteTour">
+		DELETE FROM Tour WHERE t_no = #{t_no}
+	</delete>
+	
+	<select id="getToursByUserNo" resultMap="UserTourListResultMap">
+	    SELECT 
+	        utl.utl_no, utl.m_no, utl.t_no, utl.utl_status,
+	        t.t_no AS t_t_no, t.t_title AS t_t_title, t.t_explain AS t_t_explain,
+	        t.t_totalPrice AS t_t_totalPrice, t.t_strDate AS t_t_strDate, 
+	        t.t_endDate AS t_t_endDate, t.t_status AS t_t_status,
+	        i.i_no AS i_i_no, i.i_ref_no AS i_i_ref_no, i.i_category AS i_i_category, i.i_order AS i_i_order
+	    FROM UserTourList utl
+	    JOIN Tour t ON utl.t_no = t.t_no
+	    LEFT JOIN Img i ON t.t_no = i.i_ref_no AND i.i_category = 'tour' AND i.i_order = 1
+	    WHERE utl.m_no = #{userNo}
+	</select>
+	
+	<resultMap id="UserTourListResultMap" type="TourList">
+	    <id property="utl_no" column="utl_no"/>
+	    <result property="m_no" column="m_no"/>
+	    <result property="t_no" column="t_no"/>
+	    <result property="utl_status" column="utl_status"/>
+	    
+	    <association property="tour" javaType="Tour">
+	        <id property="t_no" column="t_t_no"/>
+	        <result property="t_title" column="t_t_title"/>
+	        <result property="t_explain" column="t_t_explain"/>
+	        <result property="t_totalPrice" column="t_t_totalPrice"/>
+	        <result property="t_strDate" column="t_t_strDate"/>
+	        <result property="t_endDate" column="t_t_endDate"/>
+	        <result property="t_status" column="t_t_status"/>
+	        
+	        <association property="img" javaType="Img">
+	            <id property="i_no" column="i_i_no"/>
+	            <result property="i_ref_no" column="i_i_ref_no"/>
+	            <result property="i_category" column="i_i_category"/>
+	            <result property="i_order" column="i_i_order"/>
+	        </association>
+	    </association>
+	</resultMap>
+	
+	<delete id="deleteTourCart">
+		DELETE FROM UserTourList WHERE utl_no = #{utl_no}
+	</delete>
+	
+	<insert id="insertPaymentTour">
+		INSERT INTO PaymentTour (payt_no, payt_type, payt_Date, payt_total) 
+		VALUES (PAYT_SEQ.NEXTVAL, #{payt_type}, SYSDATE, #{payt_total})
+	</insert>
+	
+	<select id="getLatestPaymentTourId" resultType="int">
+		SELECT MAX(payt_no) FROM PaymentTour
+	</select>
+	
+	<insert id="insertOrderTour">
+		INSERT INTO OrderTour 
+		(ot_no, m_no, t_no, ot_price, ot_orderDate, ot_status, payt_no) 
+		VALUES 
+		(OT_SEQ.NEXTVAL, #{m_no}, #{t_no}, #{ot_price}, SYSDATE, 0, #{payt_no})
+	</insert>
+	
+	<insert id="insertPreference">
+		INSERT INTO Preference VALUES (PF_SEQ.NEXTVAL, #{pf_rest}, #{pf_sport}, #{pf_walk}, #{pf_cafe}, #{pf_spot})
+	</insert>
+	
+	<select id="getLastPreNo" resultType="int">
+		SELECT MAX(pf_no) FROM Preference
+	</select>
+	
+	<insert id="insertTour">
+		INSERT INTO Tour 
+		(t_no, t_title, t_explain, t_totalPrice, t_strDate, t_endDate, t_status, pf_no)
+		VALUES 
+		(T_SEQ.NEXTVAL, #{t_title}, #{t_explain}, #{t_totalPrice}, #{t_strDate}, #{t_endDate}, 0, #{pf_no})
+	</insert>
+	
+	<select id="getLastTourNo" resultType="int">
+		SELECT MAX(t_no) FROM Tour
+	</select>
+	
+	<insert id="insertImg">
+		INSERT INTO Img 
+		(i_no, i_ref_no, i_category, i_order) 
+		VALUES 
+		(IMG_SEQ.NEXTVAL, #{t_no}, #{i_category}, #{i_order})
+	</insert>
+	
+	<insert id="insertHotel">
+		INSERT INTO Hotel 
+		(h_no, t_no, h_name, h_price, h_day) 
+		VALUES 
+		(H_SEQ.NEXTVAL, #{t_no}, #{h_name}, #{h_price}, #{h_day})
+	</insert>
+	
+	<select id="getLastHotelNo" resultType="int">
+		SELECT MAX(h_no) FROM Hotel
+	</select>
+	
+	<insert id="insertPlace">
+		INSERT INTO Place 
+		(pl_no, t_no, pl_location, pl_name, pl_day) 
+		VALUES 
+		(PL_SEQ.NEXTVAL, #{t_no}, #{pl_location}, #{pl_name}, #{pl_day})
+	</insert>
+	
+	<select id="getLastPlaceNo" resultType="int">
+		SELECT MAX(pl_no) FROM Place
+	</select>
+	
+	<insert id="insertRes">
+		INSERT INTO Restaurante 
+		(res_no, t_no, res_location, res_name, res_day) 
+		VALUES 
+		(RES_SEQ.NEXTVAL, #{t_no}, #{pl_location}, #{pl_name}, #{pl_day})
+	</insert>
+	
+	<select id="getLastResNo" resultType="int">
+		SELECT MAX(res_no) FROM Restaurante
+	</select>
+	
+	<insert id="insertTourImg">
+		INSERT INTO TourImg 
+		(ti_no, t_no, ti_ref_no, ti_category, ti_order, ti_day) 
+		VALUES 
+		(TI_SEQ.NEXTVAL, #{t_no}, #{ti_ref_no}, #{ti_category}, #{ti_order}, #{ti_day})
+	</insert>
+</mapper>

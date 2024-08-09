@@ -1,0 +1,189 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.kh.daeng.mapper.MypageMapper">
+	<!-- 멤버정보 가져오기 -->
+	<select id="getUserInfo"
+		resultType="Member">
+		SELECT
+		m_no, pf_no, m_userId, m_name, m_email, m_password,
+		m_phone,
+		m_basicAddress, m_detailAddress, m_postNo
+		FROM MEMBER WHERE
+		m_no = #{userNo}
+	</select>
+	<!-- 멤버 강아지 정보 가져오기 -->
+	<select id="getDogByUserNo"
+		resultType="Dog">
+		SELECT d_no, m_no, d_name, d_breed, d_size
+		FROM DOG WHERE
+		m_no = #{userNo}
+	</select>
+	
+	<!-- 신청한 카트 목록 불러오기 -->
+	<select id="getTourListByUserNo" resultMap="TourListResultMap">
+        SELECT t.*, i.*
+        FROM Tour t
+        JOIN UserTourList utl ON t.t_no = utl.t_no
+        JOIN Img i ON t.t_no = i.i_ref_no AND i.i_category = 'tour'
+        WHERE utl.m_no = #{userNo}
+	</select>
+	    <resultMap id="TourListResultMap" type="Tour">
+	    <id property="t_no" column="t_no"/>
+	    <result property="t_title" column="t_title"/>
+	    <result property="t_explain" column="t_explain"/>
+	    <result property="t_totalPrice" column="t_totalPrice"/>
+	    <result property="t_strDate" column="t_strDate"/>
+	    <result property="t_endDate" column="t_endDate"/>
+	    
+	    <association property="img" javaType="Img">
+	        <id property="i_no" column="i_no"/>
+	        <result property="i_ref_no" column="i_ref_no"/>
+	        <result property="i_category" column="i_category"/>
+	        <result property="i_order" column="i_order"/>
+	    </association>
+	</resultMap>
+	<!-- 멤버 투어 리스트 불러오기 -->
+	 <select id="getToursByUserNo" resultMap="TourResultMap">
+        SELECT t.*, i.*
+        FROM Tour t
+        JOIN OrderTour ot ON t.t_no = ot.t_no
+        JOIN Img i ON t.t_no = i.i_ref_no AND i.i_category = 'tour'
+        WHERE ot.m_no = #{userNo}
+    </select>
+    <resultMap id="TourResultMap" type="Tour">
+	    <id property="t_no" column="t_no"/>
+	    <result property="t_title" column="t_title"/>
+	    <result property="t_explain" column="t_explain"/>
+	    <result property="t_totalPrice" column="t_totalPrice"/>
+	    <result property="t_strDate" column="t_strDate"/>
+	    <result property="t_endDate" column="t_endDate"/>
+	    
+	    <association property="img" javaType="Img">
+	        <id property="i_no" column="i_no"/>
+	        <result property="i_ref_no" column="i_ref_no"/>
+	        <result property="i_category" column="i_category"/>
+	        <result property="i_order" column="i_order"/>
+	    </association>
+	</resultMap>
+	<!-- 멤버 상품 구매정보 불러오기 -->
+	<select id="getOrderItemsByUserNo" resultMap="OrderItemResultMap">
+        SELECT oi.*, p.*, pi.*, i.*
+        FROM OrderItem oi
+        JOIN Product p ON oi.pd_no = p.pd_no
+        JOIN PaymentItem pi ON oi.pay_no = pi.pay_no
+        JOIN Img i ON p.pd_no = i.i_ref_no AND i.i_category = 'product'
+        WHERE oi.m_no = #{userNo}
+    </select>
+    <resultMap id="OrderItemResultMap" type="OrderItem">
+        <id property="oi_no" column="oi_no"/>
+        <result property="pd_no" column="pd_no"/>
+        <result property="m_no" column="m_no"/>
+        <result property="oi_price" column="oi_price"/>
+        <result property="oi_quantity" column="oi_quantity"/>
+        <result property="oi_orderDate" column="oi_orderDate"/>
+        <result property="oi_basicAddress" column="oi_basicAddress"/>
+        <result property="oi_detailAddress" column="oi_detailAddress"/>
+        <result property="oi_postNo" column="oi_postNo"/>
+        <result property="oi_status" column="oi_status"/>
+        <result property="pay_no" column="pay_no"/>
+        
+        <association property="product" javaType="Product">
+            <id property="pd_no" column="pd_no"/>
+            <result property="pd_name" column="pd_name"/>
+            <result property="pd_explain" column="pd_explain"/>
+            <result property="pd_mount" column="pd_mount"/>
+            <result property="pd_price" column="pd_price"/>
+            <result property="pd_discount" column="pd_discount"/>            
+            <result property="pd_registrationDate" column="pd_registrationDate"/>
+            <result property="pd_category" column="pd_category"/>
+            
+            <association property="img" javaType="Img">
+                <id property="i_no" column="i_no"/>
+                <result property="i_ref_no" column="i_ref_no"/>
+                <result property="i_category" column="i_category"/>
+                <result property="i_order" column="i_order"/>
+            </association>
+        </association>
+        <association property="paymentItem" javaType="PaymentItem">
+            <id property="pay_no" column="pay_no"/>
+            <result property="pay_type" column="pay_type"/>
+            <result property="pay_date" column="pay_Date"/>
+            <result property="pay_total" column="pay_total"/>
+        </association>
+    </resultMap>
+    <!-- 카트목록 불러오기 -->
+    <select id="getCartItemsByUserNo" resultMap="CartItemResultMap">
+    	        SELECT ci.*, p.*, i.*
+        FROM CartItem ci
+        JOIN Product p ON ci.pd_no = p.pd_no
+        JOIN Img i ON p.pd_no = i.i_ref_no AND i.i_category = 'product'
+        WHERE ci.m_no = #{userNo}
+    </select>
+        <resultMap id="CartItemResultMap" type="CartItem">
+	        <id property="ci_no" column="ci_no"/>
+	        <result property="pd_no" column="pd_no"/>
+	        <result property="m_no" column="m_no"/>
+	        <result property="ci_quantity" column="ci_quantity"/>
+	        
+        <association property="product" javaType="Product">
+            <id property="pd_no" column="pd_no"/>
+            <result property="pd_name" column="pd_name"/>
+            <result property="pd_explain" column="pd_explain"/>
+            <result property="pd_mount" column="pd_mount"/>
+            <result property="pd_price" column="pd_price"/>
+            <result property="pd_discount" column="pd_discount"/>
+            <result property="pd_registrationDate" column="pd_registrationDate"/>
+            <result property="pd_category" column="pd_category"/>
+            
+            <association property="img" javaType="Img">
+                <id property="i_no" column="i_no"/>
+                <result property="i_ref_no" column="i_ref_no"/>
+                <result property="i_category" column="i_category"/>
+                <result property="i_order" column="i_order"/>
+            </association>
+        </association>
+    </resultMap>
+    
+	<!-- 정보 업데이트 -->
+      <update id="updateUserId">
+        UPDATE MEMBER
+        SET m_userId = #{userId}
+        WHERE m_no = #{userNo}
+    </update>
+
+    <update id="updateName">
+        UPDATE MEMBER
+        SET m_name = #{name}
+        WHERE m_no = #{userNo}
+    </update>
+
+    <update id="updatePhone">
+        UPDATE MEMBER
+        SET m_phone = #{phone}
+        WHERE m_no = #{userNo}
+    </update>
+
+    <update id="updateAddress">
+        UPDATE MEMBER
+        SET m_postNo = #{postNo}, m_basicAddress = #{basicAddress}, m_detailAddress = #{detailAddress}
+        WHERE m_no = #{userNo}
+    </update>
+
+    <update id="updateDogName">
+        UPDATE DOG
+        SET d_name = #{dogName}
+        WHERE m_no = #{userNo}
+    </update>
+
+    <update id="updateBreed">
+        UPDATE DOG
+        SET d_breed = #{breed}
+        WHERE m_no = #{userNo}
+    </update>
+
+    <update id="updateDsize">
+        UPDATE DOG
+        SET d_size = #{dsize}
+        WHERE m_no = #{userNo}
+    </update>
+</mapper>

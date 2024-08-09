@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.kh.daeng.mapper.MemberMapper">
+
+	<select id="findByUserId" parameterType="string"
+		resultType="Member">
+		SELECT * FROM member WHERE m_userId = #{m_userId}
+	</select>
+
+	<select id="selectAllpreferences" resultType="Preference">
+		SELECT * FROM
+		preferences
+	</select>
+	<select id="selectAllMembers" resultType="Member">
+		SELECT * FROM member
+	</select>
+	<select id="selectMemberWithPreferences" parameterType="int"
+		resultType="Member">
+		SELECT * FROM member WHERE m_no = #{m_no}
+	</select>
+	<select id="deleteMember" parameterType="int">
+		BEGIN
+		delete_member_and_preferences(#{m_no});
+		END;
+	</select>
+	<select id="login" parameterType="map" resultType="Member">
+		SELECT * FROM
+		member WHERE m_email = #{email} and m_password = #{password}
+	</select>
+	<update id="updateMemberPassword" parameterType="Member">
+		UPDATE member
+		SET m_password = #{m_password}
+		WHERE m_no = #{m_no}
+	</update>
+	<select id="checkLoginExistence" parameterType="map"
+		resultType="int">
+		SELECT COUNT(*)
+		FROM member
+		WHERE m_email = #{email}
+		AND
+		m_password = #{password}
+	</select>
+	<select id="findByUserEmail" resultType="Member">
+		SELECT * FROM member
+		WHERE m_email = #{m_email}
+	</select>
+	<select id="findByPhoneNumber" parameterType="String"
+		resultType="Member">
+		SELECT * FROM member WHERE m_phone = #{m_phone}
+	</select>
+	<insert id="registerMemberWithPreference">
+		{CALL register_member_with_preference(
+		#{member.m_userId, mode=IN, jdbcType=VARCHAR},
+		#{member.m_name,
+		mode=IN, jdbcType=VARCHAR},
+		#{member.m_email, mode=IN,
+		jdbcType=VARCHAR},
+		#{member.m_password, mode=IN, jdbcType=VARCHAR},
+		#{member.m_phone, mode=IN, jdbcType=NUMERIC},
+		#{member.m_basicAddress,
+		mode=IN, jdbcType=VARCHAR},
+		#{member.m_detailAddress, mode=IN,
+		jdbcType=VARCHAR},
+		#{member.m_postNo, mode=IN, jdbcType=VARCHAR},
+		#{preference.pf_rest, mode=IN, jdbcType=NUMERIC},
+		#{preference.pf_sport, mode=IN, jdbcType=NUMERIC},
+		#{preference.pf_cafe, mode=IN, jdbcType=NUMERIC},
+		#{preference.pf_walk, mode=IN, jdbcType=NUMERIC},
+		#{preference.pf_spot, mode=IN, jdbcType=NUMERIC},
+		#{dog.d_name,
+		mode=IN, jdbcType=VARCHAR},
+		#{dog.d_breed, mode=IN, jdbcType=VARCHAR},
+		#{dog.d_size, mode=IN, jdbcType=NUMERIC}
+		)}
+	</insert>
+</mapper>
