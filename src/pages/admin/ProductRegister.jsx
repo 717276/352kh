@@ -1,11 +1,11 @@
 import '../../components/css/admin/ProductRegister.css';
-import productImage from './test.jpg';
 import { useNavigate } from 'react-router-dom';
 import { useState, useRef } from 'react';
 
 const ProductRegister = () => {
   const nav = useNavigate();
   const pdName = useRef();
+  const pdCategory = useRef();
   const pdExplain = useRef();
   const pdMount = useRef();
   const pdPrice = useRef();
@@ -39,7 +39,7 @@ const ProductRegister = () => {
             <ul>
               <li onClick={() => { nav() }}>회원관리</li>
               <li onClick={() => { nav() }}>여행관리</li>
-              <li onClick={() => { nav('/admin/productList') }}>상품관리</li>
+              <li onClick={() => { nav('/admin/getProductList') }}>상품관리</li>
               <li onClick={() => { nav('/admin/chart') }}>분석</li>
             </ul>
           </div>
@@ -48,9 +48,17 @@ const ProductRegister = () => {
           <table>
             <tbody>
               <tr>
-                <td rowSpan={5}>
-
+                <td>카테고리</td>
+                <td colSpan={3}>
+                  <select ref={pdCategory}>
+                    <option value="0">위생용품</option>
+                    <option value="1">간식 및 사료</option>
+                    <option value="2">강아지옷</option>
+                    <option value="3">악세사리</option>
+                  </select>
                 </td>
+              </tr>
+              <tr>
                 <td>상품명</td>
                 <td colSpan={2}><input type="text" ref={pdName} /></td>
               </tr>
@@ -82,10 +90,13 @@ const ProductRegister = () => {
                 </td>
               </tr>
               <tr>
-                <td><input type="file" ref={imgRef} /></td>
+                <td>대표이미지</td>
+                <td colSpan={3}><input type="file" ref={imgRef} /></td>
+              </tr>
+              <tr>
                 <td>상세이미지</td>
-                <td colSpan={2}>
-                  <td><input type="file" ref={detailImagesRef} multiple /></td>
+                <td colSpan={3}>
+                  <input type="file" ref={detailImagesRef} multiple />
                 </td>
               </tr>
             </tbody>
@@ -94,14 +105,15 @@ const ProductRegister = () => {
         <div className='ProductRegisterButton'>
           <button id='saveButton' onClick={() => {
             const form = new FormData();
-            form.append('pdName', pdName.current.value);
-            form.append('pdExplain', pdExplain.current.value);
-            form.append('pdMount', pdMount.current.value);
-            form.append('pdPrice', pdPrice.current.value);
-            form.append('pdDiscount', pdDiscount.current.value);
+            form.append('pd_name', pdName.current.value);
+            form.append('pd_explain', pdExplain.current.value);
+            form.append('pd_mount', pdMount.current.value);
+            form.append('pd_price', pdPrice.current.value);
+            form.append('pd_discount', pdDiscount.current.value);
+            form.append('pd_category', pdCategory.current.value);
             // 대표 이미지
             if (imgRef.current.files.length > 0) {
-              form.append('img', imgRef.current.files[0]); // 대표 이미지는 하나만 전송
+              form.append('image', imgRef.current.files[0]); // 대표 이미지는 하나만 전송
             }
             // 상세 이미지 (다중 파일)
             if (detailImagesRef.current.files.length > 0) {

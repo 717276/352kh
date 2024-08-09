@@ -1,5 +1,4 @@
 import '../../components/css/admin/ProductRegister.css';
-import productImage from './test.jpg';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useState, useRef, useEffect } from 'react';
 
@@ -10,6 +9,7 @@ const ProductModify = () => {
   const pdMount = useRef();
   const pdPrice = useRef();
   const pdDiscount = useRef();
+  const pdCategory = useRef();
   const [price, setPrice] = useState('');
   const [discountRate, setDiscountRate] = useState(0);
   const [items, setItems] = useState({});
@@ -19,15 +19,15 @@ const ProductModify = () => {
 
   useEffect(() => {
     const url = `http://localhost:8080/api/admin/productModify/${pdNo}`;
-    console.log(pdNo);
     fetch(url)
       .then(response => {
         return response.json();
       })
       .then(data => {
         setItems(data);
+        console.log(data);
       })
-  }, []);
+  }, [pdNo]);
 
   const handlePriceChange = (e) => {
     setPrice(e.target.value);
@@ -44,6 +44,14 @@ const ProductModify = () => {
     document.getElementById('price').value = finalPrice;
   };
 
+  const getImageUrl = () => {
+    if (items.img && items.img.i_ref_no) {
+      return `/images/shop/product_${items.img.i_ref_no}_1.jpg`;
+    } else {
+      return '/images/shop/default.jpg';
+    }
+  };
+
   return (
     <>
       <div className='ProductRegister'>
@@ -53,48 +61,58 @@ const ProductModify = () => {
             <ul>
               <li onClick={() => { nav() }}>회원관리</li>
               <li onClick={() => { nav() }}>여행관리</li>
-              <li onClick={() => { nav('/admin/productList') }}>상품관리</li>
+              <li onClick={() => { nav('/admin/getProductList') }}>상품관리</li>
               <li onClick={() => { nav('/admin/chart') }}>분석</li>
             </ul>
           </div>
         </div>
         <div className='ProductRegisterTable'>
-          <input type="hidden" value={items.pdNo || ''} readOnly />
+          <input type="hidden" value={items.pd_no || ''} readOnly />
           <input type="hidden" value={items.filename} readOnly />
           <table>
             <tbody>
               <tr>
+                <td colSpan={5}>
+                  <select ref={pdCategory} value={items.pd_category || ''} onChange={(e) => setItems(prevItems => ({ ...prevItems, pdCategory: e.target.value }))}>
+                    <option value="0">위생용품</option>
+                    <option value="1">간식 및 사료</option>
+                    <option value="2">강아지옷</option>
+                    <option value="3">악세사리</option>
+                  </select>
+                </td>
+              </tr>
+              <tr>
                 <td rowSpan={5}>
-                  <img src={`/images/shop/${items.filename}.jpg`} alt="image" />
+                  <img src={getImageUrl()} alt="image" />
                 </td>
                 <td>상품명</td>
-                <td colSpan={2}><input type="text" ref={pdName} defaultValue={items.pdName} /></td>
+                <td colSpan={2}><input type="text" ref={pdName} defaultValue={items.pd_name} /></td>
               </tr>
               <tr>
                 <td>상품설명</td>
                 <td colSpan={2}>
-                  <textarea ref={pdExplain} defaultValue={items.pdExplain}></textarea>
+                  <textarea ref={pdExplain} defaultValue={items.pd_explain}></textarea>
                 </td>
               </tr>
               <tr>
                 <td>상품수량</td>
                 <td colSpan={2}>
-                  <input type="number" min={0} ref={pdMount} defaultValue={items.pdMount} />
+                  <input type="number" min={0} ref={pdMount} defaultValue={items.pd_mount} />
                 </td>
               </tr>
               <tr>
                 <td>가격</td>
                 <td colSpan={2}>
-                  <input type="text" ref={pdPrice} onChange={handlePriceChange} defaultValue={items.pdPrice} />
+                  <input type="text" ref={pdPrice} onChange={handlePriceChange} defaultValue={items.pd_price} />
                 </td>
               </tr>
               <tr>
                 <td>할인율(%)/판매가</td>
                 <td>
-                  <input type="number" ref={pdDiscount} min={0} onChange={handleDiscountRateChange} defaultValue={items.pdDiscount} />
+                  <input type="number" ref={pdDiscount} min={0} onChange={handleDiscountRateChange} defaultValue={items.pd_discount} />
                 </td>
                 <td>
-                  <input type="text" id="price" name='price' value={items.pdPrice * (1 - items.pdDiscount / 100)} readOnly />
+                  <input type="text" id="price" name='price' value={items.pd_price * (1 - items.pd_discount / 100)} readOnly />
                 </td>
               </tr>
               <tr>
@@ -110,15 +128,16 @@ const ProductModify = () => {
         <div className='ProductRegisterButton'>
           <button id='saveButton' onClick={() => {
             const form = new FormData();
-            form.append('pdNo', pdNo);
-            form.append('pdName', pdName.current.value);
-            form.append('pdExplain', pdExplain.current.value);
-            form.append('pdMount', pdMount.current.value);
-            form.append('pdPrice', pdPrice.current.value);
-            form.append('pdDiscount', pdDiscount.current.value);
+            form.append('pd_no', items.pd_no);
+            form.append('pd_name', pdName.current.value);
+            form.append('pd_explain', pdExplain.current.value);
+            form.append('pd_mount', pdMount.current.value);
+            form.append('pd_price', pdPrice.current.value);
+            form.append('pd_discount', pdDiscount.current.value);
+            form.append('pd_category', pdCategory.current.value);
             // 대표 이미지
             if (imgRef.current.files.length > 0) {
-              form.append('img', imgRef.current.files[0]); // 대표 이미지는 하나만 전송
+              form.append('image', imgRef.current.files[0]); // 대표 이미지는 하나만 전송
             }
             // 상세 이미지 (다중 파일)
             if (detailImagesRef.current.files.length > 0) {
@@ -136,7 +155,8 @@ const ProductModify = () => {
           <button id="deleteButton" onClick={() => {
             if (window.confirm('삭제할까요?')) {
               const form = new FormData();
-              form.append('pdNo', items.pdNo);
+              console.log(items.pdNo);
+              form.append('pd_no', items.pd_no);
               fetch('http://localhost:8080/api/admin/product/delete', {
                 method: 'post',
                 body: form

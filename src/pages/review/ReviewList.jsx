@@ -21,6 +21,7 @@ const ReviewList = () => {
   const [items, setReviewList] = useState([]);
   const [sortedData, setSortedData] = useState([]);
   const [sortType, setSortType] = useState("");
+  const [searchTerm, setSearchTerm] = useState('');
 
   const url = 'http://localhost:8080/api/review';
 
@@ -33,7 +34,6 @@ const ReviewList = () => {
       .then((response) => response.json())
       .then((data) => {
         setReviewList(data);
-        //setSortType(data);
         setSortedData(data);
       })
   };
@@ -43,18 +43,29 @@ const ReviewList = () => {
 
     let sorted;
     if (selectedSortType === 'best') {
-      // 조회 많은 순으로 정렬
-      sorted = [...sortedData].sort((a, b) => b.readCount - a.readCount);
+      sorted = [...sortedData].sort((a, b) => b.ar_view - a.ar_view);
     } else if (selectedSortType === 'worst') {
-      // 조회 적은 순으로 정렬
-      sorted = [...sortedData].sort((a, b) => a.readCount - b.readCount);
+      sorted = [...sortedData].sort((a, b) => a.ar_view - b.ar_view);
     } else {
-      // 정렬이 없는 경우 원래 데이터로 리셋
       sorted = [...items];
     }
 
     setSortedData(sorted);
     setSortType(selectedSortType);
+  };
+
+  const handleSearchChange = (e) => {
+    setSearchTerm(e.target.value);
+  };
+
+  const handleSearch = () => {
+    const filteredData = items.filter(item =>
+      item.arTitle.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      item.ttitle.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      item.arUserId.toLowerCase().includes(searchTerm.toLowerCase())
+    );
+    setSortedData(filteredData);
+    setPage(1); // 검색 후 첫 페이지로 이동
   };
 
   // 페이징
@@ -90,19 +101,32 @@ const ReviewList = () => {
               </tr>
             ) : (
               currentPageData.map((row) => (
-                <tr key={row.arNo}>
-                  <td hidden>{row.arNo}</td>
-                  <td>{row.ttitle}</td>
-                  <td onClick={() => { nav(`/reviewComment/${row.arNo}`) }}>{row.arTitle}</td>
-                  <td>{row.arUserId}</td>
-                  <td>{row.arLike}</td>
-                  <td>{row.arView}</td>
-                  <td>{formatDate(row.arCreatedDate)}</td>
+                <tr key={row.ar_no}>
+                  <td hidden>{row.ar_no}</td>
+                  <td>{row.t_title}</td>
+                  <td onClick={() => { nav(`/reviewComment/${row.ar_no}`) }}>{row.ar_title}</td>
+                  <td>{row.ar_userId}</td>
+                  <td>{row.ar_like}</td>
+                  <td>{row.ar_view}</td>
+                  <td>{formatDate(row.ar_createdDate)}</td>
                 </tr>
               ))
             )}
           </tbody>
         </table>
+
+        <div className="ReviewButton">
+          <div className="ReviewSearch">
+            <input
+              type="text"
+              placeholder="검색어를 입력해주세요"
+              value={searchTerm}
+              onChange={handleSearchChange}
+            />
+            <button id='searchBtn' onClick={handleSearch}>검색</button>
+            <button className="primary" onClick={() => nav('/reviewWrite')}>후기작성</button>
+          </div>
+        </div>
 
         <Page
           totalPage={totalPage}
