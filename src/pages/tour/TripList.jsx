@@ -74,13 +74,13 @@ const TripList = () => {
 
   // 이미지 url
   const getImageUrl = (img) => {
-    return `/images/${img.i_category}/${img.i_ref_no}/${img.i_order}.png`;
+    return `/images/${img.i_category}/${img.i_category}_${img.i_ref_no}_${img.i_order}.jpg`;
   };
 
   return (
     <div className="TripList">
       <h1>투어 리스트</h1>
-      <ul className="sort-type trip-ul">
+      <ul className="mysort-type trip-ul">
         <li onClick={() => setFilter("all")}>전체</li>
         <li onClick={() => setFilter("waiting")}>승인대기</li>
         <li onClick={() => setFilter("approved")}>승인확인</li>

@@ -1,12 +1,13 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import Payment from "./Payment"; // 결제 컴포넌트 임포트
+import { jwtDecode } from "jwt-decode";
 import "../../components/css/order/Order.css";
 
 const Order = () => {
-  const { userNo } = useParams();
   const navigate = useNavigate();
   const [products, setProducts] = useState([]);
+  const [selectedProducts, setSelectedProducts] = useState([]);
   const [orderInfo, setOrderInfo] = useState({
     name: "",
     email: "",
@@ -16,6 +17,10 @@ const Order = () => {
     detailAddress: "",
   });
 
+  const token = localStorage.getItem("accessToken");
+  const decodedToken = jwtDecode(token);
+  const userNo = decodedToken.userNo;
+
   const [paymentInfo, setPaymentInfo] = useState({
     method: "card/easy", // 기본 결제 방법을 카드로 설정
   });
@@ -24,11 +29,11 @@ const Order = () => {
   const [isEditingAddress, setIsEditingAddress] = useState(false);
 
   useEffect(() => {
-    fetchOrderItems();
+    fetchOrderItems(userNo);
     loadDaumPostcodeScript();
   }, [userNo]);
 
-  const fetchOrderItems = () => {
+  const fetchOrderItems = (userNo) => {
     const url = `http://localhost:8080/api/order/${userNo}`;
     fetch(url)
       .then((response) => response.json())
@@ -82,20 +87,35 @@ const Order = () => {
     }
   };
 
-  const productTotal = products.reduce(
-    (total, product) => total + product.product.pd_price * product.ci_quantity,
-    0
-  );
+  const handleProductSelection = (ciNo) => {
+    setSelectedProducts((prevSelectedProducts) => {
+      if (prevSelectedProducts.includes(ciNo)) {
+        return prevSelectedProducts.filter((id) => id !== ciNo);
+      } else {
+        return [...prevSelectedProducts, ciNo];
+      }
+    });
+  };
 
-  const discountTotal = products.reduce(
-    (total, product) =>
+  const productTotal = selectedProducts.reduce((total, ciNo) => {
+    const product = products.find((product) => product.ci_no === ciNo);
+    return total + Math.floor(product.product.pd_price * product.ci_quantity);
+  }, 0);
+
+  const discountTotal = selectedProducts.reduce((total, ciNo) => {
+    const product = products.find((product) => product.ci_no === ciNo);
+    return (
       total +
-      (product.product.pd_price *
-        product.ci_quantity *
-        product.product.pd_discount) /
-        100,
-    0
-  );
+      Math.floor(
+        (product.product.pd_price *
+          product.ci_quantity *
+          product.product.pd_discount) /
+          100
+      )
+    );
+  }, 0);
+
+  const total = productTotal - discountTotal;
 
   const removeProduct = (ciNo) => {
     const url = `http://localhost:8080/api/deleteCart/${ciNo}`;
@@ -105,14 +125,15 @@ const Order = () => {
       .then((response) => {
         if (response.ok) {
           setProducts(products.filter((product) => product.ci_no !== ciNo));
+          setSelectedProducts((prevSelectedProducts) =>
+            prevSelectedProducts.filter((id) => id !== ciNo)
+          );
         } else {
           console.error("Failed to delete cart item");
         }
       })
       .catch((error) => console.error("Error deleting cart item:", error));
   };
-
-  const total = productTotal - discountTotal;
 
   const toggleDiscountDetails = () => {
     setShowDiscountDetails(!showDiscountDetails);
@@ -170,16 +191,19 @@ const Order = () => {
 
     const paymentData = {
       userNo: userNo, // orderInfo.userNo 대신 userNo 사용
-      orderItems: products.map((product) => ({
-        pd_no: product.product.pd_no,
-        oi_price: Math.round(
-          product.product.pd_price * (1 - product.product.pd_discount / 100)
-        ),
-        oi_quantity: product.ci_quantity,
-        oi_basicAddress: orderInfo.basicAddress,
-        oi_detailAddress: orderInfo.detailAddress,
-        oi_postNo: orderInfo.postNo,
-      })),
+      orderItems: selectedProducts.map((ciNo) => {
+        const product = products.find((product) => product.ci_no === ciNo);
+        return {
+          pd_no: product.product.pd_no,
+          oi_price: Math.floor(
+            product.product.pd_price * (1 - product.product.pd_discount / 100)
+          ),
+          oi_quantity: product.ci_quantity,
+          oi_basicAddress: orderInfo.basicAddress,
+          oi_detailAddress: orderInfo.detailAddress,
+          oi_postNo: orderInfo.postNo,
+        };
+      }),
       payment: {
         pay_type: paymentInfo.method,
         pay_total: total,
@@ -202,7 +226,7 @@ const Order = () => {
       .then((data) => {
         console.log("Order saved successfully:", data);
         alert("결제에 성공하였습니다.");
-        navigate(`/mypage/${userNo}`);
+        navigate(`/mypage`);
       })
       .catch((error) => {
         console.error("Error saving order:", error);
@@ -219,6 +243,11 @@ const Order = () => {
               products.map((product) => (
                 <div key={product.ci_no} className="product">
                   <div className="item">
+                    <input
+                      type="checkbox"
+                      checked={selectedProducts.includes(product.ci_no)}
+                      onChange={() => handleProductSelection(product.ci_no)}
+                    />
                     <img
                       src={getImageUrl(product.product.img)}
                       alt={product.product.pd_name}
@@ -357,12 +386,16 @@ const Order = () => {
           </div>
           {showDiscountDetails && (
             <div className="discount-details">
-              {products.map((product, index) => {
-                const discountAmount =
+              {selectedProducts.map((ciNo, index) => {
+                const product = products.find(
+                  (product) => product.ci_no === ciNo
+                );
+                const discountAmount = Math.floor(
                   (product.product.pd_price *
                     product.ci_quantity *
                     product.product.pd_discount) /
-                  100;
+                    100
+                );
                 return (
                   <div key={index}>
                     <span>{product.product.pd_name} 할인</span>

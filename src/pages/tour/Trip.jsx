@@ -38,17 +38,17 @@ const Trip = () => {
     if (!preferences || tours.length === 0) return [];
 
     console.log("Filtering tours based on user preference...");
-    const filtered = tours.filter((tour) => {
-      return (
-        (preferences.pf_rest === 1 && tour.pre.pf_rest === 1) ||
-        (preferences.pf_sport === 1 && tour.pre.pf_sport === 1) ||
-        (preferences.pf_walk === 1 && tour.pre.pf_walk === 1) ||
-        (preferences.pf_cafe === 1 && tour.pre.pf_cafe === 1) ||
-        (preferences.pf_spot === 1 && tour.pre.pf_spot === 1)
-      );
+    return tours.filter((tour) => {
+      let count = 0;
+      if (preferences.pf_rest === 1 && tour.pre.pf_rest === 1) count++;
+      if (preferences.pf_sport === 1 && tour.pre.pf_sport === 1) count++;
+      if (preferences.pf_walk === 1 && tour.pre.pf_walk === 1) count++;
+      if (preferences.pf_cafe === 1 && tour.pre.pf_cafe === 1) count++;
+      if (preferences.pf_spot === 1 && tour.pre.pf_spot === 1) count++;
+
+      tour.matchCount = count; // matchCount 필드를 추가하여 count 값 저장
+      return count >= 1 && tour.t_status === 1; // 1 이상인 경우 필터링
     });
-    console.log("Filtered Tours:", filtered);
-    return filtered;
   };
 
   useEffect(() => {
@@ -98,7 +98,7 @@ const Trip = () => {
   }
 
   const getImageUrl = (img) => {
-    return `/images/${img.i_category}/${img.i_ref_no}/${img.i_order}.png`;
+    return `/images/${img.i_category}/${img.i_category}_${img.i_ref_no}_${img.i_order}.jpg`;
   };
 
   const formatDateToYYYYMMDD = (dateString) => {
@@ -123,6 +123,9 @@ const Trip = () => {
                 key={item.t_no}
                 onClick={() => handleItemClick(item.t_no)}
               >
+                {item.matchCount >= 2 && (
+                  <div className="recommendation-badge">추천</div>
+                )}
                 <img src={getImageUrl(item.img)} alt={item.name} />
                 <div className="placeDescription">
                   <div className="placeName">{item.t_title}</div>

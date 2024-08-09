@@ -10,17 +10,39 @@ const TripDetail = () => {
   const [visibleReviews, setVisibleReviews] = useState(10);
   const [selectedDay, setSelectedDay] = useState(1);
   const [tourDetail, setTourDetail] = useState(null);
+  const [isApplied, setIsApplied] = useState(false);
 
   useEffect(() => {
-    const url = `http://localhost:8080/api/tripDetail/${t_no}`;
-    fetch(url)
-      .then((response) => response.json())
-      .then((data) => {
-        setTourDetail(data);
-        console.log(data);
-      })
-      .catch((error) => console.error("Error fetching tour detail:", error));
-  }, [t_no]);
+    const checkIfApplied = async () => {
+      const token = localStorage.getItem("accessToken");
+      if (!token) {
+        console.error("No access token found");
+        navigate("/login");
+        return;
+      }
+
+      const decodedToken = jwtDecode(token);
+      const userNo = decodedToken.userNo;
+
+      const url = `http://localhost:8080/api/userTourList/${userNo}`;
+      const response = await fetch(url);
+      const tourNos = await response.json();
+
+      const isTourApplied = tourNos.includes(parseInt(t_no, 10));
+      setIsApplied(isTourApplied);
+    };
+
+    const fetchTourDetail = async () => {
+      const url = `http://localhost:8080/api/tripDetail/${t_no}`;
+      const response = await fetch(url);
+      const data = await response.json();
+      setTourDetail(data);
+      console.log(data);
+    };
+
+    checkIfApplied();
+    fetchTourDetail();
+  }, [t_no, navigate]);
 
   if (!tourDetail) {
     return <div>Loading...</div>;
@@ -38,8 +60,10 @@ const TripDetail = () => {
     articles,
   } = tourDetail;
 
-  // 글이 길 때 ...으로 생략
   const truncateText = (text, maxLength) => {
+    if (!text) {
+      return "";
+    }
     if (text.length <= maxLength) {
       return text;
     }
@@ -74,7 +98,10 @@ const TripDetail = () => {
   };
 
   const getImageUrl = (img) => {
-    return `/images/tourdetail/${t_no}/${img.ti_category}/${img.ti_day}/${img.ti_order}.png`;
+    if (!img || !img.ti_category) {
+      return "/images/default.png"; // 기본 이미지 경로 또는 빈 문자열 반환
+    }
+    return `/images/tourimg/${img.ti_category}/${img.ti_category}_${img.ti_ref_no}_${img.ti_day}_${img.ti_order}.jpg`;
   };
 
   const getArtiImageUrl = (img) => {
@@ -92,12 +119,11 @@ const TripDetail = () => {
   const filteredHotels = hotels.filter((hotel) => hotel.h_day === selectedDay);
   const filteredPlaces = places.filter((place) => place.pl_day === selectedDay);
   const filteredRestaurantes = restaurantes.filter(
-    (res) => res.res_day === selectedDay
+    (res) => res.pl_day === selectedDay
   );
 
   const applyForTour = async () => {
     const token = localStorage.getItem("accessToken");
-
     if (!token) {
       console.error("No access token found");
       navigate("/login");
@@ -105,7 +131,7 @@ const TripDetail = () => {
     }
 
     const decodedToken = jwtDecode(token);
-    const userNo = decodedToken.userNo; // JWT에서 userNo 추출
+    const userNo = decodedToken.userNo;
 
     try {
       const response = await fetch(`http://localhost:8080/api/applyForTour`, {
@@ -120,20 +146,58 @@ const TripDetail = () => {
         throw new Error("Network response was not ok");
       }
 
-      const data = await response.json();
-      console.log("Application successful:", data);
-      // 추가적인 처리 로직 (예: 성공 메시지 표시, 페이지 이동 등)
+      alert("투어 신청이 완료되었습니다.");
+      window.location.reload();
     } catch (error) {
       console.error("Error applying for tour:", error);
-      // 오류 처리 로직 (예: 오류 메시지 표시)
+      alert("투어 신청 중 오류가 발생했습니다.");
     }
   };
+
+  const cancleTour = async () => {
+    const token = localStorage.getItem("accessToken");
+    if (!token) {
+      console.error("No access token found");
+      navigate("/login");
+      return;
+    }
+
+    const decodedToken = jwtDecode(token);
+    const userNo = decodedToken.userNo;
+
+    try {
+      const response = await fetch(`http://localhost:8080/api/cancleTour`, {
+        method: "DELETE",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ t_no: t_no, userNo: userNo }),
+      });
+
+      if (!response.ok) {
+        throw new Error("Network response was not ok");
+      }
+
+      alert("투어 신청이 취소되었습니다.");
+      window.location.reload();
+    } catch (error) {
+      console.error("Error cancelling tour:", error);
+      alert("투어 취소 중 오류가 발생했습니다.");
+    }
+  };
+
+  // 최대 day 값 계산
+  const maxDay = Math.max(
+    ...hotels.map((hotel) => hotel.h_day),
+    ...places.map((place) => place.pl_day),
+    ...restaurantes.map((res) => res.pl_day)
+  );
 
   return (
     <div className="TripDetail">
       <h1>투어 설명</h1>
       <div className="day-selector">
-        {[...Array(3)].map((_, index) => (
+        {[...Array(maxDay)].map((_, index) => (
           <button
             key={index}
             onClick={() => handleDaySelect(index)}
@@ -149,8 +213,8 @@ const TripDetail = () => {
           <div key={index} className="spot hotel">
             <img src={getImageUrl(hotel.img)} alt={hotel.h_name} />
             <div className="hotel-info">
-              <p>{hotel.h_location}</p>
               <p>{hotel.h_name}</p>
+              <p>{hotel.h_price}원</p>
             </div>
           </div>
         ))}
@@ -210,8 +274,8 @@ const TripDetail = () => {
               .map((food, index) => (
                 <div key={index} className="spot">
                   <img src={getImageUrl(food.img)} alt={`Food ${index}`} />
-                  <p>{food.res_name}</p>
-                  <p>{food.res_location}</p>
+                  <p>{food.pl_name}</p>
+                  <p>{food.pl_location}</p>
                 </div>
               ))}
           </div>
@@ -234,7 +298,7 @@ const TripDetail = () => {
           {formatDateToYYYYMMDD(t_endDate)}
         </p>
       </div>
-      {articles && articles.length > 0 && (
+      {articles && articles.length > 0 && articles[0].ar_no !== 0 && (
         <div className="reviews">
           {articles.slice(0, visibleReviews).map((review) => (
             <div
@@ -242,10 +306,12 @@ const TripDetail = () => {
               className="review"
               onClick={() => handleReviewClick(review.ar_no)}
             >
-              <img
-                src={getArtiImageUrl(review.img)}
-                alt={`Review ${review.ar_no}`}
-              />
+              {
+                // <img
+                //   src={getArtiImageUrl(review.img)}
+                //   alt={`Review ${review.ar_no}`}
+                // />
+              }
               <div className="review-text">
                 <h3>{review.ar_title}</h3>
                 <p>{truncateText(review.ar_content, 30)}</p>
@@ -254,17 +320,26 @@ const TripDetail = () => {
           ))}
         </div>
       )}
-      {articles && visibleReviews < articles.length && (
-        <div className="load-more">
-          <p onClick={loadMoreReviews} className="load-more-text">
-            + 더보기
-          </p>
-        </div>
-      )}
+      {articles &&
+        visibleReviews < articles.length &&
+        articles[0].ar_no !== 0 && (
+          <div className="load-more">
+            <p onClick={loadMoreReviews} className="load-more-text">
+              + 더보기
+            </p>
+          </div>
+        )}
       <div className="detail-actions">
-        <button className="detail-actions-register">신청하기</button>
+        {isApplied ? (
+          <button className="detail-actions-applied" onClick={cancleTour}>
+            신청취소
+          </button>
+        ) : (
+          <button className="detail-actions-register" onClick={applyForTour}>
+            신청하기
+          </button>
+        )}
         <button onClick={() => navigate(-1)}>뒤로가기</button>
-        <button>수정하기</button>
       </div>
     </div>
   );
