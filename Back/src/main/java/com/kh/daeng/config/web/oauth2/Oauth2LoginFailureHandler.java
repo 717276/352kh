@@ -17,7 +17,7 @@ public class Oauth2LoginFailureHandler extends SimpleUrlAuthenticationFailureHan
         if (exception instanceof OAuth2AuthenticationException) {
         	System.err.println("exception at oauth2authentication");
             OAuth2AuthenticationException oAuth2Exception = (OAuth2AuthenticationException) exception;
-            String redirectUrl =oAuth2Exception.getMessage();             
+            String redirectUrl = oAuth2Exception.getMessage();            
             getRedirectStrategy().sendRedirect(request, response, redirectUrl);
             
         } else if (exception instanceof AuthenticationException) {

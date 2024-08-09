@@ -140,6 +140,7 @@ const Build = () => {
                 });
                 if (response.status === 200) {
                     const hotelData = await response.json();
+                    console.log(hotelData);
                     setHotels(hotelData);
                 } else {
                     console.log("search bad request : ", response.status);
@@ -230,7 +231,7 @@ const Build = () => {
         setAddress(resultSearch +" "+data.name);
         dispatch({
             type: SELECT_TYPES.SET_HOTEL,
-            payload: new Hotel(data.name, data.price, data.image),
+            payload: new Hotel(data.name, data.price, data.photo),
         });
     }
     function createdPlace(data) {

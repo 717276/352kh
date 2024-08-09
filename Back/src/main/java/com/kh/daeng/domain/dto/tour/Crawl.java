@@ -5,6 +5,6 @@ import lombok.Data;
 @Data
 public class Crawl {
 	private String name;
-	private String img;
+	private String photo;
 	private String price;
 }

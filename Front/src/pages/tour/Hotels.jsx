@@ -10,7 +10,7 @@ const Hotels =({createdHotel, hotels, width, height})=>{
                     <div key={index} >
                         <span>{hotel.name}</span>
                         <div className="hotel_img">
-                            <img src={hotel.image} onClick={()=>createdHotel(hotel)} style={{ width: `${width}px`, height: `${height}px` }}/>
+                            <img src={hotel.photo} onClick={()=>createdHotel(hotel)} style={{ width: `${width}px`, height: `${height}px` }}/>
                         </div>
                         <div className="hotel_price">
                             {hotel.price}                            

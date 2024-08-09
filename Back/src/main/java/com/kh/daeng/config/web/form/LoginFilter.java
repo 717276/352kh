@@ -54,9 +54,9 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
 		Iterator<? extends GrantedAuthority> iterator = authorities.iterator();
 		GrantedAuthority auth = iterator.next();
 		String role = auth.getAuthority();
-
-		String accessToken = jwtUtil.createJwt("access", cud.getUserNo(), role,  1000L);
-		String refreshToken = jwtUtil.createJwt("refresh", cud.getUserNo(), role, 86400000L);
+		String userName = cud.getName();
+		String accessToken = jwtUtil.createJwt("access", cud.getUserNo(), userName, role,  1000L);
+		String refreshToken = jwtUtil.createJwt("refresh", cud.getUserNo(), userName, role, 86400000L);
 
 		// 필요하면 DB에 refreshToken 저장
 		

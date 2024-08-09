@@ -17,6 +17,9 @@ public class JWTUtil {
 	public JWTUtil (@Value("${spring.jwt.secret}")String secret) {
         secretKey = new SecretKeySpec(secret.getBytes(StandardCharsets.UTF_8), Jwts.SIG.HS256.key().build().getAlgorithm());		
 	}
+	public String getUserName(String token) {
+		return Jwts.parser().verifyWith(secretKey).build().parseSignedClaims(token).getPayload().get("userName",String.class);
+	}
 	public Integer getUserNo(String token) {
         return Jwts.parser().verifyWith(secretKey).build().parseSignedClaims(token).getPayload().get("userNo", Integer.class);
 	}
@@ -29,10 +32,11 @@ public class JWTUtil {
 	public String getCategory(String token) {        
         return Jwts.parser().verifyWith(secretKey).build().parseSignedClaims(token).getPayload().get("category", String.class);
     }
-	public String createJwt(String category, int userNo, String role, Long expiredMs) {
+	public String createJwt(String category, int userNo, String userName, String role, Long expiredMs) {
 		return Jwts.builder()
         		.claim("category", category)
                 .claim("userNo", userNo)
+                .claim("userName",userName)
                 .claim("role", role)
                 .issuedAt(new Date(System.currentTimeMillis()))
                 .expiration(new Date(System.currentTimeMillis() + expiredMs))

@@ -40,7 +40,7 @@ public class Oauth2UserDetailsService extends DefaultOAuth2UserService{
 			try {
 				String email = URLEncoder.encode(oauth2Response.getEmail(),"UTF-8");
 				String name = URLEncoder.encode(oauth2Response.getName(),"UTF-8");
-				String redirectUrl = "http://localhost:5173/register?email=" + email + "&name=" + name;
+				String redirectUrl = "http://localhost:5173/register/user?email=" + email + "&name=" + name;
 				throw new OAuth2AuthenticationException(new OAuth2Error("user_not_found"), redirectUrl);
 			}catch (UnsupportedEncodingException e) {
 				e.printStackTrace();

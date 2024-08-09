@@ -46,8 +46,10 @@ public class JWTFilter extends OncePerRequestFilter {
 		}		
 		// 토큰 만료 X
 		int userNo = jwtUtil.getUserNo(accessToken);
+		String userName = jwtUtil.getUserName(accessToken);
 		String role = jwtUtil.getRole(accessToken);
 		Member member = new Member();
+		member.setM_name(userName);
 		member.setM_no(userNo);
 		member.setM_role(role);
 		

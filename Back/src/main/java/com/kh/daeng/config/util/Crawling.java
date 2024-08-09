@@ -188,7 +188,7 @@ public class Crawling {
 			WebElement price = price_elements.get(i);
 			Crawl h = new Crawl();
 			h.setName(temp_name.get(i));						
-			h.setImg(temp_img.get(i));
+			h.setPhoto(temp_img.get(i));
 			h.setPrice(price.getText());
 			list.add(h);
 		}		

@@ -17,7 +17,8 @@ public class BuildController {
 	@Autowired
 	private Crawling crawling;
 	@PostMapping("/api/hotel")
-	public ResponseEntity<?> getHotelData(@RequestParam("strDate") String str  , @RequestParam("endDate") String end,  @RequestParam("region") String region){		
+	public ResponseEntity<?> getHotelData(@RequestParam("strDate") String str  , @RequestParam("endDate") String end,  @RequestParam("region") String region){
+		System.out.println("str Date " + str + " end Date " + end);
 		List<Crawl> hotelData;
 		try {
 			hotelData = crawling.process(region, str, end, 1, 0, 0);
