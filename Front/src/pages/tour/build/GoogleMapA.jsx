@@ -1,6 +1,6 @@
 import React from "react";
 import {useState,useEffect, useRef} from 'react';
-import '../../components/css/tour/Map.css';
+import '../../../components/css/tour/Map.css';
 import {
     GoogleMap,    
     useJsApiLoader,
@@ -17,10 +17,13 @@ const center = {
     lat: 37.5665,
     lng: 126.9780,
 };
+
+const radius = 5000;
+
 const libraries = ["places"];
 
-function GoogleMapB({address}) {   
-    console.log(address);
+function GoogleMapA({search, category,filteredData}) {   
+    
     const { isLoaded } = useJsApiLoader({
         id: "google-map-script",
         googleMapsApiKey: "AIzaSyBRZQy7nY-LfiTF9w9GdgQE81CvnGAKp9I",
@@ -28,13 +31,24 @@ function GoogleMapB({address}) {
     });
         
     let query = React.useMemo(() => {
-        return address;
-    }, [address]);
+        let baseQuery = "반려동물 동반 ";
+        if (search === '') {
+            return "서울역";
+        } else {
+            if (category === 1) {
+                return baseQuery + "명소 " + search;
+            } else if (category === 2) {
+                return baseQuery + "레스토랑 " + search;
+            }
+        }
+        return baseQuery;
+    }, [search, category]);
+    
 
     const [map, setMap] = React.useState(null);
     const [markers, setMarkers] = React.useState([]);
     let mapKey = React.useMemo(() => 
-        `${address}`, [address]
+        `${search}-${category}`, [search, category]
     );    
 
     const onLoad = React.useCallback(function callback(map) {
@@ -61,20 +75,17 @@ function GoogleMapB({address}) {
                         address: place.formatted_address,
                         photo: photoUrl,
                     };
-                });   
-                                 
+                });
+                if (category === 1 || category === 2){
+                    filteredData (newMarkers);
+                }                
                 setMarkers(newMarkers);
                 
                 if (newMarkers.length > 0) {
                     map.setCenter(newMarkers[0].position);
                     const bounds = new window.google.maps.LatLngBounds();
                     newMarkers.forEach(marker => bounds.extend(marker.position));
-                    map.fitBounds(bounds);
-
-                    const listener = window.google.maps.event.addListener(map, "bounds_changed", function() {
-                        this.setZoom(Math.min(map.getZoom(), 15));
-                        window.google.maps.event.removeListener(listener);
-                    });
+                    map.fitBounds(bounds);                                        
                 }
             }                                    
         });                
@@ -84,13 +95,14 @@ function GoogleMapB({address}) {
     const onUnmount = React.useCallback(function callback(map) {
         setMap(null);
     }, []);
-        
+    
+    
     return isLoaded ? (
         <GoogleMap
             key={mapKey}
             mapContainerStyle={containerStyle}
             center={center}
-            zoom={5}
+            zoom={15}
             onLoad={onLoad}
             onUnmount={onUnmount}
             options={{
@@ -99,9 +111,8 @@ function GoogleMapB({address}) {
             }}
         >
             {markers.map((marker,index)=>(
-                <MarkerF key={index} position={marker.position} title={marker.name} 
-                onMouseOver={() => {
-                    // info Window marker 정보 표시
+                <MarkerF key={index} position={marker.position} title={marker.name}                 
+                onClick={() => {
                     const infowindow = new window.google.maps.InfoWindow({
                     content: `<div>
                                 <h3>${marker.name}</h3>
@@ -109,8 +120,10 @@ function GoogleMapB({address}) {
                                 ${marker.photo ? `<img src="${marker.photo}" alt="${marker.name}" style="width:100px;height:100px;"/>` : ''}
                                 </div>`,
                     });
+                    // info Window marker 정보 표시
                     infowindow.open(map, new window.google.maps.Marker({ position: marker.position, map }));
                 }}>
+                
                     
                 </MarkerF>
             ))}
@@ -120,4 +133,4 @@ function GoogleMapB({address}) {
     );
 }
 
-export default GoogleMapB;
+export default GoogleMapA;

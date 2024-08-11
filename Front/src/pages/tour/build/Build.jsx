@@ -1,14 +1,14 @@
-import "../../components/css/tour/Build.css";
-import { useState, useRef, useReducer, useContext } from "react";
+import "../../../components/css/tour/Build.css";
+import { useState, useRef, useReducer, useContext, useEffect } from "react";
 import DatePicker from "react-datepicker";
 import { useNavigate } from "react-router-dom";
+
 import Hotels from "./Hotels";
 import Restaurante from "./Restaurantes";
 import Places from "./Places";
 import GoogleMapA from "./GoogleMapA.jsx";
 import GoogleMapB from "./GoogleMapB.jsx";
 import "react-datepicker/dist/react-datepicker.css";
-import { AuthContext } from "../../components/Auth.jsx"; // context.js 파일에서 import
 
 class Tour {
     constructor(hotel = null, places = [], res = []) {
@@ -86,12 +86,12 @@ const initialState = {
     res: [],
 };
 
-const Build = () => {
-    const { isAuthorized, setIsAuthorized } = useContext(AuthContext);
+const Build = () => {    
+    const navigator = useNavigate();    
+    const [save, setSave] = useState(false);
     // 카테고리, 검색어 설정
     const [category, setCategory] = useState(0);
     const [search, setSearch] = useState("");
-    const navigator = useNavigate();
     const [resultSearch, setResultSearch] = useState("");
     const [resultCategory, setResultCategory] = useState(category);
 
@@ -119,7 +119,7 @@ const Build = () => {
         setCategory(type);
         setSelectedCategory(type);
     };
-    // 검색 useCallback 동작 수정 필요
+    // 검색
     const getSearch = (category, search) => {
         if (search === "") {
             inputRef.current.focus();
@@ -151,8 +151,6 @@ const Build = () => {
             } else {
                 setResultSearch(search);
                 setResultCategory(category);
-                // setSearch(search);
-                // setCategory(category);
             }
         };
         renderingSearch();
@@ -165,7 +163,11 @@ const Build = () => {
             setRes(results);
         }
     }
-
+    const searchEnter=(e)=>{
+        if(e.key === "Enter"){
+            getSearch(category, search);
+        }
+    }
     // npm install react-datepicker 달력 라이브러리
     const today = new Date();
     const tomorrow = new Date();
@@ -179,6 +181,8 @@ const Build = () => {
             if (strIdxRef.current === endIdxRef.current + 1) {
                 endIdxRef.current = strIdxRef.current;
                 setTours([...tours, new Tour(state.hotel, state.places, state.res)]);
+                console.log("save tour");
+                console.log(tours);
 
                 state.hotel = "";
                 state.places = [];
@@ -289,21 +293,17 @@ const Build = () => {
     };
     // 데이터 전송
     const handleNav = async () => {
-        if (
-            state.hotel !== null &&
-            state.places.length > 0 &&
-            state.res.length > 0
-        ) {
+        if (state.hotel !== null && state.places.length > 0 && state.res.length > 0) {
             console.log("async ");
             await nextTour();
+            setSave(true);
         }
-        navigator("/trip", {
-            state: {
-                data: tours,
-            },
-        });
     };
-
+    useEffect(()=>{
+        if(save){
+            navigator("/tour/trip",{state:{data:tours}});
+        }
+    },[save])
     return (
         <div className="Build">
             <div className="build build_list_box">
@@ -357,6 +357,7 @@ const Build = () => {
                         placeholder="지역 입력"
                         value={search}
                         onChange={(e) => setSearch(e.target.value)}
+                        onKeyDown={(e)=> searchEnter(e)}                        
                     />
 
                     <img

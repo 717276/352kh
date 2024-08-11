@@ -5,72 +5,91 @@ export const HTTP_STATUS = {
     UNAUTHORIZED: 401,
     FORBIDDEN: 403,
     NOT_FOUND: 404,
+    SC_GONE: 410,
     INTERNAL_SERVER_ERROR: 500,
 };
 export const AuthContext = createContext();
 export const DataContext = createContext();
 
 export const AuthProvider = ({ children }) => {
+
     const baseURI = 'http://localhost:8080';
     const location = useLocation();
     const navigator = useNavigate();
     const [isAuthorized, setIsAuthorized] = useState(false);
 
+    useEffect(() => {         
+        const sync = async()=>{
+            await sendAccess();
+        };
+        sync();
+    }, [location.pathname]);
+
     async function setAccessToken (response){
+        console.log("setAccessToken: " + response.headers.get('authorization'));
         const accessToken = response.headers.get('authorization');        
-        console.log("set access token : " + accessToken);
         localStorage.setItem('accessToken', accessToken);
     }
 
     async function sendAccess() {
         const accessToken = localStorage.getItem('accessToken');
-        console.log("send access token: " + accessToken);
-        if (location.pathname === '/register/user'){
-            return true;
-        }
-        if (location.pathname !== '/' ){
-            if (accessToken === null || accessToken === 'null'){
+        const path = location.pathname;
+        if (path !== '/' && path !== '/login' && !path.startsWith('/register') && !path.startsWith('/shop')){                        
+            const uriResult = await sendUri(accessToken);
+            if (uriResult === HTTP_STATUS.SC_GONE){
                 sendRefresh();
-            }else {
-                const response = await fetch(baseURI + location.pathname, {
-                    method: 'GET',
-                    headers: {
-                        'authorization': accessToken,
-                    },
-                    credentials: 'include'
-                })
-                if (response.status === HTTP_STATUS.OK){                
-                    console.log("access response status 200 : " + accessToken);
-                    setIsAuthorized(true);
-                } else if (response.status === HTTP_STATUS.UNAUTHORIZED){
-                    console.log("access response status 401");
-                    sendRefresh();
-                } else if (response.status === HTTP_STATUS.FORBIDDEN){
-                    navigator('/');
-                    alert("접근 권한 없음");
-                } else{
-                    alert("access Error : " + response.status);
-                }
-            }
+            }            
+        }                
+    }    
+    async function sendUri(accessToken){        
+        if (accessToken === null){            
+            return HTTP_STATUS.SC_GONE;
+        }
+        const response = await fetch(baseURI + location.pathname,{
+            method:"GET",
+            headers:{'Authorization' : `${accessToken}`},
+            credentials:'include'
+        })
+        console.log("access response : " + response.status);
+        //저장 
+        if (response.status === HTTP_STATUS.OK){        
+            setAccessToken(response);    
+            setIsAuthorized(true);
+            console.log("토큰저장");
+            return HTTP_STATUS.OK; 
+        //토큰 만료
+        } else if (response.status === HTTP_STATUS.SC_GONE){
+            return HTTP_STATUS.SC_GONE;
+        //인증        
+        } else if (response.status === HTTP_STATUS.UNAUTHORIZED) {
+            alert("로그인 실패");
+            window.location.reload();
+            return HTTP_STATUS.UNAUTHORIZED;
+        //인가
+        } else if (response.status === HTTP_STATUS.FORBIDDEN){
+            alert("접근 권한 없음");
+            navigator(-1);
+            return HTTP_STATUS.FORBIDDEN;
+        } else if (response.status === HTTP_STATUS.NOeT_FOUND){
+            alert("페이지를 찾을 수 없음");
+            navigator(-1);
+            return HTTP_STATUS.NOT_FOUND;
         }
     }
-
+    
     async function sendRefresh() {
         try {
             const response = await fetch(baseURI + '/reissue', {
                 method: 'POST',
                 credentials: 'include',
             });
-            if (response.ok) {        
-                console.log("refersh response status 200");
+            console.log("refresh response status : " , response.status);
+            if (response.ok) {
                 setAccessToken(response);        
                 sendAccess();                
-            } else{
-                console.log("refersh response status is not 200 => " + response.status);
-
+            } else{                
                 localStorage.removeItem('accessToken');
                 document.cookie = "refresh=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";                
-                navigator('/login');         
             }
         } catch (error) {
             console.error('Error while refreshing token:', error);
@@ -78,20 +97,33 @@ export const AuthProvider = ({ children }) => {
         }        
     }
 
-    useEffect(() => {
-        sendAccess(); // URL 경로가 변경될 때마다 호출
-    }, [location.pathname]);
     return (
-        <AuthContext.Provider value={{ isAuthorized, setIsAuthorized }}>
+        <AuthContext.Provider value={[ isAuthorized, setIsAuthorized ]}>
             {children}
         </AuthContext.Provider>
     );
 };
+
 export const DataProvider = ({ children }) => {
     const [uri, setUri] = useState('');
-
+    const [data, setData] = useState();
+    useEffect(()=>{
+        const getData = async()=>{
+            if (!uri) return;
+            const response = await fetch(uri,{
+                credentials:'include'
+            })
+            if (response.status === HTTP_STATUS.OK){
+                const jsonData = await response.json();
+                setData(jsonData);
+            }else{
+                console.log("Get data error");
+            }   
+        }
+        getData();
+    },[uri])
     return (
-        <DataContext.Provider value={{ uri, setUri }}>
+        <DataContext.Provider value={{ uri, setUri , data, setData}}>
             {children}
         </DataContext.Provider>
     );
