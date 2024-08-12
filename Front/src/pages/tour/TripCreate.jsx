@@ -7,7 +7,7 @@ const TripCreate = () => {
   const location = useLocation();
   const [currentIndex, setCurrentIndex] = useState({ places: 0, foods: 0 });
   const [selectedDay, setSelectedDay] = useState(1);
-  const { tours, startDate } = location.state || {};
+  const { data: tours, startDate } = location.state || {};
   const [endDate, setEndDate] = useState(null);
   const tourNameRef = useRef(null);
   const tourDescriptionRef = useRef(null);
