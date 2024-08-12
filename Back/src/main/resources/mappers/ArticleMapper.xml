@@ -17,7 +17,25 @@
 	    order by ar_no desc
 	</select>
 	
-	<select id="detail" parameterType="int" resultType="Article">
+	<resultMap id="ArticleResultMap" type="Article">
+        <id property="ar_no" column="ar_no"/>
+        <result property="m_no" column="m_no"/>
+        <result property="t_no" column="t_no"/>
+        <result property="ar_title" column="ar_title"/>
+        <result property="ar_content" column="ar_content"/>
+        <result property="ar_userId" column="ar_userId"/>
+        <result property="ar_like" column="ar_like"/>
+        <result property="ar_view" column="ar_view"/>
+        <result property="t_title" column="t_title"/>
+
+        <collection  property="img_list" ofType="Img">
+            <id property="i_no" column="i_no"/>
+            <result property="i_ref_no" column="i_ref_no"/>
+            <result property="i_category" column="i_category"/>
+            <result property="i_order" column="i_order"/>
+        </collection >
+    </resultMap>
+	<select id="detail" parameterType="int" resultMap="ArticleResultMap">
 		 select a.ar_no as ar_no,
 	           a.m_no as m_no,
 	           a.t_no as t_no,
@@ -27,11 +45,17 @@
 	           a.ar_userId as ar_userId,
 	           a.ar_createdDate as ar_createdDate,
 	           a.ar_like as ar_like,
-	           a.ar_view as ar_view
-	    from article a inner join tour t
-	    on a.t_no = t.t_no
+	           a.ar_view as ar_view,
+	           i.i_no as i_no,
+	           i.i_ref_no as i_ref_no,
+	           i.i_category as i_category,
+	           i.i_order as i_order
+	    from article a
+	    inner join tour t on a.t_no = t.t_no
+	    left join img i on a.ar_no = i.i_ref_no
+	    and i.i_category = 'review'
 	    where a.ar_no = #{ar_no}
-	    order by ar_no desc
+	    order by i.i_order
 	</select>
 	
 	<insert id="insert">
@@ -88,13 +112,7 @@
 		insert into img
 		values (img_seq.nextval, #{ar_no}, 'review', #{index})
 	</insert>
-	
-	<select id="selectImgList" parameterType="int" resultType="java.util.Map">
-		select 'review_' || i_ref_no || '_' || i_order as filename
-		from img
-		where i_ref_no = #{ar_no} and i_category = 'review'
-	</select>
-	
+
 	<insert id="insertCommentList">
 		insert into comments
 		values (c_seq.nextVal, #{ar_no}, #{m_no}, 0, #{c_userId}, 0, #{c_content}, SYSDATE, 0)
