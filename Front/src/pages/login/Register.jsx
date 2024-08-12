@@ -24,10 +24,12 @@ const Register = () => {
     const location = useLocation();
 
     const emailRegEx = /^[A-Za-z0-9]([-_.]?[A-Za-z0-9])*@[A-Za-z0-9]([-_.]?[A-Za-z0-9])*\.[A-Za-z]{2,3}$/i;
-    const passwordRegEx = /^(?=.*[A-Z])(?=.*[!@#$%^&*])[A-Za-z0-9!@#$%^&*]{8,20}$/;
+    const passwordRegEx = /^(?=.*[!@#$%^&*])[A-Za-z0-9!@#$%^&*]{8,20}$/;
     const usernameRegEx = /^[가-힣]{2,6}$/; // 한글 2글자에서 6글자
     const phoneNumberRegEx = /^[0-9]*$/; // 숫자만
 
+    // provider 추가 
+    const [provider, setProvider] = useState('Daeng');
     const passwordCheck = (userPW) => {
         if (userPW === '') {
             setPasswordError('');
@@ -75,12 +77,17 @@ const Register = () => {
         document.body.appendChild(script);
 
         // location.state에서 이름과 이메일 값 가져오기
-        if (location.state) {
-            const { googleName, googleEmail } = location.state;
-            setUsername(googleName || '');
-            setEmail(googleEmail || '');
+        const params = new URLSearchParams(location.search);
+        const name = decodeURIComponent(params.get('name'));
+        const email = decodeURIComponent(params.get('email'));
+        const provider = decodeURIComponent(params.get('provider'));       
+        if (name !== 'null') setUsername(name);
+        if (email !== 'null') setEmail(email);
+        if (provider !== 'null') {
+            console.log(provider);
+            setProvider(provider);    
         }
-    }, [location.state]);
+    }, [location.search]);
 
     const completeHandler = (data) => {
         const { address, zonecode } = data;
@@ -128,6 +135,7 @@ const Register = () => {
 
     const handleSubmit = (event) => {
         event.preventDefault();
+        console.log("handleSubmit");
         // 입력값 검증 로직
         if (usernameError || !username) {
             alert('이름을 올바르게 입력해주세요.');
@@ -137,7 +145,7 @@ const Register = () => {
             alert('ID를 입력해주세요.');
             return;
         }
-        if (passwordError || !password) {
+        if ((passwordError || !password ) && provider === 'Daeng') {
             alert('유효한 비밀번호를 입력해주세요.');
             return;
         }
@@ -183,6 +191,7 @@ const Register = () => {
             zonecode,
             address,
             detailedAddress,
+            provider : provider,
         };
         const dog = {
             dogName,
@@ -193,7 +202,7 @@ const Register = () => {
         // 세션에 저장하고 다음 페이지로 이동
         sessionStorage.setItem('user', JSON.stringify(user));
         sessionStorage.setItem('dog', JSON.stringify(dog));
-        navigate('/selecttm');
+        navigate('/register/preference');
     };
 
     return (
@@ -228,19 +237,20 @@ const Register = () => {
                             중복 체크
                         </button>
                     </div>
-
-                    <input
-                        type="password"
-                        name="userPW"
-                        id="userPW"
-                        placeholder="PASSWORD : 대문자 특수문자 포함"
-                        className="input-field"
-                        value={password}
-                        onChange={(e) => {
-                            setPassword(e.target.value);
-                            passwordCheck(e.target.value);
-                        }}
-                    />
+                    {provider==='Daeng'&&(
+                        <input
+                            type="password"
+                            name="userPW"
+                            id="userPW"
+                            placeholder="PASSWORD : 대문자 특수문자 포함"
+                            className="input-field"
+                            value={password}
+                            onChange={(e) => {
+                                setPassword(e.target.value);
+                                passwordCheck(e.target.value);
+                            }}
+                        />
+                    )}
                     {passwordError && <p style={{ color: 'red' }}>{passwordError}</p>}
                     <input
                         type="email"

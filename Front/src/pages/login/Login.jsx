@@ -1,11 +1,27 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef, useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
 import '../../components/css/login/Login.css';
-const Login = ({ login }) => {
+import { AuthContext } from '../../components/Auth';
+const HTTP_STATUS = {
+    OK: 200,    
+    NOT_FOUND: 404,    
+};
+const Login = () => {
     const [username, setUserId] = useState('');
     const [password, setUserPW] = useState('');
     const navigate = useNavigate();
-
+    const inputRef = useRef();
+    const [isAuthorized,setIsAuthorized] = useContext(AuthContext);
+    useEffect(()=>{
+        console.log("Login: " + isAuthorized);
+        if(isAuthorized){            
+            alert("로그인")
+            navigate('/');
+        }
+    },[isAuthorized])
+    function googleLoginHandler() {
+        window.location.href = 'http://localhost:8080/oauth2/authorization/google';
+    }
     const formLogin = async () => {
         try {
             const response = await fetch('http://localhost:8080/login', {
@@ -19,10 +35,17 @@ const Login = ({ login }) => {
                 }).toString(),
                 credentials: 'include',
             });
-            if (response.status === 200) {
+
+            if (response.status === HTTP_STATUS.OK) {      
+                alert("로그인");          
+                localStorage.setItem('accessToken', response.headers.get('authorization'));
+                setIsAuthorized(true);
                 navigate('/');
-            } else {
-                console.log('form login error');
+            } else if(response.status === HTTP_STATUS.NOT_FOUND){
+                setUserId('');
+                setUserPW('');
+                inputRef.current.focus();
+                alert("로그인 실패");
                 return;
             }
         } catch (error) {
@@ -32,38 +55,45 @@ const Login = ({ login }) => {
     return (
         <div className="login-container">
             <h2>로그인</h2>
-            <div className="login_box">
-                <input
-                    onChange={(e) => setUserId(e.target.value)}
-                    type="text"
-                    name="username"
-                    id="username"
-                    placeholder="ID"
-                    className="input-field"
-                />
-                <input
-                    onChange={(e) => setUserPW(e.target.value)}
-                    type="password"
-                    name="password"
-                    id="password"
-                    placeholder="PASSWORD"
-                    className="input-field"
-                />
-                <input type="submit" value="로그인" className="login-button" onClick={() => formLogin()} />
+            <div className="login_box_wrapper">
+                <div className="login_box">
+                    <input
+                        onChange={(e) => setUserId(e.target.value)}                    
+                        ref={inputRef}
+                        type="text"
+                        name="username"
+                        id="username"
+                        placeholder="ID"
+                        className="input-field"
+                        value={username} 
+                    />
+                    <input
+                        onChange={(e) => setUserPW(e.target.value)}
+                        type="password"
+                        name="password"
+                        id="password"
+                        placeholder="PASSWORD"
+                        className="input-field"
+                        value={password}
+                    />
+                    <input type="submit" value="로그인" className="login-button" onClick={() => formLogin()} />
+                </div>
                 <div className="login-buttons">
-                    <div className="google-login">
-                        <a href="/oauth2/authorization/google">구글 로그인</a>
+                    <div className='google-login-wrapper'>
+                        <img className="google-login"  src="/public/images/login/google_login.png"  onClick={() => {
+                                googleLoginHandler();
+                            }} />                                        
                     </div>
-                    <div className="naver-login">
-                        <a href="/oauth2/authorization/naver">
-                            <img className="n_logo" src="public/images/login/naverlogo.png" alt="Naver Logo" />{' '}
-                        </a>
+                    <div className='naver-login-wrapper'>
+                        <img className="naver-login" src="/public/images/login/naver_login.png" alt="Naver Logo" />{' '}
+                            {/* <a href="/oauth2/authorization/naver">
+                            </a> */}                    
                     </div>
                 </div>
                 <div className="footer-links">
-                    <div onClick={navigate('/findemail')}>이메일 찾기</div>
-                    <div onClick={navigate('//findpassword')}>비밀번호 찾기</div>
-                    <div onClick={navigate('/register/user')}>회원가입</div>
+                    <div onClick={() => navigate('/findemail')}>이메일 찾기</div>
+                    <div onClick={() => navigate('/findpassword')}>비밀번호 찾기</div>
+                    <div onClick={() => navigate('/register')}>회원가입</div>
                 </div>
             </div>
         </div>
