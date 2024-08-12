@@ -36,6 +36,7 @@ public class JwtServiceImpl {
 
         if (refresh == null) {
         	System.out.println("refersh is null");
+        	response.setStatus(400);
             return new ResponseEntity<>("refresh token null", HttpStatus.BAD_REQUEST);
         }
         //expired check
@@ -52,10 +53,11 @@ public class JwtServiceImpl {
         }
         
         int userNo = jwtUtil.getUserNo(refresh);
+        String userName = jwtUtil.getUserName(refresh);
         String role = jwtUtil.getRole(refresh);
 
-        String newAccess = jwtUtil.createJwt("access", userNo, role, 600000L);
-        String newRefresh = jwtUtil.createJwt("refresh", userNo, role, 86400000L);
+        String newAccess = jwtUtil.createJwt("access", userNo, userName, role, 600000L);
+        String newRefresh = jwtUtil.createJwt("refresh", userNo, userName, role, 86400000L);
         
         refreshMapper.deleteByRefresh(refresh);
     	addRefreshEntity(userNo, newRefresh, 86400000L);

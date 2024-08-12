@@ -8,6 +8,7 @@ import java.util.concurrent.CompletableFuture;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
@@ -40,6 +41,8 @@ public class MemberServiceImpl implements MemberService {
     private JavaMailSender mailSender;
     @Autowired
     private CertificationGenerator generator;
+    @Value("${basic.provider}")
+    private String basicProvider;
 
     @Override
     public List<Member> getAllMembers() {
@@ -86,7 +89,9 @@ public class MemberServiceImpl implements MemberService {
         logger.info("impl진입" );
         logger.info("Member Name: " + member.getM_name());
         logger.info("Prefer: " + preference.toString());
-        logger.info("Dog: " + dog.toString());
+        logger.info("Dog: " + dog.toString());        
+        String encyrptionPassword = bCryptPasswordEncoder.encode(member.getM_password());
+        member.setM_password(encyrptionPassword);
         memberMapper.registerMemberWithPreference(member, preference, dog);
     }
 
@@ -97,8 +102,8 @@ public class MemberServiceImpl implements MemberService {
     }
 
     @Override
-    public Member findByEmail(String email) {
-        return memberMapper.findByUserEmail(email);
+    public Member findByEmail(String email, String provider) {
+        return memberMapper.findByUserEmail(email, provider);
     }
 
     @Override
@@ -110,7 +115,8 @@ public class MemberServiceImpl implements MemberService {
 
     @Override
     public ResponseEntity<String> findPwdByUser(Map<String, String> user) {
-        Member member = findByEmail(user.get("userEmail"));
+    	
+        Member member = findByEmail(user.get("userEmail"),basicProvider);
         if (member != null) {
             String dbUserTel = "0" + member.getM_phone(); // DB에서 email로 검색, DB에서 email이 있으면
             String inputTel = user.get("userTel"); // input tel과 DB tel을 비교
@@ -159,7 +165,7 @@ public class MemberServiceImpl implements MemberService {
         String content = String.format("임시비밀번호: %s <br><br> 로그인 후 마이페이지에서 비밀번호를 수정해주세요.", certificationNumber);
 
         // DB에 비밀번호 저장
-        Member member = findByEmail(email);
+        Member member = findByEmail(email,basicProvider);
         if (member != null) {
             member.setM_password(certificationNumber); // 임시 비밀번호 설정 (암호화는 다른 곳에서 처리)
             updateMemberPassword(member); // 변경된 비밀번호를 DB에 저장

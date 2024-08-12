@@ -40,9 +40,8 @@
 		AND
 		m_password = #{password}
 	</select>
-	<select id="findByUserEmail" resultType="Member">
-		SELECT * FROM member
-		WHERE m_email = #{m_email}
+	<select id="findByUserEmail" parameterType="map" resultType="Member">
+		SELECT * FROM member WHERE m_email = #{email} and m_provider = #{provider}
 	</select>
 	<select id="findByPhoneNumber" parameterType="String"
 		resultType="Member">
@@ -51,26 +50,23 @@
 	<insert id="registerMemberWithPreference">
 		{CALL register_member_with_preference(
 		#{member.m_userId, mode=IN, jdbcType=VARCHAR},
-		#{member.m_name,
-		mode=IN, jdbcType=VARCHAR},
-		#{member.m_email, mode=IN,
-		jdbcType=VARCHAR},
+		#{member.m_name, mode=IN, jdbcType=VARCHAR},
+		#{member.m_email, mode=IN, jdbcType=VARCHAR},
 		#{member.m_password, mode=IN, jdbcType=VARCHAR},
 		#{member.m_phone, mode=IN, jdbcType=NUMERIC},
-		#{member.m_basicAddress,
-		mode=IN, jdbcType=VARCHAR},
-		#{member.m_detailAddress, mode=IN,
-		jdbcType=VARCHAR},
+		#{member.m_basicAddress, mode=IN, jdbcType=VARCHAR},
+		#{member.m_detailAddress, mode=IN, jdbcType=VARCHAR},
 		#{member.m_postNo, mode=IN, jdbcType=VARCHAR},
+		#{member.m_provider, mode=IN, jdbcType=VARCHAR},
+				
 		#{preference.pf_rest, mode=IN, jdbcType=NUMERIC},
 		#{preference.pf_sport, mode=IN, jdbcType=NUMERIC},
 		#{preference.pf_cafe, mode=IN, jdbcType=NUMERIC},
 		#{preference.pf_walk, mode=IN, jdbcType=NUMERIC},
 		#{preference.pf_spot, mode=IN, jdbcType=NUMERIC},
-		#{dog.d_name,
-		mode=IN, jdbcType=VARCHAR},
+		#{dog.d_name, mode=IN, jdbcType=VARCHAR},
 		#{dog.d_breed, mode=IN, jdbcType=VARCHAR},
-		#{dog.d_size, mode=IN, jdbcType=NUMERIC}
+		#{dog.d_size, mode=IN, jdbcType=NUMERIC}		
 		)}
 	</insert>
 </mapper>
