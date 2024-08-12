@@ -8,6 +8,7 @@ import Main from './pages/Main';
 import Tour from './pages/tour/Tour.jsx';
 import Board from './pages/review/Board.jsx';
 import Admin from './pages/admin/Admin.jsx';
+import Store from './pages/shop/Store.jsx';
 
 import Notice from './pages/notice/Notice';
 import QnA from './pages/csr/QnA';
@@ -34,20 +35,14 @@ function App() {
             <Route path="/" element={<Main />} />
             <Route path="/tour/*" element={<Tour />} />                          
             <Route path="/board/*" element={<Board />}/>            
-            <Route path="/admin/*" element={<Admin/>}/>             
-            
+            <Route path="/admin/*" element={<Admin/>}/>            
+            <Route path="/shop/*" element={<Store />} />
 
             <Route path="/login" element={<Login />} />
             <Route path="/register" element={<Register />} />
             <Route path="/register/preference" element={<SelectTm />} />
-
             <Route path="/mypage" element={<MyPage />} />
-            {/* url 변경 */}
-            <Route path="/shop" element={<Shop />} />
-            {/* shoplist -> shop/list */}
-            <Route path="/shop/list/:category" element={<ShopList />} />                                                                                          
-            <Route path="/notice" element={<Notice />} />
-            <Route path="/qna" element={<QnA/>}/>
+            
           </Routes>          
         <Footer></Footer>
         </div>
