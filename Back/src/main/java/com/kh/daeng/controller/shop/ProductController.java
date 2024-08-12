@@ -8,6 +8,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -22,6 +23,7 @@ import com.kh.daeng.domain.dto.shop.Product;
 import com.kh.daeng.service.iface.ProductService;
 
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 
 @RestController
 public class ProductController {
@@ -35,11 +37,16 @@ public class ProductController {
 		return product;
 	}
 
+// request mapping 이름 수정
 	@RequestMapping("/api/admin/productList")
 	public List<Product> selectProductList() throws Exception {
+	public List<Product> selectProductList(HttpServletResponse response) throws Exception {
 		logger.info("컨트롤러 selectProductList 진입");
 		List<Product> list = service.selectProductList();
 		return list;
+        logger.info("Response status: " + response.getStatus());
+		List<Product> list = service.selectProductList();		
+		return list;		
 	}
 	
 	@RequestMapping("/api/admin/productModify/{pd_no}")

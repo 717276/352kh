@@ -39,6 +39,7 @@ public class TourController {
 	// 전체 리스트 불러오기
 	@GetMapping("/trip")
 	public List<Tour> getAllTours() throws Exception {
+	public List<Tour> getAllTours() throws Exception {		
 		return service.getAllTours();
 	}
 

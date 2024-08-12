@@ -2,6 +2,7 @@ package com.kh.daeng.config.web.jwt;
 
 import java.io.IOException;
 
+import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -27,8 +28,9 @@ public class JWTFilter extends OncePerRequestFilter {
 	@Override	
 	protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
 			throws ServletException, IOException {			
-		System.err.println("in jwt filter from " +  request.getRequestURL());
-		String accessToken = request.getHeader("authorization");				
+		log.info("in jwt filter from " +  request.getRequestURL());
+		String accessToken = request.getHeader("Authorization");	
+		System.err.println("accessToken : " + accessToken);
 		// token 없음
 		if (accessToken == null || accessToken.equals("null")) {
 			System.err.println("jwt access token null");
@@ -36,12 +38,11 @@ public class JWTFilter extends OncePerRequestFilter {
 			return;
 		}
 		// 토큰 만료 O
-		try {
-			System.err.println("jwt access token check expired : " + accessToken);
+		try {			
 			jwtUtil.isExpired(accessToken);
 		} catch (ExpiredJwtException e) {
-			System.err.println("access token is expired return 401 error");
-			response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+			System.err.println("access token is expired return 409 error");
+			response.setStatus(HttpServletResponse.SC_GONE);
 			return;
 		}		
 		// 토큰 만료 X
@@ -52,14 +53,15 @@ public class JWTFilter extends OncePerRequestFilter {
 		member.setM_name(userName);
 		member.setM_no(userNo);
 		member.setM_role(role);
-		
-		System.err.println("jwt filter role " + role);
-		
+						
 		CustomUserDetails customUserDetails = new CustomUserDetails(member);
 		Authentication authToken = new UsernamePasswordAuthenticationToken(customUserDetails, null,customUserDetails.getAuthorities());
 		SecurityContextHolder.getContext().setAuthentication(authToken);
-
-		System.err.println("jwt to next filter");
+		 
+		response.setHeader("authorization", accessToken);
+		response.setStatus(HttpStatus.OK.value());
+		
+		log.info("jwt to next filter");		
 		filterChain.doFilter(request, response);
 	}
 }

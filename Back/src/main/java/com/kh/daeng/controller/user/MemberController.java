@@ -80,6 +80,7 @@ public class MemberController {
         member.setM_basicAddress(userInfo.get("address").toString());
         member.setM_detailAddress(userInfo.get("detailedAddress").toString());
         member.setM_postNo(userInfo.get("zonecode").toString());
+        member.setM_provider(userInfo.get("provider").toString());
 
         Dog dog = new Dog();
         dog.setD_breed(userInfo.get("breed").toString());

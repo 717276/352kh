@@ -35,26 +35,17 @@ public class Oauth2UserDetailsService extends DefaultOAuth2UserService{
 			oauth2Response = new NaverResponse(oauth2.getAttributes());
 		}
 						
-		Member member = memberMapper.findByUserEmail(oauth2Response.getEmail());
-		if (member == null) {
+		Member member = memberMapper.findByUserEmail(oauth2Response.getEmail(),oauth2Response.getProvider());				
+		if (member == null || !member.getM_provider().equals(oauth2Response.getProvider())) {
 			try {
 				String email = URLEncoder.encode(oauth2Response.getEmail(),"UTF-8");
 				String name = URLEncoder.encode(oauth2Response.getName(),"UTF-8");
-				String redirectUrl = "http://localhost:5173/register/user?email=" + email + "&name=" + name;
+				String redirectUrl = "http://localhost:5173/register?email=" + email + "&name=" + name +"&provider=" + oauth2Response.getProvider();
 				throw new OAuth2AuthenticationException(new OAuth2Error("user_not_found"), redirectUrl);
 			}catch (UnsupportedEncodingException e) {
 				e.printStackTrace();
 			}			
-		}	
-		
-//		Member member = new Member();
-//		if ("본인 email 입력".equals(oauth2Response.getEmail())) {
-//			System.err.println("email confirm");
-//			System.err.println(oauth2Response.getEmail());
-//			member.setM_email(oauth2Response.getEmail());
-//			member.setM_name(oauth2Response.getName());
-//			member.setM_no(-1);			
-//		}
+		}
 		return new CustomUserDetails(member, oauth2Response);
 	}
 }

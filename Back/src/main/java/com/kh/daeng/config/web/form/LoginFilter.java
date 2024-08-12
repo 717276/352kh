@@ -55,7 +55,7 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
 		GrantedAuthority auth = iterator.next();
 		String role = auth.getAuthority();
 		String userName = cud.getName();
-		String accessToken = jwtUtil.createJwt("access", cud.getUserNo(), userName, role,  1000L);
+		String accessToken = jwtUtil.createJwt("access", cud.getUserNo(), userName, role,  600000L);
 		String refreshToken = jwtUtil.createJwt("refresh", cud.getUserNo(), userName, role, 86400000L);
 
 		// 필요하면 DB에 refreshToken 저장
@@ -67,8 +67,8 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
 
 	@Override
 	protected void unsuccessfulAuthentication(HttpServletRequest request, HttpServletResponse response,
-			AuthenticationException failed) throws IOException, ServletException {
-		response.setStatus(401);		
+			AuthenticationException failed) throws IOException, ServletException {					
+		response.setStatus(HttpStatus.NOT_FOUND.value());					   
 	}
 
 	private Cookie createCookie(String key, String value) {

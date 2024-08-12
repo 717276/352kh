@@ -21,6 +21,7 @@ public class Member {
 	private String m_detailAddress;
 	private String m_postNo;
 	private String m_role;
+	private String m_provider;
 	private Preference preference;
 	private Dog dog;
     private List<Tour> tours;

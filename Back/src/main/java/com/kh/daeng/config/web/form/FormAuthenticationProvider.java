@@ -18,18 +18,13 @@ public class FormAuthenticationProvider implements AuthenticationProvider{
 	public Authentication authenticate(Authentication authentication) throws AuthenticationException {
 		String email = (String)authentication.getPrincipal();
 		String password = (String)authentication.getCredentials();
-				
+							
 		UserDetails cuds = formUserDetailsService.loadUserByUsername(email);
-		if (password.equals(cuds.getPassword())) {			
+		if (bcryto.matches(password,cuds.getPassword())) {			
 			return new UsernamePasswordAuthenticationToken(cuds, password, cuds.getAuthorities());
 		} else {
 			throw new BadCredentialsException("Invalid credentials");
 		}
-//		if (bcryto.matches(password, cuds.getPassword())) {			
-//			return new UsernamePasswordAuthenticationToken(cuds, password, cuds.getAuthorities());
-//		} else {
-//			throw new BadCredentialsException("Invalid credentials");
-//		}
 	}
 
 	@Override

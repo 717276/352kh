@@ -10,8 +10,10 @@ import com.kh.daeng.service.JwtServiceImpl;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import lombok.extern.slf4j.Slf4j;
 
 @RestController
+@Slf4j
 public class MainController {	
 	@Autowired
 	private JwtServiceImpl jwtService;
@@ -24,5 +26,17 @@ public class MainController {
     @PostMapping("/reissue")
     public ResponseEntity<?> reissue(HttpServletRequest request, HttpServletResponse response) {
     	return jwtService.work(request, response);
+    }       
+    @RequestMapping("/qna")
+    public void qna(HttpServletRequest request) {
+    }
+    @RequestMapping("/board/*")
+    public void board(HttpServletRequest request) {  
+    }    
+    @RequestMapping("/tour/*")
+    public void tour(HttpServletRequest request) {    	
+    }
+    @RequestMapping("/admin/*")
+    public void admin(HttpServletRequest request) {    	    
     }
 }

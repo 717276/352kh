@@ -1,5 +1,6 @@
 package com.kh.daeng.config.web.form;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -12,13 +13,17 @@ import com.kh.daeng.mapper.MemberMapper;
 @Service
 public class FormUserDetailsService implements UserDetailsService{
 	private final MemberMapper memberMapper;
+	@Value("${basic.provider}")
+	private String provider;
 	public FormUserDetailsService(MemberMapper memberMapper) {
 		this.memberMapper = memberMapper;
 	}
 	@Override
 	public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
-		System.err.println("user email: " + email);		
-		Member member = memberMapper.findByUserEmail(email);
+		System.err.println("user email: " + email);				
+		Member member = memberMapper.findByUserEmail(email, provider);
+		
+		System.err.println(member.getM_provider());
 		if (member != null) {
 			return new CustomUserDetails(member);
 		}

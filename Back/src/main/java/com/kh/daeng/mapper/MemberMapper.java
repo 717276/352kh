@@ -14,7 +14,7 @@ public interface MemberMapper {
 
 	Member login(@Param("email") String email, @Param("password") String password);
 
-	Member findByUserEmail(String email);
+	Member findByUserEmail(@Param("email")String email , @Param("provider")String provider);
 
 	int checkLoginExistence(@Param("email") String email, @Param("password") String password);
 
