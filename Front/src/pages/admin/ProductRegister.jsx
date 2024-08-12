@@ -39,7 +39,7 @@ const ProductRegister = () => {
             <ul>
               <li onClick={() => { nav() }}>회원관리</li>
               <li onClick={() => { nav() }}>여행관리</li>
-              <li onClick={() => { nav('/admin/getProductList') }}>상품관리</li>
+              <li onClick={() => { nav('/admin/productList') }}>상품관리</li>
               <li onClick={() => { nav('/admin/chart') }}>분석</li>
             </ul>
           </div>

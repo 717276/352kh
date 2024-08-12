@@ -1,13 +1,15 @@
 import '../../components/css/admin/Chart.css';
 import { useNavigate } from 'react-router-dom';
-import { BarChart, Bar, CartesianGrid, XAxis, YAxis, Tooltip, Legend, LineChart, Line } from 'recharts';
+import { BarChart, Bar, CartesianGrid, XAxis, YAxis, Tooltip, Legend, LineChart, Line, PieChart, Pie } from 'recharts';
 import { useEffect, useState } from 'react';
 
 const Chart = () => {
   const nav = useNavigate();
 
   const [data, setData] = useState([]);
+  const [data2, setData2] = useState([]);
   const url = 'http://localhost:8080/api/chart/getChart1';
+  const url2 = 'http://localhost:8080/api/chart/getChart2';
 
   useEffect(() => {
     fetch(url)
@@ -16,14 +18,28 @@ const Chart = () => {
         const transformedData = data.map(item => ({
           name: item.CATEGORY, // 카테고리 이름
           value: item.VALUE,   // 비율
-          booking: item.BOOKING   // 비율
+          booking: item.BOOKING
         }));
         setData(transformedData);
       })
       .catch(error => {
         console.error('Error processing data:', error);
       });
-  }, [url]);
+
+    fetch(url2)
+      .then(response => response.json())
+      .then(data => {
+        const transformedData2 = data.map(item => ({
+          pdNo: item.PD_NAME, // 카테고리 이름
+          sum: item.SUM,   // 비율
+        }));
+        setData2(transformedData2);
+      })
+      .catch(error => {
+        console.error('Error processing data:', error);
+      });
+
+  }, [url2]);
 
   return (
     <>
@@ -52,15 +68,13 @@ const Chart = () => {
 
         <div className='chart2'>
           <h3>상품별 총 매출액</h3>
-          <LineChart width={730} height={250} data={data} margin={{ top: 5, right: 30, left: 20, bottom: 5 }}>
+          <BarChart width={730} height={250} data={data2} margin={{ top: 20, right: 20, bottom: 20, left: 20 }}>
             <CartesianGrid strokeDasharray="3 3" />
-            <XAxis dataKey="name" />
+            <XAxis dataKey="pdNo" />
             <YAxis />
             <Tooltip />
-            <Legend />
-            <Line type="monotone" dataKey="value" stroke="#8884d8" />
-            <Line type="monotone" dataKey="booking" stroke="#8884d8" />
-          </LineChart>
+            <Bar dataKey="sum" fill="#8884d8" />
+          </BarChart>
         </div>
 
       </div>

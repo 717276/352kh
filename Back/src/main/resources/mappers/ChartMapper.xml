@@ -41,4 +41,12 @@
 		    TotalCounts tc
 	</select>
 	
+	<select id="getChart2" resultType="java.util.Map">
+		select o.pd_no as pd_no, p.pd_name as pd_name, sum(o.oi_price) as sum
+	    from orderitem o inner join product p
+	    on o.pd_no = p.pd_no
+	    group by o.pd_no, p.pd_name
+	    order by o.pd_no
+	</select>
+	
 </mapper>
