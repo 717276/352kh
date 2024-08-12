@@ -60,7 +60,7 @@ const TripApproval = () => {
     if (!img || !img.ti_category) {
       return "/images/default.png"; // 기본 이미지 경로 또는 빈 문자열 반환
     }
-    return `/images/tourimg/${img.ti_category}/${img.ti_category}_${img.ti_ref_no}_${img.ti_day}_${img.ti_order}.jpg`;
+    return `/images/${img.ti_category}/${img.ti_category}_${img.ti_ref_no}_${img.ti_day}_${img.ti_order}.jpg`;
   };
 
   const formatDateToYYYYMMDD = (dateString) => {

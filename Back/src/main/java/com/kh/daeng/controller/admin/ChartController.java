@@ -18,4 +18,9 @@ public class ChartController {
 	public List<Map<String, Object>> getChart1() throws Exception {
 		return service.getChart1();
 	}
+	
+	@RequestMapping("/api/chart/getChart2")
+	public List<Map<String, Object>> getChart2() throws Exception {
+		return service.getChart2();
+	}
 }

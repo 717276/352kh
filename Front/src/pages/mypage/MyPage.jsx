@@ -57,9 +57,11 @@ const MyPage = () => {
   }, [sortType, user]);
 
   const getImageUrl = (img) => {
+    if (!img || !img.i_category) {
+      return "/images/default.png"; // 기본 이미지 경로 또는 빈 문자열 반환
+    }
     return `/images/${img.i_category}/${img.i_category}_${img.i_ref_no}_${img.i_order}.jpg`;
   };
-
   const getProImageUrl = (img) => {
     return `/images/${img.i_category}/${img.i_category}_${img.i_ref_no}_${img.i_order}.png`;
   };
@@ -278,6 +280,32 @@ const MyPage = () => {
       .catch((error) => {
         console.error("Error updating user data:", error);
       });
+  };
+
+  const handleFileChange = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      const formData = new FormData();
+      formData.append("image", file);
+      formData.append("userNo", userNo);
+
+      fetch("http://localhost:8080/api/mypage/uploadProfileImage", {
+        method: "POST",
+        body: formData,
+      })
+        .then((response) => {
+          if (response.ok) {
+            console.log("Profile image uploaded successfully");
+            window.location.reload(); // 성공 시 페이지 새로고침
+            // 추가적인 성공 처리 코드 (예: 알림 표시 등)
+          } else {
+            console.error("Failed to upload profile image");
+          }
+        })
+        .catch((error) => {
+          console.error("Error uploading profile image:", error);
+        });
+    }
   };
 
   const handleItemClick = (t_no) => {
@@ -738,9 +766,14 @@ const MyPage = () => {
               </div>
               <div className="image-section">
                 <div className="image-box">
-                  <img src={profileImg} alt="프로필 이미지" />
+                  <img src={getImageUrl(user.img)} alt="프로필 이미지" />
                 </div>
-                <input type="file" id="file" style={{ display: "none" }} />
+                <input
+                  type="file"
+                  id="file"
+                  style={{ display: "none" }}
+                  onChange={handleFileChange}
+                />
                 <label htmlFor="file" className="image-change">
                   이미지 변경
                 </label>

@@ -81,7 +81,7 @@ const ReviewModify = () => {
               method: 'post',
               body: form
             }).then(() => {
-              nav(`/reviewComment/${items.arNo}`);
+              nav(`/reviewComment/${items.ar_no}`);
             });
           }}>수정</button>
           <button id="deleteButton" onClick={() => {
