@@ -1,18 +1,32 @@
-import{useContext, useEffect} from 'react';
-import { Link } from 'react-router-dom';
+import{useContext, useEffect, useState} from 'react';
+import { Link , useNavigate} from 'react-router-dom';
 import './css/Header.css';
 import logo from '../images/logo.png';
 import {AuthContext} from './Auth.jsx';
+import { jwtDecode } from "jwt-decode";
 const Header=()=>{
-    const [isAuthorized, setIsAuthorized] = useContext(AuthContext);    
-    console.log(isAuthorized);    
-    const LogoutHandler=()=>{
-        console.log(isAuthorized);
+    const [isAuthorized, setIsAuthorized] = useContext(AuthContext);        
+    const [role,setRole] = useState();    
+    const nav = useNavigate();
+    const logoutHandler=()=>{
         localStorage.removeItem('accessToken');
         document.cookie = "refresh=123; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;"; 
         setIsAuthorized(false);
+    }    
+    const rolePageHandler=()=>{
+        if(role === 'ROLE_USER'){
+            nav('/mypage');
+        }else if (role === 'ROLE_ADMIN'){
+            nav('/admin/management');
+        }
     }
-    useEffect(()=>{         
+    useEffect(()=>{        
+        const token = localStorage.getItem('accessToken');
+        if (token !== null){
+            const user = jwtDecode(token);
+            console.log(user.role);
+            setRole(user.role);
+        }
     },[isAuthorized])
     return (
         <div className="Header">
@@ -45,8 +59,21 @@ const Header=()=>{
                     <Link to="/"><img src={logo}></img></Link>
                 </div>         
                 {isAuthorized ? (
-                    <div className="logout">                        
-                        <button className='logout_btn' onClick={()=>LogoutHandler()}>Logout</button>
+                    <div className="header_info">
+                        <div className="role_info">  
+                            {role === 'ROLE_USER' ? (
+                                <div className="mypage" onClick={()=>rolePageHandler()}>
+                                    Mypage
+                                </div>
+                            ):(
+                                <div className="admin" onClick={()=>rolePageHandler()}>
+                                    Admin
+                                </div>
+                            )}
+                        </div>
+                        <div className="logout">                        
+                            <button className='logout_btn' onClick={()=>logoutHandler()}>Logout</button>
+                        </div>
                     </div>
                 ):(
                     <div className="login">
