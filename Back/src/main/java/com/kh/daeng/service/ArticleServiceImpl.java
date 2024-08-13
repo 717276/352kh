@@ -70,7 +70,7 @@ public class ArticleServiceImpl implements ArticleService {
 			// 기존 이미지 파일 삭제
 			deleteFilesByPdNo(article.getAr_no());
 			mapper.deleteImg(article.getAr_no());
-			String path = "D:/reactTest/test/public/images/review/";
+			String path = "D:/reactTest/test/Front/public/images/review/";
 			File directory = new File(path);
 			if (!directory.exists()) {
 				directory.mkdirs();
@@ -86,6 +86,8 @@ public class ArticleServiceImpl implements ArticleService {
 			}
 		}
 
+		System.out.println(article.getAr_no());
+		
 		// 새로운 이미지 정보 DB에 추가
 		for (int i = 1; i < index; i++) {
 			mapper.updateImg(article.getAr_no(), i);
@@ -93,7 +95,7 @@ public class ArticleServiceImpl implements ArticleService {
 	}
 
 	private void deleteFilesByPdNo(int arNo) {
-		String path = "D:/reactTest/test/public/images/review/";
+		String path = "D:/reactTest/test/Front/public/images/review/";
 		File directory = new File(path);
 
 		if (directory.exists() && directory.isDirectory()) {

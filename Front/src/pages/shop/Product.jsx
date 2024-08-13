@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 import '../../components/css/shop/Product.css';
+import { jwtDecode } from 'jwt-decode'; // 여기를 수정
 
 const categoryMap = {
     0: '위생용품',
@@ -10,11 +11,42 @@ const categoryMap = {
 };
 
 const Product = () => {
+    const nav = useNavigate();
     const { pd_no } = useParams();
     const [product, setProduct] = useState(null);
     const [mainImage, setMainImage] = useState('');
     const [quantity, setQuantity] = useState(1);
+    const [accessToken, setAccessToken] = useState(localStorage.getItem('accessToken')); // accessToken 상태 추가
+    const decodedToken = jwtDecode(accessToken);
 
+    const addCart = () => {
+        const faqData = {
+            pd_no: pd_no, //
+            m_no: decodedToken.userNo,
+            ci_quantity: quantity,
+        };
+        console.log('디코드뽑아온 유저번호 :' + decodedToken.userNo);
+        fetch('http://localhost:8080/api/order/insert', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(faqData),
+        })
+            .then((response) => response.json())
+            .then((data) => {
+                if (!data.success) {
+                    alert('상품추가에 실패했습니다.');
+                } else {
+                    alert('상품추가 성공');
+                }
+            })
+            .catch((error) => {
+                console.error('Error:', error);
+                alert('서버와 통신 중 오류가 발생했습니다.');
+            });
+    };
+    console.log(pd_no);
     useEffect(() => {
         const fetchProduct = async () => {
             try {
@@ -39,9 +71,13 @@ const Product = () => {
             setQuantity(value);
         }
     };
-    const addCart = () => {
-        alert('gdgd');
+
+    const buyDirect = () => {
+        addCart();
+        alert('바로구매');
+        nav('/order');
     };
+
     const handleImageClick = (src) => {
         setMainImage(src);
     };
@@ -94,7 +130,9 @@ const Product = () => {
                             <button onClick={addCart} className="custom_button">
                                 장바구니
                             </button>
-                            <button className="custom_button">바로구매</button>
+                            <button onClick={buyDirect} className="custom_button">
+                                바로구매
+                            </button>
                         </div>
                     </div>
                 </div>

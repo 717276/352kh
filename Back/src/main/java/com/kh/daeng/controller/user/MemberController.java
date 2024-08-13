@@ -37,8 +37,8 @@ public class MemberController {
     @Autowired
     private DogService dogService;
 
-    private static final Logger logger = LoggerFactory.getLogger(MemberController.class);
-    
+    private static final Logger logger = LoggerFactory.getLogger(MemberController.class);   
+
     @GetMapping
     public List<Member> getAllMembers() {
         System.out.println("회원출력");
@@ -81,7 +81,6 @@ public class MemberController {
         member.setM_detailAddress(userInfo.get("detailedAddress").toString());
         member.setM_postNo(userInfo.get("zonecode").toString());
         member.setM_provider(userInfo.get("provider").toString());
-
         Dog dog = new Dog();
         dog.setD_breed(userInfo.get("breed").toString());
         dog.setD_name(userInfo.get("dogName").toString());
@@ -117,6 +116,37 @@ public class MemberController {
             return ResponseEntity.status(404).body(response);
         }
     }
+    @GetMapping("/checkPhoneNumber/{phoneNumber}")
+    public ResponseEntity<Map<String, String>> checkPhoneNumberDuplicate(@PathVariable("phoneNumber") String phoneNumber) {
+        Member existingMember = memberService.findByPhoneNumber(phoneNumber);
+        
+        Map<String, String> response = new HashMap<>();
+        if (existingMember != null) {
+        	logger.info("중복된 전화번호임");
+            response.put("message", "이미 등록된 전화번호입니다.");
+            return ResponseEntity.status(409).body(response);
+        } else {
+        	logger.info("중복된 전화번호 아님");
+            response.put("message", "사용 가능한 전화번호입니다.");
+            return ResponseEntity.ok(response);
+        }
+    }
+    @GetMapping("/checkEmail")
+    public ResponseEntity<Map<String, String>> checkEmailDuplicate(@RequestParam(name = "email") String email,   @RequestParam(name = "provider") String provider) {
+        Member existingMember = memberService.findByEmail(email, provider);
+        
+        Map<String, String> response = new HashMap<>();
+        if (existingMember != null) {
+        	logger.info("중복된 이메일");
+            response.put("message", "이미 등록된 이메일입니다.");
+            return ResponseEntity.status(409).body(response);
+        } else {
+        	logger.info("중복된 이메일 아님");
+            response.put("message", "사용 가능한이메일입니다.");
+            return ResponseEntity.ok(response);
+        }
+    }
+
 
     @GetMapping("/checkId/{userId}")
     public ResponseEntity<Map<String, String>> checkIdDuplicate(@PathVariable("userId") String userId) {
@@ -132,5 +162,5 @@ public class MemberController {
             response.put("message", "사용 가능한 아이디입니다.");
             return ResponseEntity.ok(response);
         }
-    }   
-}
+    }
+ }

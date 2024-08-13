@@ -23,5 +23,5 @@ public interface ProductMapper {
 	
 	public void deleteImg(int pdNo);
 
-	public void updateImg(@Param("pdNo") int pdNo, @Param("index") int index);
+	public void updateImg(@Param("pd_no") int pdNo, @Param("index") int index);
 }

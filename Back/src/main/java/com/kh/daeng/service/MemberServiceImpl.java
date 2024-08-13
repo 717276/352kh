@@ -89,9 +89,9 @@ public class MemberServiceImpl implements MemberService {
         logger.info("impl진입" );
         logger.info("Member Name: " + member.getM_name());
         logger.info("Prefer: " + preference.toString());
-        logger.info("Dog: " + dog.toString());        
-        String encyrptionPassword = bCryptPasswordEncoder.encode(member.getM_password());
-        member.setM_password(encyrptionPassword);
+        logger.info("Dog: " + dog.toString());
+        String encoded = bCryptPasswordEncoder.encode(member.getM_password());
+        member.setM_password(encoded);
         memberMapper.registerMemberWithPreference(member, preference, dog);
     }
 
@@ -185,6 +185,12 @@ public class MemberServiceImpl implements MemberService {
 
         mailSender.send(mimeMessage);
     }
+
+	@Override
+	public Member findByPhoneNumber(String phoneNumber) {
+		
+		return memberMapper.findByPhoneNumber(phoneNumber);
+	}
 
 	
 

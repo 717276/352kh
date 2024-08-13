@@ -13,14 +13,13 @@ import lombok.extern.slf4j.Slf4j;
 @Data
 @Slf4j
 public class ChatRoom {
-    private String roomId;
-    private String name;
+    private int room_id;
+    private String room_name;
     private Set<WebSocketSession> sessions = new HashSet<>();
-
-    @Builder
-    public ChatRoom(String roomId, String name) {
-        this.roomId = roomId;
-        this.name = name;
+    
+    public ChatRoom(int room_id, String email) {
+        this.room_id = room_id;
+        this.room_name = email;
     }
 
     public void handleActions(WebSocketSession session, ChatMessage chatMessage, ChatService chatService) {    	

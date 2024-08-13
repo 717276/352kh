@@ -55,9 +55,9 @@ public class JwtServiceImpl {
         int userNo = jwtUtil.getUserNo(refresh);
         String userName = jwtUtil.getUserName(refresh);
         String role = jwtUtil.getRole(refresh);
-
-        String newAccess = jwtUtil.createJwt("access", userNo, userName, role, 600000L);
-        String newRefresh = jwtUtil.createJwt("refresh", userNo, userName, role, 86400000L);
+        String userEmail = jwtUtil.getUserEmail(refresh);
+        String newAccess = jwtUtil.createJwt("access", userNo, userName,userEmail, role, 600000L);
+        String newRefresh = jwtUtil.createJwt("refresh", userNo, userName,userEmail, role, 86400000L);
         
         refreshMapper.deleteByRefresh(refresh);
     	addRefreshEntity(userNo, newRefresh, 86400000L);

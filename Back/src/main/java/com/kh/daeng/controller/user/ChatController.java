@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -21,29 +22,34 @@ import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
 @RestController
-@RequestMapping("/chat")
+@RequestMapping("/api/chat")
 public class ChatController {
-    private ChatService chatService;
-    private static final Logger logger = LoggerFactory.getLogger(ChatController.class);
-    @PostMapping
-    public ChatRoom createRoom(@RequestParam("name") String name) {
-    	
-    	 logger.info("방 생성 : "+ name);
-        return chatService.createRoom(name);
-    }
+	@Autowired
+	private ChatService chatService;
+	private static final Logger logger = LoggerFactory.getLogger(ChatController.class);
 
-    @GetMapping
-    public List<ChatRoom> findAllRoom() {
-        return chatService.findAllRoom();
-    }
-    
-    @GetMapping("/messages/{roomId}")
-    public List<ChatMessage> getMessages(@PathVariable("roomId") String roomId) {
-    	logger.info("채팅 긁어오기 진입");
-    	logger.info("룸 아이디 : " + roomId);
-        return chatService.findChatByRoomId(roomId);
-    }
-    
-  
-   
+	@PostMapping
+	public ChatRoom createRoom(@RequestParam("email") String email, @RequestParam("m_no") int m_no) {
+		logger.info("방 생성 : " + email + " " + m_no);
+		ChatRoom chatRoom = chatService.findRoomById(m_no);
+		if (chatRoom == null) {
+			return chatService.createRoom(email, m_no);
+		} else {
+			return chatRoom;
+		}
+	}
+
+	@GetMapping
+	public List<ChatRoom> findAllRoom() {
+		return chatService.findAllRoom();
+	}
+
+	@GetMapping("/messages/{roomId}")
+	public List<ChatMessage> getMessages(@PathVariable("roomId") String roomId) {
+
+		List<ChatMessage> chatList = chatService.findChatByRoomId(roomId);
+
+		return chatList;
+	}
+
 }

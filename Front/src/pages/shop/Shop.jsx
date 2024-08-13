@@ -119,7 +119,7 @@ const Shop = () => {
             <div className="product-grid">
                 {categories.map((category, index) => (
                     <div className="product-item" key={index}>
-                        <Link to={`/shoplist/${category.category}`} state={{ selectedCategory: category.name }}>
+                        <Link to={`/shop/list/${category.category}`} state={{ selectedCategory: category.name }}>
                             <span>{category.name}</span>
                         </Link>
                         <br />

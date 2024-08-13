@@ -10,9 +10,13 @@ import com.kh.daeng.domain.dto.chat.ChatRoom;
 
 @Mapper
 public interface ChatMapper {
-    void insertChatRoom(@Param("room_Name") String room_Name,@Param("room_Id") String room_Id );
-    ChatRoom findChatRoomById(String roomId);
     List<ChatRoom> findAllChatRooms();
-	void insertChat(ChatMessage chatMessage);
+    
+	void insertChat(ChatMessage chatMessage);	
+	void insertChatRoom(@Param("room_Name") String room_Name,@Param("room_Id") int room_Id );
+		
+	ChatRoom findRoomById(int roomId);
+	ChatRoom findRoomByEmail(String email);
+
 	List<ChatMessage> findChatByRoomId (@Param("room_Id") String roomId);
 }

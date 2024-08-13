@@ -79,8 +79,8 @@ const SelectTm = () => {
             dogName: dog.dogName,
             breed: dog.breed,
             size: dog.size,
-        };
-
+        };        
+        console.log(userInfo.provider);
         try {
             const response = await fetch('http://localhost:8080/api/members/finalizeRegistration', {
                 method: 'POST',

@@ -14,6 +14,38 @@ const ProductRegister = () => {
   const [discountRate, setDiscountRate] = useState(0);
   const imgRef = useRef();
   const detailImagesRef = useRef();
+  const [showImages, setShowImages] = useState([]);
+  const [showImages2, setShowImages2] = useState([]);
+
+  const handleAddImages = (event) => {
+    const imageLists = event.target.files;
+    let imageUrlLists = [];
+
+    for (let i = 0; i < imageLists.length; i++) {
+      const currentImageUrl = URL.createObjectURL(imageLists[i]);
+      imageUrlLists.push(currentImageUrl);
+    }
+
+    if (imageUrlLists.length > 10) {
+      imageUrlLists = imageUrlLists.slice(0, 10);
+    }
+    setShowImages(imageUrlLists);
+  };
+
+  const handleAddImages2 = (event) => {
+    const imageLists = event.target.files;
+    let imageUrlLists = [];
+
+    for (let i = 0; i < imageLists.length; i++) {
+      const currentImageUrl = URL.createObjectURL(imageLists[i]);
+      imageUrlLists.push(currentImageUrl);
+    }
+
+    if (imageUrlLists.length > 10) {
+      imageUrlLists = imageUrlLists.slice(0, 10);
+    }
+    setShowImages2(imageUrlLists);
+  };
 
   const handlePriceChange = (e) => {
     setPrice(e.target.value);
@@ -37,8 +69,8 @@ const ProductRegister = () => {
         <div className='mg_box'>
           <div className='mg_mangeMenu'>
             <ul>
-              <li onClick={() => { nav() }}>회원관리</li>
-              <li onClick={() => { nav() }}>여행관리</li>
+              <li onClick={() => { nav('/admin/management') }}>회원관리</li>
+              <li onClick={() => { nav('/admin/tripList') }}>여행관리</li>
               <li onClick={() => { nav('/admin/productList') }}>상품관리</li>
               <li onClick={() => { nav('/admin/chart') }}>분석</li>
             </ul>
@@ -91,12 +123,30 @@ const ProductRegister = () => {
               </tr>
               <tr>
                 <td>대표이미지</td>
-                <td colSpan={3}><input type="file" ref={imgRef} /></td>
+                <td colSpan={3}><input type="file" ref={imgRef} onChange={handleAddImages} /></td>
+              </tr>
+              <tr>
+                <td colSpan={4}>
+                  {showImages.map((image, id) => (
+                    <div key={id}>
+                      <img src={image} alt={`${image}-${id}`} />
+                    </div>
+                  ))}
+                </td>
               </tr>
               <tr>
                 <td>상세이미지</td>
                 <td colSpan={3}>
-                  <input type="file" ref={detailImagesRef} multiple />
+                  <input type="file" ref={detailImagesRef} multiple onChange={handleAddImages2} />
+                </td>
+              </tr>
+              <tr>
+                <td colSpan={4}>
+                  {showImages2.map((image, id) => (
+                    <div className='imgcontainer' key={id}>
+                      <img src={image} alt={`${image}-${id}`} />
+                    </div>
+                  ))}
                 </td>
               </tr>
             </tbody>

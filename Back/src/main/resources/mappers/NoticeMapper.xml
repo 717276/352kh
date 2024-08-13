@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.kh.daeng.mapper.NoticeMapper">
+
+    <select id="getAllNotice" resultType="com.kh.daeng.domain.dto.board.Notice">
+        SELECT * FROM notice
+    </select>
+
+    <insert id="insertNotice">
+        insert into notice (n_no, n_title, n_content, n_category, n_createdDate) 
+        values (no_seq.NEXTVAL, #{n_title}, #{n_content}, #{n_category}, sysdate)
+    </insert>
+    
+    <select id="getNoticeById" parameterType="int" resultType="com.kh.daeng.domain.dto.board.Notice">
+        SELECT n_no, n_title, n_content, n_category, n_createdDate
+        FROM notice 
+        WHERE n_no = #{faqId}
+    </select>
+    <update id="updateNotice" parameterType="com.kh.daeng.domain.dto.board.Notice">
+    UPDATE Notice
+    SET n_title = #{n_title},
+        n_content = #{n_content},
+        n_category = #{n_category}
+    WHERE n_no = #{n_no}
+</update>
+
+</mapper>

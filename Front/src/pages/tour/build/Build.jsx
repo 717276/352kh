@@ -298,10 +298,11 @@ const Build = () => {
             await nextTour();
             setSave(true);
         }
+        setSave(true);
     };
     useEffect(()=>{
         if(save){
-            navigator("/tour/trip",{state:{data:tours}});
+            navigator("/tour/tripCreate",{state:{data:tours, startDate:startDate}});
         }
     },[save])
     return (

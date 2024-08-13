@@ -1,5 +1,6 @@
 package com.kh.daeng.controller.user;
 
+import java.io.File;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -8,7 +9,9 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.kh.daeng.domain.dto.user.Member;
 import com.kh.daeng.service.iface.MypageService;
@@ -23,11 +26,13 @@ public class MypageController {
 	@Autowired
 	private MypageService service;
 
+	// 유저 정보 불러오기
 	@GetMapping("/{userNo}")
 	public Member getUser(@PathVariable(name = "userNo") int userNo) throws Exception {
 		return service.getUser(userNo);
 	}
 
+	// m_userId 업데이트
 	@PostMapping("/updateUserId")
 	public Member updateUserId(@RequestBody Map<String, Object> request) throws Exception {
 		int userNo = Integer.parseInt(request.get("userNo").toString());
@@ -36,6 +41,7 @@ public class MypageController {
 		return service.getUser(userNo);
 	}
 
+	// m_name 업데이트
 	@PostMapping("/updateName")
 	public Member updateName(@RequestBody Map<String, Object> request) throws Exception {
 		int userNo = Integer.parseInt(request.get("userNo").toString());
@@ -44,6 +50,7 @@ public class MypageController {
 		return service.getUser(userNo);
 	}
 
+	// m_phone 업데이트
 	@PostMapping("/updatePhone")
 	public Member updatePhone(@RequestBody Map<String, Object> request) throws Exception {
 		int userNo = Integer.parseInt(request.get("userNo").toString());
@@ -52,6 +59,7 @@ public class MypageController {
 		return service.getUser(userNo);
 	}
 
+	// m_postNo, m_detailAddress, m_basicAddress 업데이트
 	@PostMapping("/updateAddress")
 	public Member updateAddress(@RequestBody Map<String, Object> params) throws Exception {
 		int userNo = Integer.parseInt(params.get("userNo").toString());
@@ -62,6 +70,7 @@ public class MypageController {
 		return service.getUser(userNo);
 	}
 
+	// d_name 업데이트
 	@PostMapping("/updateDogName")
 	public Member updateDogName(@RequestBody Map<String, Object> request) throws Exception {
 		int userNo = Integer.parseInt(request.get("userNo").toString());
@@ -70,6 +79,7 @@ public class MypageController {
 		return service.getUser(userNo);
 	}
 
+	// d_breed 업데이트
 	@PostMapping("/updateBreed")
 	public Member updateBreed(@RequestBody Map<String, Object> params) throws Exception {
 		int userNo = Integer.parseInt(params.get("userNo").toString());
@@ -78,11 +88,45 @@ public class MypageController {
 		return service.getUser(userNo);
 	}
 
+	// d_size 업데이트
 	@PostMapping("/updateDsize")
 	public Member updateDsize(@RequestBody Map<String, Object> params) throws Exception {
 		int userNo = Integer.parseInt(params.get("userNo").toString());
 		int dsize = Integer.parseInt(params.get("DSIZE").toString());
 		service.updateDsize(userNo, dsize);
 		return service.getUser(userNo);
+	}
+	
+	// 프로필 이미지 업데이트
+	@PostMapping("/uploadProfileImage")
+	public void uploadProfileImage(@RequestParam("image") MultipartFile file, @RequestParam("userNo") int userNo) throws Exception {
+	    
+	    // 프로필 이미지 변경
+	    if (!file.isEmpty()) {
+	        String folderPath = "D:/reactTest/daengTrip2/Front/public/images/user/";
+	        String imagePath = folderPath + "user_" + userNo + "_1.jpg";
+	        File folder = new File(folderPath);
+	        System.out.println(folderPath);
+	        
+	        boolean fileExists = false;
+
+	        if (folder.exists() && folder.isDirectory()) {
+	            File[] files = folder.listFiles((dir, name) -> name.startsWith("user_" + userNo + "_"));
+	            if (files != null && files.length > 0) {
+	                fileExists = true; // 이미 해당 유저의 파일이 존재
+	            } else {
+	                // 해당 유저의 파일이 없을 때
+	                service.insertImg(userNo);
+	            }
+	        } else {
+	            // 폴더가 존재하지 않으면 폴더를 생성하고 insertImg 호출
+	            folder.mkdirs();
+	            service.insertImg(userNo);
+	        }
+	        
+	        File dest = new File(imagePath);
+	        file.transferTo(dest);
+	        System.out.println("프로필 이미지 변경 성공");
+	    }
 	}
 }

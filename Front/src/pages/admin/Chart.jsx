@@ -2,22 +2,26 @@ import '../../components/css/admin/Chart.css';
 import { useNavigate } from 'react-router-dom';
 import { BarChart, Bar, CartesianGrid, XAxis, YAxis, Tooltip, Legend, LineChart, Line, PieChart, Pie } from 'recharts';
 import { useEffect, useState } from 'react';
+import '../../components/css/admin/Chart.css'
 
 const Chart = () => {
   const nav = useNavigate();
 
   const [data, setData] = useState([]);
   const [data2, setData2] = useState([]);
+  const [data3, setData3] = useState([]);
   const url = 'http://localhost:8080/api/chart/getChart1';
   const url2 = 'http://localhost:8080/api/chart/getChart2';
+  const url3 = 'http://localhost:8080/api/chart/getChart3';
+
 
   useEffect(() => {
     fetch(url)
       .then(response => response.json())
       .then(data => {
         const transformedData = data.map(item => ({
-          name: item.CATEGORY, // 카테고리 이름
-          value: item.VALUE,   // 비율
+          name: item.CATEGORY,
+          value: item.VALUE,
           booking: item.BOOKING
         }));
         setData(transformedData);
@@ -30,10 +34,23 @@ const Chart = () => {
       .then(response => response.json())
       .then(data => {
         const transformedData2 = data.map(item => ({
-          pdNo: item.PD_NAME, // 카테고리 이름
-          sum: item.SUM,   // 비율
+          pdNo: item.PD_NAME,
+          sum: item.SUM,
         }));
         setData2(transformedData2);
+      })
+      .catch(error => {
+        console.error('Error processing data:', error);
+      });
+
+    fetch(url3)
+      .then(response => response.json())
+      .then(data => {
+        const transformedData3 = data.map(item => ({
+          tNo: item.T_NO,
+          cnt: item.CNT,
+        }));
+        setData3(transformedData3);
       })
       .catch(error => {
         console.error('Error processing data:', error);
@@ -47,8 +64,8 @@ const Chart = () => {
         <div className='mg_box'>
           <div className='mg_mangeMenu'>
             <ul>
-              <li onClick={() => { nav() }}>회원관리</li>
-              <li onClick={() => { nav() }}>여행관리</li>
+              <li onClick={() => { nav('/admin/management') }}>회원관리</li>
+              <li onClick={() => { nav('/admin/tripList') }}>여행관리</li>
               <li onClick={() => { nav('/admin/productList') }}>상품관리</li>
               <li onClick={() => { nav('/admin/chart') }}>분석</li>
             </ul>
@@ -74,6 +91,17 @@ const Chart = () => {
             <YAxis />
             <Tooltip />
             <Bar dataKey="sum" fill="#8884d8" />
+          </BarChart>
+        </div>
+
+        <div className='chart3'>
+          <h3>투어별 총 리뷰건</h3>
+          <BarChart width={730} height={250} data={data3} margin={{ top: 20, right: 20, bottom: 20, left: 20 }}>
+            <CartesianGrid strokeDasharray="3 3" />
+            <XAxis dataKey="tNo" />
+            <YAxis />
+            <Tooltip />
+            <Bar dataKey="cnt" fill="#8884d8" />
           </BarChart>
         </div>
 

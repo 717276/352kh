@@ -5,6 +5,7 @@ import java.util.List;
 import com.kh.daeng.domain.dto.shop.CartItem;
 import com.kh.daeng.domain.dto.tour.Tour;
 import com.kh.daeng.domain.dto.tour.TourList;
+import com.kh.daeng.domain.dto.util.Img;
 
 import lombok.Data;
 
@@ -28,4 +29,6 @@ public class Member {
     private List<OrderItem> orderItems;
     private List<CartItem> cartItems;
     private List<TourList> tourList;
+    //프로필이미지 
+    private Img img;
 }

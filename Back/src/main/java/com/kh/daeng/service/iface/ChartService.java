@@ -7,4 +7,6 @@ public interface ChartService {
 	public List<Map<String, Object>> getChart1() throws Exception;
 	
 	public List<Map<String, Object>> getChart2() throws Exception;
+	
+	public List<Map<String, Object>> getChart3() throws Exception;
 }

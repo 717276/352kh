@@ -22,7 +22,17 @@ const Login = () => {
     function googleLoginHandler() {
         window.location.href = 'http://localhost:8080/oauth2/authorization/google';
     }
+    const loginHandler=(e)=>{
+        if (e.key === 'Enter'){
+            formLogin();
+        }
+    }
     const formLogin = async () => {
+        if (username === '' || password === ''){
+            alert("이메일 & 비밀번호 입력");            
+            inputRef.current.focus();
+            return;
+        }
         try {
             const response = await fetch('http://localhost:8080/login', {
                 method: 'POST',
@@ -69,12 +79,13 @@ const Login = () => {
                     />
                     <input
                         onChange={(e) => setUserPW(e.target.value)}
+                        onKeyDown={(e)=> loginHandler(e)}
                         type="password"
                         name="password"
                         id="password"
                         placeholder="PASSWORD"
                         className="input-field"
-                        value={password}
+                        value={password}                        
                     />
                     <input type="submit" value="로그인" className="login-button" onClick={() => formLogin()} />
                 </div>

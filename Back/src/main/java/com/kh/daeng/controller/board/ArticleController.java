@@ -65,7 +65,7 @@ public class ArticleController {
 			int arNo = service.getMaxArNo();
 
 			if (img != null && img.length > 0) {
-				String path = "C:/DaengTrip/public/images/review/";
+				String path = "D:/reactTest/test/Front/public/images/review/";
 				File directory = new File(path);
 				if (!directory.exists()) {
 					directory.mkdirs(); // 디렉토리 생성

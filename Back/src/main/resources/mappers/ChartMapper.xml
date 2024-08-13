@@ -49,4 +49,10 @@
 	    order by o.pd_no
 	</select>
 	
+	<select id="getChart3" resultType="java.util.Map">
+		select t_no, count(1) as cnt
+        from article
+        group by t_no
+	</select>
+	
 </mapper>

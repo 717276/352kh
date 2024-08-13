@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import '../../components/css/csr/FAQ.css';
 import { useNavigate } from 'react-router-dom';
 import { jwtDecode } from 'jwt-decode'; // 여기를 수정
+import { HTTP_STATUS } from '../../components/Auth';
 
 const getCategoryName = (category) => {
     switch (category) {
@@ -22,63 +23,64 @@ const getCategoryName = (category) => {
 
 const FAQ = () => {
     const [postsPerPage, setPostsPerPage] = useState(30);
-    const [response, setResponse] = useState(null);
+    const [response, setResponse] = useState(null);    
     const [userName, setUserName] = useState('');
+    const [userNo, setUserNo] = useState('');
     const [posts, setPosts] = useState([]);
     const [selectedCategory, setSelectedCategory] = useState(null);
-    const [accessToken, setAccessToken] = useState(localStorage.getItem('accessToken')); // accessToken 상태 추가
+    const [accessToken, setAccessToken] = useState(localStorage.getItem('accessToken')); 
     const nav = useNavigate();
 
-    useEffect(() => {
+    useEffect(() => {                
         if (accessToken && accessToken !== 'null') {
             try {
-                const decodedToken = jwtDecode(accessToken);
-                setUserName(decodedToken.userName); // 필요한 사용자 정보 추출
-                console.log('토큰 null아님');
-                console.log('디코드뽑아온 유저네임 :' + decodedToken.userName);
+                const decodedToken = jwtDecode(accessToken);                
+                console.log(decodedToken.userEmail);
+
+                setUserName(decodedToken.userEmail); // 필요한 사용자 정보 추출
+                setUserNo(decodedToken.userNo);                
             } catch (err) {
                 console.error('토큰 디코딩 실패:', err);
             }
         } else {
             console.log('토큰 null임');
         }
-    }, [accessToken]);
+        fetchNotices();
+    }, []);
 
     const fetchNotices = async () => {
         try {
-            const res = await fetch('http://localhost:8080/api/notice/all');
-            const data = await res.json();
-            setPosts(data);
+            const res = await fetch('http://localhost:8080/api/notice/all');            
+            if (res.status === HTTP_STATUS.OK){                
+                const data = await res.json();
+                setPosts(data);
+            }
         } catch (error) {
             console.error('Error fetching notices:', error);
         }
     };
-
-    useEffect(() => {
-        fetchNotices();
-    }, []);
-
-    const handleCreateRoom = async () => {
+    const handleCreateRoom = async () => {        
         if (!userName) {
             alert('사용자 이름을 찾을 수 없습니다.');
             return;
         }
-
         try {
-            const res = await fetch('http://localhost:8080/chat', {
+            const res = await fetch('http://localhost:8080/api/chat', {
                 method: 'POST',
-                headers: {
-                    'Content-Type': 'application/x-www-form-urlencoded',
-                },
+                headers: {'Content-Type': 'application/x-www-form-urlencoded' },
                 body: new URLSearchParams({
-                    name: userName, // Room Name을 userName으로 설정
+                    email: userName, // Room Name을 userName으로 설정
+                    m_no: userNo,
                 }),
             });
 
             if (res.ok) {
                 const data = await res.json();
                 setResponse(data);
-                alert(`Room created: ${data.name}`);
+                console.log(res);
+                console.log(data.room_id);
+                alert(`채팅방으로 이동합니다`);
+                window.open(`/csr/chat/room/${data.room_id}`, '_blank', 'width=650,height=500');
             } else {
                 const errorData = await res.json();
                 alert(`Failed to create room: ${errorData.message}`);
@@ -94,11 +96,11 @@ const FAQ = () => {
     };
 
     const handlePostClick = (postId) => {
-        nav(`/faq/${postId}`);
+        nav(`csr/faq/${postId}`);
     };
 
     const handleWriteButtonClick = () => {
-        nav('/faqwrite');
+        nav('csr/faqwrite');
     };
 
     const handleCategoryClick = (category) => {
@@ -112,6 +114,13 @@ const FAQ = () => {
         <div className="qna_container">
             <div className="qna_box">
                 <header className="qna_header">
+                    {accessToken && accessToken !== 'null' && (
+                        <div>
+                            <button onClick={handleCreateRoom}>
+                                <img className="ChatLogoImg" src="/public/images/chat/ChatLogo.png" alt="" />
+                            </button>
+                        </div>
+                    )}
                     <h1>FAQ</h1>
                     <div>
                         <select className="qna_posts_per_page" value={postsPerPage} onChange={handlePostsPerPageChange}>
@@ -161,19 +170,6 @@ const FAQ = () => {
                     <div className="qna_pagination">
                         <span>1</span>
                     </div>
-
-                    {accessToken && accessToken !== 'null' && (
-                        <div>
-                            <button onClick={handleCreateRoom}>1대1 채팅 생성</button>
-                            {response && (
-                                <div>
-                                    <h2>Room Created</h2>
-                                    <p>Room ID: {response.roomId}</p>
-                                    <p>Room Name: {response.name}</p>
-                                </div>
-                            )}
-                        </div>
-                    )}
                 </footer>
             </div>
         </div>

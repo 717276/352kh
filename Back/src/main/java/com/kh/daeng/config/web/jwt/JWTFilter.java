@@ -30,7 +30,6 @@ public class JWTFilter extends OncePerRequestFilter {
 			throws ServletException, IOException {			
 		log.info("in jwt filter from " +  request.getRequestURL());
 		String accessToken = request.getHeader("Authorization");	
-		System.err.println("accessToken : " + accessToken);
 		// token 없음
 		if (accessToken == null || accessToken.equals("null")) {
 			System.err.println("jwt access token null");
@@ -41,24 +40,26 @@ public class JWTFilter extends OncePerRequestFilter {
 		try {			
 			jwtUtil.isExpired(accessToken);
 		} catch (ExpiredJwtException e) {
-			System.err.println("access token is expired return 409 error");
+			System.err.println("access token is expired return SC_GONE error");
 			response.setStatus(HttpServletResponse.SC_GONE);
 			return;
 		}		
 		// 토큰 만료 X
 		int userNo = jwtUtil.getUserNo(accessToken);
 		String userName = jwtUtil.getUserName(accessToken);
+		String userEmail = jwtUtil.getUserEmail(accessToken);
 		String role = jwtUtil.getRole(accessToken);
 		Member member = new Member();
 		member.setM_name(userName);
+		member.setM_email(userEmail);
 		member.setM_no(userNo);
 		member.setM_role(role);
 						
 		CustomUserDetails customUserDetails = new CustomUserDetails(member);
 		Authentication authToken = new UsernamePasswordAuthenticationToken(customUserDetails, null,customUserDetails.getAuthorities());
 		SecurityContextHolder.getContext().setAuthentication(authToken);
-		 
-		response.setHeader("authorization", accessToken);
+		String newAccessToken = jwtUtil.createJwt("access", userNo, userName, userEmail, role, 600000l);
+		response.setHeader("authorization", newAccessToken);
 		response.setStatus(HttpStatus.OK.value());
 		
 		log.info("jwt to next filter");		

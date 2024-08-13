@@ -18,28 +18,33 @@ public class OrderItemServiceImpl implements OrderItemService{
 	@Autowired
 	private OrderItemMapper mapper;
 	
+	// 장바구니 불러오기
 	@Override
 	public List<CartItem> getCartItems(int userNo) throws Exception {
 		return mapper.getCartItems(userNo);
 	}
 
+	// 장바구니 삭제하기
 	@Override
 	public void deleteCart(int ciNo) throws Exception {
 		mapper.deleteCart(ciNo);
 	}
 
+	// order 페이지에서 사용자 정보 불러오기(배송지 입력)
 	@Override
 	public Member getUserInfo(int userNo) throws Exception {
 		return mapper.getUserInfo(userNo);
 	}
 
+	// 결제 정보 저장하기
 	@Override
 	public void saveOrderData(int userNo, List<OrderItem> orderItems, PaymentItem paymentItem) throws Exception{
-		mapper.insertPaymentItem(paymentItem);
-		int payNo = mapper.getLatestPaymentId();
+		mapper.insertPaymentItem(paymentItem);			//Payitem 결제 정보 저장하기
+		int payNo = mapper.getLatestPaymentId();		//Payitem 최근 pay_no 불러오기
 		
+		// 결제한 상품데이터 저장
 		for(OrderItem data : orderItems) {
-			data.setPay_no(payNo);
+			data.setPay_no(payNo);						
 			data.setM_no(userNo);
 			mapper.insertOrderItem(data);
 		}

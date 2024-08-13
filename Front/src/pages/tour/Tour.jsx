@@ -7,9 +7,9 @@ const Tour = () => {
   return (
     <Routes>
       <Route path="trip" element={<Trip></Trip>} />
-      <Route path="tripDetail/:no" element={<TripDetail />} />
-      <Route path="build" element={<Build></Build>} />
+      <Route path="tripDetail/:t_no" element={<TripDetail />} />
       <Route path="tripCreate" element={<TripCreate />} />
+      <Route path="build" element={<Build></Build>} />
     </Routes>
   );
 };

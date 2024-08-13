@@ -13,21 +13,54 @@ const ProductModify = () => {
   const [price, setPrice] = useState('');
   const [discountRate, setDiscountRate] = useState(0);
   const [items, setItems] = useState({});
-  const { pdNo } = useParams();
+  const { pd_no } = useParams();
   const imgRef = useRef();
   const detailImagesRef = useRef();
+  const [showImages, setShowImages] = useState([]);
+  const [showImages2, setShowImages2] = useState([]);
 
   useEffect(() => {
-    const url = `http://localhost:8080/api/admin/productModify/${pdNo}`;
+    const url = `http://localhost:8080/api/admin/productModify/${pd_no}`;
     fetch(url)
-      .then(response => {
-        return response.json();
-      })
+      .then(response => response.json())
       .then(data => {
         setItems(data);
-        console.log(data);
-      })
-  }, [pdNo]);
+        // 기본 이미지 미리보기 (처음 로드 시)
+        if (data.img) {
+          setShowImages2([`/images/shop/product_${data.img.i_ref_no}_1.jpg`]);
+        }
+      });
+  }, [pd_no]);
+
+  const handleAddImages = (event) => {
+    const imageLists = event.target.files;
+    let imageUrlLists = [];
+
+    for (let i = 0; i < imageLists.length; i++) {
+      const currentImageUrl = URL.createObjectURL(imageLists[i]);
+      imageUrlLists.push(currentImageUrl);
+    }
+
+    if (imageUrlLists.length > 10) {
+      imageUrlLists = imageUrlLists.slice(0, 10);
+    }
+    setShowImages(imageUrlLists);
+  };
+
+  const handleAddImages2 = (event) => {
+    const imageLists = event.target.files;
+    let imageUrlLists = [];
+
+    for (let i = 0; i < imageLists.length; i++) {
+      const currentImageUrl = URL.createObjectURL(imageLists[i]);
+      imageUrlLists.push(currentImageUrl);
+    }
+
+    if (imageUrlLists.length > 10) {
+      imageUrlLists = imageUrlLists.slice(0, 10);
+    }
+    setShowImages2(imageUrlLists);
+  };
 
   const handlePriceChange = (e) => {
     setPrice(e.target.value);
@@ -44,14 +77,6 @@ const ProductModify = () => {
     document.getElementById('price').value = finalPrice;
   };
 
-  const getImageUrl = () => {
-    if (items.img && items.img.i_ref_no) {
-      return `/images/shop/product_${items.img.i_ref_no}_1.jpg`;
-    } else {
-      return '/images/shop/default.jpg';
-    }
-  };
-
   return (
     <>
       <div className='ProductRegister'>
@@ -59,15 +84,15 @@ const ProductModify = () => {
         <div className='mg_box'>
           <div className='mg_mangeMenu'>
             <ul>
-              <li onClick={() => { nav() }}>회원관리</li>
-              <li onClick={() => { nav() }}>여행관리</li>
+              <li onClick={() => { nav('/admin/management') }}>회원관리</li>
+              <li onClick={() => { nav('/admin/tripList') }}>여행관리</li>
               <li onClick={() => { nav('/admin/productList') }}>상품관리</li>
               <li onClick={() => { nav('/admin/chart') }}>분석</li>
             </ul>
           </div>
         </div>
         <div className='ProductRegisterTable'>
-          <input type="hidden" value={items.pd_no || ''} readOnly />
+          <input type="hidden" value={items.pd_no} readOnly />
           <input type="hidden" value={items.filename} readOnly />
           <table>
             <tbody>
@@ -83,7 +108,15 @@ const ProductModify = () => {
               </tr>
               <tr>
                 <td rowSpan={5}>
-                  <img src={getImageUrl()} alt="image" />
+                  {showImages2.length > 0 ? (
+                    showImages2.map((image, id) => (
+                      <div className='imgcontainer' key={id}>
+                        <img src={image} alt={`${image}-${id}`} />
+                      </div>
+                    ))
+                  ) : (
+                    <img src='/images/shop/default.jpg' alt="default" />
+                  )}
                 </td>
                 <td>상품명</td>
                 <td colSpan={2}><input type="text" ref={pdName} defaultValue={items.pd_name} /></td>
@@ -116,10 +149,19 @@ const ProductModify = () => {
                 </td>
               </tr>
               <tr>
-                <td><input type="file" ref={imgRef} /></td>
+                <td><input type="file" ref={imgRef} onChange={handleAddImages2} /></td>
                 <td>상세이미지</td>
                 <td colSpan={2}>
-                  <input type="file" ref={detailImagesRef} multiple />
+                  <input type="file" ref={detailImagesRef} multiple onChange={handleAddImages} />
+                </td>
+              </tr>
+              <tr>
+                <td colSpan={4}>
+                  {showImages.map((image, id) => (
+                    <div className='imgcontainer' key={id}>
+                      <img src={image} alt={`${image}-${id}`} />
+                    </div>
+                  ))}
                 </td>
               </tr>
             </tbody>
@@ -150,23 +192,23 @@ const ProductModify = () => {
               body: form
             }).then(() => {
               nav('/admin/productList');
+              window.location.reload();
             });
           }}>수정</button>
           <button id="deleteButton" onClick={() => {
             if (window.confirm('삭제할까요?')) {
               const form = new FormData();
-              console.log(items.pdNo);
               form.append('pd_no', items.pd_no);
               fetch('http://localhost:8080/api/admin/product/delete', {
                 method: 'post',
                 body: form
               }).then(() => {
                 nav('/admin/productList');
+                window.location.reload();
               })
             }
-          }
-          }>삭제</button>
-          <button id='normalButton' onClick={() => { nav(-1) }}>취소</button>
+          }}>삭제</button>
+          <button id='normalButton' onClick={() => { nav('/admin/productList') }}>취소</button>
         </div>
       </div>
     </>

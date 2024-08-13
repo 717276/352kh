@@ -26,17 +26,23 @@ public class MainController {
     @PostMapping("/reissue")
     public ResponseEntity<?> reissue(HttpServletRequest request, HttpServletResponse response) {
     	return jwtService.work(request, response);
-    }       
-    @RequestMapping("/qna")
-    public void qna(HttpServletRequest request) {
+    }           
+    @RequestMapping("/api/**")
+    public void api(HttpServletRequest request) {    	    	
     }
-    @RequestMapping("/board/*")
+    @RequestMapping("/csr/**")
+    public void cs(HttpServletRequest request) {    	
+    }
+    @RequestMapping("/board/**")
     public void board(HttpServletRequest request) {  
     }    
-    @RequestMapping("/tour/*")
+    @RequestMapping("/tour/**")
     public void tour(HttpServletRequest request) {    	
     }
-    @RequestMapping("/admin/*")
+    @RequestMapping("/admin/**")
     public void admin(HttpServletRequest request) {    	    
     }
+    @RequestMapping("/ws/**")
+    public void connect() {  
+    }    
 }

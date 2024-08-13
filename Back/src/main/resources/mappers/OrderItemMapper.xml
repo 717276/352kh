@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.kh.daeng.mapper.OrderItemMapper">
+
+	<!-- 장바구니 불러오기 -->
     <select id="getCartItems" resultMap="OrderItemResultMap">
         SELECT 
             ci.ci_no, ci.pd_no, ci.m_no, ci.ci_quantity,
@@ -19,7 +21,6 @@
         <result property="pd_no" column="pd_no"/>
         <result property="m_no" column="m_no"/>
         <result property="ci_quantity" column="ci_quantity"/>
-        
         <association property="product" javaType="Product">
             <id property="pd_no" column="p_pd_no"/>
             <result property="pd_name" column="p_pd_name"/>
@@ -29,7 +30,6 @@
             <result property="pd_discount" column="p_pd_discount"/>
             <result property="pd_registrationDate" column="p_pd_registrationDate"/>
             <result property="pd_category" column="p_pd_category"/>
-            
             <association property="img" javaType="Img">
                 <id property="i_no" column="i_i_no"/>
                 <result property="i_ref_no" column="i_i_ref_no"/>
@@ -49,16 +49,18 @@
         SELECT * FROM member WHERE m_no = #{userNo}
     </select>
     
-    <!-- 결제 성공 시 orderItem, paymentItem에 데이터 추가 -->
+    <!-- Payitem 결제 정보 저장하기 -->
     <insert id="insertPaymentItem" parameterType="PaymentItem">
         INSERT INTO PaymentItem (pay_no, pay_type, pay_Date, pay_total) 
         VALUES (PAY_SEQ.NEXTVAL, #{pay_type}, SYSDATE, #{pay_total})
     </insert>
 
+	<!-- Payitem 최근 pay_no 불러오기 -->
     <select id="getLatestPaymentId" resultType="int">
         SELECT MAX(pay_no) FROM PaymentItem
     </select>
 
+	<!-- 결제한 상품 데이터 저장 -->
     <insert id="insertOrderItem" parameterType="OrderItem">
         INSERT INTO OrderItem 
         (oi_no, pd_no, m_no, oi_price, oi_quantity, oi_orderDate,oi_basicAddress, 

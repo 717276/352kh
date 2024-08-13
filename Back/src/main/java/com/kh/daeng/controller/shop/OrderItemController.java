@@ -29,21 +29,25 @@ public class OrderItemController {
 	@Autowired
 	private OrderItemService service;
 	
+	// 장바구니 불러오기
 	@GetMapping("/order/{userNo}")
 	public List<CartItem> getCartItems(@PathVariable(name = "userNo") int userNo) throws Exception {
 		return service.getCartItems(userNo);
 	}
 	
+	// 장바구니 삭제하기
 	@DeleteMapping("/deleteCart/{ciNo}")
 	public void deleteCart(@PathVariable(name = "ciNo") int ciNo) throws Exception{
 		service.deleteCart(ciNo);
 	}
 	
+	// order 페이지에서 사용자 정보 불러오기(배송지 입력)
 	@GetMapping("/order/user/{userNo}")
 	public Member getUserInfo(@PathVariable(name = "userNo") int userNo) throws Exception {
 		return service.getUserInfo(userNo);
 	}
 	
+	// 결제 정보 저장하기
 	@PostMapping("/order/save")
 	public void saveOrderData(@RequestBody Map<String, Object> orderData) throws Exception {
 	    int userNo = Integer.parseInt(orderData.get("userNo").toString());
@@ -65,6 +69,7 @@ public class OrderItemController {
 	    service.saveOrderData(userNo, orderItems, paymentItem);
 	}
 	
+	// 결제 타입 변경하기
 	public int convertPaymentType(String payType) {
 	    switch (payType) {
 	        case "card/easy":

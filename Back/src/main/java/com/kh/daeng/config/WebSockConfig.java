@@ -7,6 +7,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.web.socket.config.annotation.EnableWebSocket;
 import org.springframework.web.socket.config.annotation.WebSocketConfigurer;
 import org.springframework.web.socket.config.annotation.WebSocketHandlerRegistry;
+import org.springframework.web.socket.server.support.HttpSessionHandshakeInterceptor;
 
 import com.kh.daeng.config.web.handler.WebSockChatHandler;
 
@@ -14,7 +15,7 @@ import lombok.RequiredArgsConstructor;
 
 @Configuration
 @EnableWebSocket
-@RequiredArgsConstructor
+@RequiredArgsConstructor	
 public class WebSockConfig implements WebSocketConfigurer {
 
 	@Autowired
@@ -24,8 +25,8 @@ public class WebSockConfig implements WebSocketConfigurer {
     @Override
     public void registerWebSocketHandlers(WebSocketHandlerRegistry registry) {
         logger.info("핸들러 메서드 ");
-        registry.addHandler(webSockChatHandler, "/ws/chat")
-                .setAllowedOrigins("*"); // 모든 출처를 허용
+        registry.addHandler(webSockChatHandler, "/ws/chat").addInterceptors(new HttpSessionHandshakeInterceptor())
+        .setAllowedOrigins("*"); // 모든 출처를 허용
                
     }
 }

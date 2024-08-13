@@ -6,20 +6,25 @@ const Register = () => {
     const [dogName, setDogName] = useState('');
     const [breed, setBreed] = useState('');
     const [size, setSize] = useState('');
-
+    const [phoneNumberDuplicateError, setPhoneNumberDuplicateError] = useState('');
+    const [emailDuplicateError, setEmailDuplicateError] = useState('');
     const [zonecode, setZonecode] = useState('');
     const [address, setAddress] = useState('');
     const [detailedAddress, setDetailedAddress] = useState('');
     const [username, setUsername] = useState('');
     const [userId, setUserId] = useState('');
     const [password, setPassword] = useState('');
+    const [confirmPassword, setConfirmPassword] = useState(''); // 패스워드 확인란 상태 추가
     const [email, setEmail] = useState('');
     const [phoneNumber, setPhoneNumber] = useState('');
     const [passwordError, setPasswordError] = useState('');
+    const [confirmPasswordError, setConfirmPasswordError] = useState(''); // 패스워드 일치 오류 상태 추가
     const [emailError, setEmailError] = useState('');
     const [usernameError, setUsernameError] = useState('');
     const [phoneNumberError, setPhoneNumberError] = useState('');
 
+    const [isPhoneNumberChecked, setIsPhoneNumberChecked] = useState(false);
+    const [isEmailChecked, setIsEmailChecked] = useState(false);
     const navigate = useNavigate();
     const location = useLocation();
 
@@ -28,8 +33,48 @@ const Register = () => {
     const usernameRegEx = /^[가-힣]{2,6}$/; // 한글 2글자에서 6글자
     const phoneNumberRegEx = /^[0-9]*$/; // 숫자만
 
-    // provider 추가 
+    // provider 추가
     const [provider, setProvider] = useState('Daeng');
+
+    const handleEmailDuplicateCheck = async () => {
+        try {
+            const response = await fetch(
+                `http://localhost:8080/api/members/checkEmail?email=${email}&provider=${provider}`
+            );
+
+            if (response.status === 409) {
+                const data = await response.json();
+                setEmailDuplicateError(data.message);
+                setIsEmailChecked(false);
+                alert('이미 등록된 이메일입니다.');
+            } else {
+                setEmailDuplicateError('');
+                setIsEmailChecked(true);
+                alert('사용 가능한 이메일입니다.');
+            }
+        } catch (error) {
+            console.error('Error:', error);
+        }
+    };
+
+    const handlePhoneNumberDuplicateCheck = async () => {
+        try {
+            const response = await fetch(`http://localhost:8080/api/members/checkPhoneNumber/${phoneNumber}`);
+            if (response.status === 409) {
+                const data = await response.json();
+                setPhoneNumberDuplicateError(data.message);
+                setIsPhoneNumberChecked(false);
+                alert('이미 등록된 전화번호입니다.');
+            } else {
+                setPhoneNumberDuplicateError('');
+                setIsPhoneNumberChecked(true);
+                alert('사용 가능한 전화번호입니다.');
+            }
+        } catch (error) {
+            console.error('Error:', error);
+        }
+    };
+
     const passwordCheck = (userPW) => {
         if (userPW === '') {
             setPasswordError('');
@@ -37,6 +82,15 @@ const Register = () => {
             setPasswordError('잘못된 비밀번호 형식입니다.');
         } else {
             setPasswordError('');
+        }
+    };
+    const confirmPasswordCheck = (value) => {
+        if (value === '') {
+            setConfirmPasswordError('');
+        } else if (value !== password) {
+            setConfirmPasswordError('비밀번호가 일치하지 않습니다.');
+        } else {
+            setConfirmPasswordError('');
         }
     };
 
@@ -80,12 +134,12 @@ const Register = () => {
         const params = new URLSearchParams(location.search);
         const name = decodeURIComponent(params.get('name'));
         const email = decodeURIComponent(params.get('email'));
-        const provider = decodeURIComponent(params.get('provider'));       
+        const provider = decodeURIComponent(params.get('provider'));
         if (name !== 'null') setUsername(name);
         if (email !== 'null') setEmail(email);
         if (provider !== 'null') {
             console.log(provider);
-            setProvider(provider);    
+            setProvider(provider);
         }
     }, [location.search]);
 
@@ -135,7 +189,7 @@ const Register = () => {
 
     const handleSubmit = (event) => {
         event.preventDefault();
-        console.log("handleSubmit");
+        console.log('handleSubmit');
         // 입력값 검증 로직
         if (usernameError || !username) {
             alert('이름을 올바르게 입력해주세요.');
@@ -145,8 +199,12 @@ const Register = () => {
             alert('ID를 입력해주세요.');
             return;
         }
-        if ((passwordError || !password ) && provider === 'Daeng') {
+        if (passwordError || !password) {
             alert('유효한 비밀번호를 입력해주세요.');
+            return;
+        }
+        if (confirmPasswordError || !confirmPassword) {
+            alert('비밀번호 확인란을 올바르게 입력해주세요.');
             return;
         }
         if (emailError || !email) {
@@ -181,6 +239,14 @@ const Register = () => {
             alert('강아지 크기를 선택해주세요.');
             return;
         }
+        if (!isEmailChecked) {
+            alert('이메일 중복 체크를 해주세요.');
+            return;
+        }
+        if (!isPhoneNumberChecked) {
+            alert('전화번호 중복 체크를 해주세요.');
+            return;
+        }
 
         const user = {
             username,
@@ -191,7 +257,7 @@ const Register = () => {
             zonecode,
             address,
             detailedAddress,
-            provider : provider,
+            provider: provider,
         };
         const dog = {
             dogName,
@@ -237,7 +303,7 @@ const Register = () => {
                             중복 체크
                         </button>
                     </div>
-                    {provider==='Daeng'&&(
+                    {provider === 'Daeng' && (
                         <input
                             type="password"
                             name="userPW"
@@ -253,31 +319,61 @@ const Register = () => {
                     )}
                     {passwordError && <p style={{ color: 'red' }}>{passwordError}</p>}
                     <input
-                        type="email"
-                        name="email"
-                        id="email"
-                        placeholder="E - MAIL"
+                        type="password"
+                        name="confirmPW"
+                        id="confirmPW"
+                        placeholder="PASSWORD 확인"
                         className="input-field"
-                        value={email}
+                        value={confirmPassword}
                         onChange={(e) => {
-                            setEmail(e.target.value);
-                            emailCheck(e.target.value);
+                            setConfirmPassword(e.target.value);
+                            confirmPasswordCheck(e.target.value);
                         }}
                     />
+                    {confirmPasswordError && <p style={{ color: 'red' }}>{confirmPasswordError}</p>}
+                    <div className="userEmailInsert">
+                        <input
+                            type="email"
+                            name="email"
+                            id="email"
+                            placeholder="E - MAIL"
+                            className="input-field"
+                            value={email}
+                            onChange={(e) => {
+                                setEmail(e.target.value);
+                                emailCheck(e.target.value);
+                                setIsEmailChecked(false);
+                            }}
+                        />
+                        <button type="button" className="emailCheck" onClick={handleEmailDuplicateCheck}>
+                            중복 체크
+                        </button>
+                    </div>
+
                     {emailError && <p style={{ color: 'red' }}>{emailError}</p>}
-                    <input
-                        type="tel"
-                        name="pNum"
-                        id="pNum"
-                        placeholder="전화번호"
-                        className="input-field"
-                        value={phoneNumber}
-                        onChange={(e) => {
-                            setPhoneNumber(e.target.value);
-                            phoneNumberCheck(e.target.value);
-                        }}
-                    />
+                    {emailDuplicateError && <p style={{ color: 'red' }}>{emailDuplicateError}</p>}
+                    <div className="phoneNumberInsert">
+                        <input
+                            type="tel"
+                            name="pNum"
+                            id="pNum"
+                            placeholder="전화번호"
+                            className="input-field"
+                            value={phoneNumber}
+                            onChange={(e) => {
+                                setPhoneNumber(e.target.value);
+                                phoneNumberCheck(e.target.value);
+                                setIsPhoneNumberChecked(false);
+                            }}
+                        />
+                        <button type="button" className="pNumCheck" onClick={handlePhoneNumberDuplicateCheck}>
+                            중복 체크
+                        </button>
+                    </div>
+
                     {phoneNumberError && <p style={{ color: 'red' }}>{phoneNumberError}</p>}
+                    {phoneNumberDuplicateError && <p style={{ color: 'red' }}>{phoneNumberDuplicateError}</p>}
+
                     <div className="addressDetailSelect">
                         <input type="text" value={zonecode} readOnly placeholder="우편번호" className="input-field" />
                         <button type="button" onClick={handleClick} className="addressSelect">

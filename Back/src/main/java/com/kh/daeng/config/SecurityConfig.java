@@ -115,8 +115,8 @@ public class SecurityConfig {
 
 		http.authorizeHttpRequests((auth) -> auth
 				.requestMatchers("/tour/**", "/chat/**").hasAnyRole("USER")
-				.requestMatchers("/admin/**").hasRole("ADMIN")
-				.anyRequest().permitAll())				
+				.requestMatchers("/admin/**").hasRole("ADMIN")				
+				.anyRequest().permitAll())	
 			.exceptionHandling()				
         		.accessDeniedHandler(customAccessDeniedHandler);
         									

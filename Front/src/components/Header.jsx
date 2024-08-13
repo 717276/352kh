@@ -1,7 +1,7 @@
 import{useContext, useEffect, useState} from 'react';
 import { Link , useNavigate} from 'react-router-dom';
 import './css/Header.css';
-import logo from '../images/logo.png';
+import logo from '/images/logo.png';
 import {AuthContext} from './Auth.jsx';
 import { jwtDecode } from "jwt-decode";
 const Header=()=>{
@@ -12,6 +12,7 @@ const Header=()=>{
         localStorage.removeItem('accessToken');
         document.cookie = "refresh=123; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;"; 
         setIsAuthorized(false);
+        nav('/');
     }    
     const rolePageHandler=()=>{
         if(role === 'ROLE_USER'){
@@ -49,9 +50,9 @@ const Header=()=>{
                             <li><Link to="/shop/">여행용품</Link></li>
                         </ul>
                     </li>
-                    <li>QnA
+                    <li>FAQ
                         <ul className="sub_list">
-                            <li><Link to="/qna">&nbsp;QnA</Link></li>
+                            <li><Link to="/csr/faq">&nbsp;FAQ</Link></li>
                         </ul>
                     </li>
                 </ul>                

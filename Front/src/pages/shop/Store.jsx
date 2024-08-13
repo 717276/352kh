@@ -7,7 +7,7 @@ const Store=()=>{
         <Routes>
             <Route path="" element={<Shop/>}/>                
             <Route path="list/:category" element={<ShopList />} />
-            <Route path="product/:id" element={<Product/>}/>                
+            <Route path="product/:pd_no" element={<Product/>}/>                
         </Routes>
     );
 }

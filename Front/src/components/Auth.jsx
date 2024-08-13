@@ -25,8 +25,7 @@ export const AuthProvider = ({ children }) => {
         sync();
     }, [location.pathname]);
 
-    async function setAccessToken (response){
-        console.log("setAccessToken: " + response.headers.get('authorization'));
+    async function setAccessToken (response){        
         const accessToken = response.headers.get('authorization');        
         localStorage.setItem('accessToken', accessToken);
     }
@@ -34,7 +33,7 @@ export const AuthProvider = ({ children }) => {
     async function sendAccess() {
         const accessToken = localStorage.getItem('accessToken');
         const path = location.pathname;
-        if (path !== '/' && path !== '/login' && !path.startsWith('/register') && !path.startsWith('/shop')){                        
+        if (path !== '/' && !path.startsWith('/register') && !path.startsWith('/shop')){                        
             const uriResult = await sendUri(accessToken);
             if (uriResult === HTTP_STATUS.SC_GONE){
                 sendRefresh();
@@ -42,6 +41,7 @@ export const AuthProvider = ({ children }) => {
         }                
     }    
     async function sendUri(accessToken){        
+        console.log("senduri: " + location.pathname);
         if (accessToken === null){            
             return HTTP_STATUS.SC_GONE;
         }
@@ -78,6 +78,7 @@ export const AuthProvider = ({ children }) => {
     }
     
     async function sendRefresh() {
+        console.log("send refresh");
         try {
             const response = await fetch(baseURI + '/reissue', {
                 method: 'POST',

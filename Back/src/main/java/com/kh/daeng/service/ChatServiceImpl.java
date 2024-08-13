@@ -26,8 +26,10 @@ import lombok.extern.slf4j.Slf4j;
 public class ChatServiceImpl implements ChatService {
     private static final Logger logger = LoggerFactory.getLogger(ChatServiceImpl.class);
         
-    private ObjectMapper objectMapper;
-    private Map<String, ChatRoom> chatRooms;
+    @Autowired
+    private ObjectMapper objectMapper;  
+    private Map<Integer, ChatRoom> chatRooms;
+    @Autowired
     private ChatMapper chatMapper;
     
     @PostConstruct
@@ -39,28 +41,18 @@ public class ChatServiceImpl implements ChatService {
     public List<ChatRoom> findAllRoom() {
     	List<ChatRoom> rList =  chatMapper.findAllChatRooms();
     	for(ChatRoom data : rList) {
-    		chatRooms.put(data.getRoomId(), data);
+    		chatRooms.put(data.getRoom_id(), data);
     	}
         return rList;
     }
-
-    @Override
-    public ChatRoom findRoomById(String roomId) {
-    	
-        return chatRooms.get(roomId);
-    }	
-
+    
+    
     @Override
     @Transactional
-    public ChatRoom createRoom(String name) {
-        String randomId = UUID.randomUUID().toString();
-        ChatRoom chatRoom = ChatRoom.builder().name(name).roomId(randomId).build();
-
-        logger.info("room객체생성");
-        logger.info("room객체 이름 " + chatRoom.getName());
-        logger.info("room객체 아이디 값 :  " + chatRoom.getRoomId());
-        chatMapper.insertChatRoom(chatRoom.getName(), chatRoom.getRoomId());
-        chatRooms.put(randomId, chatRoom);
+    public ChatRoom createRoom(String room_name, int m_no) {        
+        ChatRoom chatRoom = new ChatRoom(m_no, room_name);                
+        chatMapper.insertChatRoom(chatRoom.getRoom_name(), m_no);
+        chatRooms.put(m_no, chatRoom);
         return chatRoom;
     }
 
@@ -80,10 +72,12 @@ public class ChatServiceImpl implements ChatService {
 		chatMapper.insertChat(chatMessage);
 		
 	}
-
 	@Override
-	public List<ChatMessage> findChatByRoomId(String roomId) {
-		
+    public ChatRoom findRoomById(int roomId) {    	
+        return chatMapper.findRoomById(roomId);
+    }	
+	@Override
+	public List<ChatMessage> findChatByRoomId(String roomId) {		
 		return chatMapper.findChatByRoomId(roomId);
 	}
 }

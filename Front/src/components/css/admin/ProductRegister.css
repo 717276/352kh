@@ -136,3 +136,20 @@ input[type="file"] {
   border-radius: 5px;
   margin-bottom: 10px;
 }
+
+.ProductRegisterTable img {
+  width: 200px;
+  width: 200px;
+  object-fit: cover; 
+  display: flex; 
+  flex-wrap: wrap; 
+  gap: 10px;
+}
+
+.ProductRegisterTable .imgcontainer {
+  display: inline-block;
+}
+
+.ProductRegisterTable tr:last-child td {
+  text-align: center;
+}

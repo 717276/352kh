@@ -18,12 +18,14 @@ public interface MemberService {
     Member getMemberWithPreferences(int m_no);
     void deleteMember(int m_no);
     void registerMemberWithPreference(Member member, Preference preference, Dog dog);
-    boolean authenticate(String userId, String password);    
+    boolean authenticate(String userId, String password);
+    Member findByEmail(String email, String provider);
     Member findByUserId(String userId);
     ResponseEntity<String> findPwdByUser(Map<String, String> user);
     void updateMemberPassword(Member member);
     void sendEmailForCertification(String email) throws NoSuchAlgorithmException, MessagingException, jakarta.mail.MessagingException;
 
 	String findEmailByPhoneNumber(String phoneNumber);
-	Member findByEmail(String email, String provider);
+	Member findByPhoneNumber(String phoneNumber);
 }
+

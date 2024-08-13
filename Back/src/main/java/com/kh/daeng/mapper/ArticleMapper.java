@@ -30,7 +30,7 @@ public interface ArticleMapper {
 	
 	public void deleteImg(int arNo);
 
-	public void updateImg(@Param("arNo") int arNo, @Param("index") int index);
+	public void updateImg(@Param("ar_no") int arNo, @Param("index") int index);
 
 	public List<Img> selectImgList(int arNo) throws Exception;
 

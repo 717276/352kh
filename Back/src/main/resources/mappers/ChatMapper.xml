@@ -6,24 +6,23 @@
 <mapper namespace="com.kh.daeng.mapper.ChatMapper">
     <resultMap id="ChatRoomResult" type="ChatRoom">       
     </resultMap>
-
-    <select id="findChatRoomById" resultType="ChatRoom">
+		
+    <select id="findRoomById" resultType="ChatRoom">
         SELECT room_id, room_name FROM ChatRoom WHERE room_id = #{roomId}
     </select>
-
+     <select id="findChatByRoomId" resultType="ChatMessage">
+        SELECT * FROM ChatMessage where room_Id=#{room_Id}
+    </select>
     <select id="findAllChatRooms" resultType="ChatRoom">
         SELECT * FROM ChatRoom
     </select>
-
+    
     <insert id="insertChatRoom">
-        INSERT INTO ChatRoom (room_id, room_name) 
-        VALUES (#{room_Id}, #{room_Name})
+        INSERT INTO ChatRoom 
+        VALUES (chat_message_seq.nextVal , #{room_Id}, #{room_Name})
     </insert>
     <insert id="insertChat" parameterType="ChatMessage">
         INSERT INTO ChatMessage (c_no, c_type, room_Id, sender, message, m_no, message_date)
         VALUES (chat_message_seq.NEXTVAL, #{type}, #{roomId}, #{sender}, #{message}, #{m_no}, SYSDATE)
     </insert>
-     <select id="findChatByRoomId" resultType="ChatMessage">
-        SELECT * FROM ChatMessage where room_Id=#{room_Id}
-    </select>
 </mapper>

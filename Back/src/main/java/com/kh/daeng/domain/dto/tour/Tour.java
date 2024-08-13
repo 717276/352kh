@@ -21,6 +21,7 @@ public class Tour {
     private Date t_endDate;
     private int t_status;
     private int pf_no;
+    private int ar_cnt;
     
     private Img img;
     private Preference pre;

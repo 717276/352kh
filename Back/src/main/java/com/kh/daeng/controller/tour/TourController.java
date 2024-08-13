@@ -36,58 +36,80 @@ public class TourController {
 	@Autowired
 	private TourService service;
 
+	// 메인 리스트
+	@GetMapping("/main/tour")
+	public List<Tour>getMainTour(){
+		return service.getMainTour();
+	}
+	
+	
 	// 전체 리스트 불러오기
 	@GetMapping("/trip")
-	public List<Tour> getAllTours() throws Exception {
 	public List<Tour> getAllTours() throws Exception {		
 		return service.getAllTours();
 	}
 
+	// m_no를 이용하여 유저의 선호도 불러오기
 	@GetMapping("/getPre/{userNo}")
 	public Preference getUserPre(@PathVariable(name = "userNo") int userNo) throws Exception {
 		return service.getUserPre(userNo);
 	}
 
-	@GetMapping("/tripDetail/{t_no}")
-	public Tour getTourDetail(@PathVariable(name = "t_no") int t_no) throws Exception {
+	// t_no를 이용하여 해당 투어의 상세정보 불러오기
+	@GetMapping("/tripDetail/{no}")
+	public Tour getTourDetail(@PathVariable(name = "no") int t_no) throws Exception {
 		System.out.println("들어와지나");
-		System.out.println(service.getTourDetail(t_no));
+		System.out.println(service.getTourDetail(t_no));		
 		return service.getTourDetail(t_no);
 	}
-
+	
+	// m_no로 유저의 TourList 불러오기
 	@GetMapping("userTourList/{userNo}")
 	public List<Integer> getUserTourList(@PathVariable(name = "userNo") int userNo) throws Exception {
 		return service.getUserTourList(userNo);
 	}
 
+	// m_no와 t_no로 투어 신청하기
 	@PostMapping("/applyForTour")
 	public void applyForTour(@RequestBody Map<String, Object> request) throws Exception {
 		int userNo = Integer.parseInt(request.get("userNo").toString());
 		int t_no = Integer.parseInt(request.get("t_no").toString());
-		System.out.println(userNo + " / " + t_no);
 		service.insertTourList(userNo, t_no);
 	}
+	
+	// m_no와 t_no로 투어 신청 취소하기
+	@DeleteMapping("/cancelTour")
+	public void cancelTour(@RequestBody Map<String, Object> request) throws Exception {
+		int userNo = Integer.parseInt(request.get("userNo").toString());
+		int t_no = Integer.parseInt(request.get("t_no").toString());
+		service.deleteTourList(userNo, t_no);
+	}
 
+	// admin 투어 승인하기
 	@PutMapping("/admin/tripStatusChange/{t_no}")
 	public void statusUpdate(@PathVariable(name = "t_no") int t_no) throws Exception {
 		service.statusUpdata(t_no);
 	}
 
+	//admin 투어 삭제하기
 	@DeleteMapping("/admin/tourDelete/{t_no}")
 	public void tourDelete(@PathVariable(name = "t_no") int t_no) throws Exception {
 		service.deleteTour(t_no);
 	}
 
+	// 신청한 투어 정보 불러오기
 	@GetMapping("/tourOrder/{userNo}")
 	public List<Tour> getTourOrder(@PathVariable(name = "userNo") int userNo) throws Exception {
 		return service.getToursByUserNo(userNo);
 	}
 
+	// 신청한 투어 취소하기
 	@DeleteMapping("/deleteTourCart/{utl_no}")
 	public void deleteTourCart(@PathVariable(name = "utl_no") int utl_no) throws Exception {
 		service.deleteTourCart(utl_no);
 	}
 
+	// 투어 결제하기
 	@PostMapping("/tourOrder/save")
 	public void saveTourOrderData(@RequestBody Map<String, Object> orderData) throws Exception {
 		int userNo = Integer.parseInt(orderData.get("userNo").toString());
@@ -107,21 +129,7 @@ public class TourController {
 		service.saveTourOrder(userNo, ordertours, pt);
 	}
 
-	public int convertPaymentType(String payType) {
-		switch (payType) {
-		case "card/easy":
-			return 0;
-		case "trans":
-			return 1;
-		case "vbank":
-			return 2;
-		case "phone":
-			return 3;
-		default:
-			throw new IllegalArgumentException("Invalid payment type: " + payType);
-		}
-	}
-
+	// 투어 생성하기
 	@PostMapping("/tourCreate")
 	public ResponseEntity<?> createTour(@RequestParam("tourName") String tourName,
 			@RequestParam("tourDescription") String tourDescription, @RequestParam("tourPrice") int tourPrice,
@@ -144,15 +152,12 @@ public class TourController {
 		tour.setT_strDate(start);
 		tour.setT_endDate(end);
 
-		System.out.println("투어 기본 정보");
-		System.out.println(tour.toString());
-		System.out.println();
 		// 투어 데이터 저장
 		int t_no = service.createTour(tour, categories, toursJson);
 
 		// 투어 이미지 저장
 		if (!tourImageFile.isEmpty()) {
-			String folderPath = "D:/reactTest/daengTrip2/public/images/tour/";
+			String folderPath = "D:/reactTest/daengTrip2/Front/public/images/tour/";
 			String imagePath = folderPath + "tour_" + t_no + "_1.jpg";
 			File folder = new File(folderPath);
 			if (!folder.exists()) {
@@ -160,9 +165,24 @@ public class TourController {
 			}
 			File dest = new File(imagePath);
 			tourImageFile.transferTo(dest);
-			System.out.println("투어 대표이미지 저장 성공");
 		}
 
 		return ResponseEntity.ok("투어 등록 성공");
+	}
+	
+	// 결제 타입 변환하기
+	public int convertPaymentType(String payType) {
+		switch (payType) {
+		case "card/easy":
+			return 0;
+		case "trans":
+			return 1;
+		case "vbank":
+			return 2;
+		case "phone":
+			return 3;
+		default:
+			throw new IllegalArgumentException("Invalid payment type: " + payType);
+		}
 	}
 }

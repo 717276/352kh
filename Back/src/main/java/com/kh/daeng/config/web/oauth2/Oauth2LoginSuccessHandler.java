@@ -35,9 +35,9 @@ public class Oauth2LoginSuccessHandler extends SimpleUrlAuthenticationSuccessHan
 		Iterator<?extends GrantedAuthority> iterator = authorities.iterator();
 		GrantedAuthority auth = iterator.next();
 		String role = auth.getAuthority();
-		
-		String accessToken = jwtUtil.createJwt("access", userNo, userName,role, 600 * 1000L);
-		String refreshToken = jwtUtil.createJwt("refresh", userNo, userName, role, 86400000L);
+		String userEmail = cuds.getUsername();
+		String accessToken = jwtUtil.createJwt("access", userNo, userName,userEmail,role, 600 * 1000L);
+		String refreshToken = jwtUtil.createJwt("refresh", userNo, userName,userEmail, role, 86400000L);
 		
 		response.setHeader("authorization", accessToken);
 		response.addCookie(createCookie("refresh", refreshToken));		

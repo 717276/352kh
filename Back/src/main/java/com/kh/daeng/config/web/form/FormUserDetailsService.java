@@ -22,8 +22,7 @@ public class FormUserDetailsService implements UserDetailsService{
 	public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
 		System.err.println("user email: " + email);				
 		Member member = memberMapper.findByUserEmail(email, provider);
-		
-		System.err.println(member.getM_provider());
+				
 		if (member != null) {
 			return new CustomUserDetails(member);
 		}

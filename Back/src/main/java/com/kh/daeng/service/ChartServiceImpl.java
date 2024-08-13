@@ -24,4 +24,7 @@ public class ChartServiceImpl implements ChartService {
 		return mapper.getChart2();
 	}
 
+	public List<Map<String, Object>> getChart3() throws Exception {
+		return mapper.getChart3();
+	}
 }
