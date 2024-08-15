@@ -61,6 +61,7 @@ const ProductList = () => {
               <li onClick={() => { nav('/admin/tripList') }}>여행관리</li>
               <li onClick={() => { nav('/admin/productList') }}>상품관리</li>
               <li onClick={() => { nav('/admin/chart') }}>분석</li>
+              <li onClick={()=>{nav('/admin/chat/list')}}>Faq관리</li>
             </ul>
           </div>
         </div>

@@ -61,7 +61,7 @@ const Management = () => {
                     <li onClick={() => { nav('tripList') }}>여행관리</li>
                     <li onClick={() => { nav('productList') }}>상품관리</li>
                     <li onClick={() => { nav('chart') }}>분석</li>
-                    {/* <li onClick={()=>{nav('/faq/')}}></li> */}
+                    <li onClick={()=>{nav('/admin/chat/list')}}>Faq관리</li>
                     </ul>
                 </div>
                 <div className="mg_userList">

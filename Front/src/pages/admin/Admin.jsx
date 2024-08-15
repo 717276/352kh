@@ -17,7 +17,7 @@ const Admin=()=>{
             <Route path="/" element={<Management/>}/>   
             <Route path="tripApproval/:t_no" element={<TripApproval/>}></Route>         
             <Route path="tripList" element={<TripList />}></Route>              
-            <Route path="admin/chat/" element={<ChatRoomList />}/>
+            <Route path="/chat/list" element={<ChatRoomList />}/>
         </Routes>
     );
 }
