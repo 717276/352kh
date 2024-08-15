@@ -13,7 +13,11 @@ const MainTrip = ({tourData}) => {
     navigate(`/tour/tripDetail/${t_no}`);
   };
 
+  useEffect(()=>{
+  },[tourData])
+
   const truncateText = (text, maxLength) => {
+
     if (text.length <= maxLength) {
       return text;
     }

@@ -38,11 +38,13 @@ const Main=()=>{
                 const iconImg = tours.slice(5, 10);          
                 setSlideImgs(slideImg);                            
                 setTourData(iconImg);                 
-                getUrl(slideImg);                                                               
+                getUrl(slideImg); 
+                console.log(iconImg);                                                              
             }else {          
                 setSlideImgs(tours);
                 setTourData(tours);
-                getUrl(tours);                     
+                getUrl(tours);       
+                console.log(tours);              
             }
         }        
         mtour();
