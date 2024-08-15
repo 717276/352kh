@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation} from 'react-router-dom';
 import '../../components/css/login/SelectTm.css';
 
 const themes = [
@@ -45,12 +45,16 @@ const SelectTm = () => {
         pf_spot: false,
     });
 
-    const navigate = useNavigate();
+    const navigate = useNavigate();    
+    const location = useLocation();
+    const m_no = location.state?.m_no;
 
     useEffect(() => {
         // 세션에서 유저 정보를 가져옴
+    
         const user = JSON.parse(sessionStorage.getItem('user'));
         const dog = JSON.parse(sessionStorage.getItem('dog'));
+        
         if (!user || !dog) {
             // 유저나 개 정보가 없으면 회원가입 페이지로 리디렉션
             navigate('/register');
@@ -69,6 +73,29 @@ const SelectTm = () => {
     };
 
     const updatePreferences = async () => {
+        const newPf = {
+            m_no,
+            preferences: selectedPreferences
+        }
+        if (m_no){
+            
+            const response = await fetch(`http://localhost:8080/api/mypage/update/preference`,{
+                method:"POST",
+                headers:{
+                    'Content-Type':'application/json',
+                },
+                body:JSON.stringify(newPf)
+            })
+            if (response.status === 200){
+                alert("update 성공")
+                navigate(-1);
+            }else{
+                alert(response.body);
+                navigate(-1);
+            }
+            return;
+        }
+
         const user = JSON.parse(sessionStorage.getItem('user'));
         const dog = JSON.parse(sessionStorage.getItem('dog'));
         const preferences = selectedPreferences;
@@ -132,7 +159,7 @@ const SelectTm = () => {
                 </div>
 
                 <button className="selectButton" onClick={updatePreferences}>
-                    회원가입
+                    등록하기
                 </button>
             </div>
         </div>

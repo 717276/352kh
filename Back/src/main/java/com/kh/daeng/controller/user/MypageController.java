@@ -4,6 +4,7 @@ import java.io.File;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -14,6 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.kh.daeng.domain.dto.user.Member;
+import com.kh.daeng.domain.dto.user.Preference;
 import com.kh.daeng.service.iface.MypageService;
 
 import lombok.extern.java.Log;
@@ -29,9 +31,8 @@ public class MypageController {
 	// 유저 정보 불러오기
 	@GetMapping("/{userNo}")
 	public Member getUser(@PathVariable(name = "userNo") int userNo) throws Exception {
-		Member m = service.getUser(userNo);
-		System.err.println("member " + m.getTours());
-		System.err.println("member 2" + m.getTourList());
+		Member m = service.getUser(userNo);		
+		System.err.println("member tourlist " + m.getTourList());
 		return m;
 	}
 
@@ -131,5 +132,26 @@ public class MypageController {
 	        file.transferTo(dest);
 	        System.out.println("프로필 이미지 변경 성공");
 	    }
+	}
+	@PostMapping("/update/preference")
+    public ResponseEntity<String> updatePf(@RequestBody Map<String,Object> newPf) {
+		try {
+			int mNo = (Integer)newPf.get("m_no");			
+	        Preference preference = new Preference();
+
+			Map<String, Boolean> preferences = (Map<String, Boolean>) newPf.get("preferences");
+			preference.setPf_rest(preferences.get("pf_rest") ? 1 : 0);
+	        preference.setPf_sport(preferences.get("pf_sport") ? 1 : 0);
+	        preference.setPf_cafe(preferences.get("pf_cafe") ? 1 : 0);
+	        preference.setPf_walk(preferences.get("pf_walk") ? 1 : 0);
+	        preference.setPf_spot(preferences.get("pf_spot") ? 1 : 0);
+	        int pno = service.getPfNo(mNo);
+	        preference.setPf_no(pno);
+			service.updatePf(preference);
+			return ResponseEntity.ok("update success");
+		}catch(Exception e) {
+			e.printStackTrace();
+			return ResponseEntity.badRequest().body("update fail");
+		}
 	}
 }

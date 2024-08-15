@@ -1,14 +1,33 @@
 import '../components/css/Main.css'
-import React, { useState, useEffect, useMemo , useRef} from 'react';
+import React, { useState, useEffect, useContext} from 'react';
+import {useLocation, useNavigate} from 'react-router-dom';
 import MainTrip from '../pages/tour/build/MainTrip.jsx';
 import Slide from '../components/Slide.jsx';
 import { HTTP_STATUS } from '../components/Auth.jsx';
+import { AuthContext } from '../components/Auth.jsx';
+const Main=()=>{                  
+    const [isAuthorized, setIsAuthorized] = useContext(AuthContext);
+    const location = useLocation();    
+    const nav = useNavigate();
+    const queryParams = new URLSearchParams(location.search);
+    const social = queryParams.get('social');
+    const [hasSocial, setHasSocial] = useState(false);
 
-const Main=()=>{                    
     const [tourSlideImgs, setSlideImgs] = useState([]);
     const [tourData, setTourData] = useState([]);    
     const [url, setUrl] = useState([]);               
     const [searchTerm, setSearchTerm] = useState('');    
+
+    useEffect(() => {        
+        if (social) {          
+          setHasSocial(true);        
+          setIsAuthorized(true);
+          nav('/'); 
+          console.log('Social parameter exists:', social);          
+        } else {          
+          setHasSocial(false);
+        }
+      }, [social]);
 
     useEffect(()=>{                
         const mtour = async ()=>{

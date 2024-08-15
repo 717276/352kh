@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-
+import '../../components/css/login/FindPassword.css';
 const FindPassword = () => {
     const [user, setUser] = useState({ userEmail: '', userTel: '' });
     const [findError, setFindError] = useState('');
@@ -45,24 +45,26 @@ const FindPassword = () => {
 
     return (
         <div className="findpw-container">
-            <form onSubmit={handleSubmit}>
-                <div className="find_sub">
-                    <div>가입 시 등록한 휴대폰 번호와 이메일을 입력하면</div>
-                    <div>이메일로 임시 비밀번호를 보내드립니다.</div>
-                </div>
-                <div>
-                    <h3>휴대폰 번호</h3>
-                    <div className="userTel">
-                        <input type="text" id="userTel" placeholder="01012345678" onChange={handleChange} />
+            <div className="findpw-wrapper">
+                <form onSubmit={handleSubmit}>
+                    <div className="find_sub">
+                        <div>가입 시 등록한 휴대폰 번호와 이메일을 입력하면</div>
+                        <div>이메일로 임시 비밀번호를 보내드립니다.</div>
                     </div>
-                </div>
-                <div>
-                    <h3>이메일 주소</h3>
-                    <input type="text" id="userEmail" placeholder="예) DaengTrip@naver.com" onChange={handleChange} />
-                </div>
-                {findError && <div style={{ color: 'red' }}>{findError}</div>}
-                <button type="submit">이메일 발송하기</button>
-            </form>
+                    <div>
+                        <h3>휴대폰 번호</h3>
+                        <div className="userTel">
+                            <input type="text" id="userTel" placeholder="01012345678" onChange={handleChange} />
+                        </div>
+                    </div>
+                    <div>
+                        <h3>이메일 주소</h3>
+                        <input type="text" id="userEmail" placeholder="예) DaengTrip@naver.com" onChange={handleChange} />
+                    </div>
+                    {findError && <div style={{ color: 'red' }}>{findError}</div>}
+                    <button type="submit">이메일 발송하기</button>
+                </form>
+            </div>
         </div>
     );
 };

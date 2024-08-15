@@ -13,7 +13,8 @@ import Csr from './pages/csr/Csr.jsx';
 import Login from './pages/login/Login';
 import Register from './pages/login/Register';
 import SelectTm from './pages/login/SelectTm.jsx';
-
+import FindEmail from './pages/login/FindEmail.jsx';
+import FindPassword from './pages/login/FindPassword.jsx';
 import { AuthProvider, DataProvider } from './components/Auth.jsx'; // context.js 파일에서 import
 import './App.css';
 
@@ -38,6 +39,8 @@ function App() {
             <Route path="/login" element={<Login />} />
             <Route path="/register" element={<Register />} />
             <Route path="/register/preference" element={<SelectTm />} /> 
+            <Route path="/findemail" element={<FindEmail/>}/>
+            <Route path="/findpassword" element={<FindPassword/>}/>
             
           </Routes>          
         {!pop && <Footer></Footer>}

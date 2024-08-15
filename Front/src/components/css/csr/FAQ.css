@@ -1,5 +1,5 @@
 .faq_container {
-    width: 100%;        
+    width: 100%;
     margin: 20px auto;
     background-color: #fff;
     border-radius: 8px;
@@ -17,7 +17,8 @@
 .ChatLogoImg {
     width: 40px;
     height: 40px;
-    object-fit: cover;                
+    object-fit: cover;
+    cursor: pointer;
 }
 
 .faq_header {
@@ -26,7 +27,7 @@
     align-items: center;
     margin-bottom: 20px;
     border-bottom: 2px solid #4e90e9;
-    padding-bottom: 10px;    
+    padding-bottom: 10px;
 }
 
 .faq_write_button {
@@ -37,12 +38,12 @@
     border-radius: 20px;
     cursor: pointer;
     font-size: 14px;
-    margin-left: 10px;    
+    margin-left: 10px;
 }
 
 .faq_write_button:hover {
     background-color: #0056b3;
-    transform: scale(1.05);    
+    transform: scale(1.05);
 }
 
 .faq_posts_per_page {
@@ -52,81 +53,87 @@
     font-size: 14px;
     width: 80px;
     margin-right: 10px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-}
-
-.faq_posts_table {
-    width: 100%;
-    border-collapse: collapse;
-    margin-top: 20px;    
-}
-
-.faq_posts_table th,
-.faq_posts_table td {
-    border: 1px solid #ddd;
-    padding: 12px;
-    text-align: center;
-    font-size:14px;
-}
-
-.faq_posts_table th {
-    background-color: #4e90e9;
-    color: white;
-    font-weight: bold;
-}
-
-.faq_posts_table tr:nth-child(even) {
-    background-color: #f9f9f9;
-}
-
-.faq_posts_table tr:hover {
-    background-color: #f1f1f1;
-}
-
-.faq_th_delete{
-    width:10%;
-}
-
-.faq_footer {
-    margin-top: 20px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-}
-
-.faq_pagination span {
-    padding: 10px 15px;
-    margin: 0 5px;
-    background-color: #4e90e9;
-    color: white;
-    border-radius: 10px;
-    font-size: 14px;
-    cursor: pointer;
-}
-
-.faq_pagination span:hover {
-    background-color: #0056b3;
 }
 
 .category-filter {
-    margin: 20px 0;
     display: flex;
-    flex-wrap: wrap;
-    gap: 10px;    
+    justify-content: center;
+    margin-bottom: 20px;
 }
 
 .category-filter button {
     background-color: #4e90e9;
     color: white;
+    padding: 10px 20px;
+    margin: 0 5px;
     border: none;
     border-radius: 20px;
-    padding: 10px 15px;
-    margin: 5px;
     cursor: pointer;
     font-size: 14px;
 }
 
 .category-filter button:hover {
     background-color: #0056b3;
+    transform: scale(1.05);
 }
 
+.faq_posts_table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.faq_posts_table th,
+.faq_posts_table td {
+    padding: 12px 15px;
+    border-bottom: 1px solid #ddd;
+    text-align: center;
+    cursor: pointer;
+}
+
+.faq_posts_table th {
+    background-color: #f5f5f5;
+    font-weight: bold;
+}
+
+.faq_posts_table td:hover {
+    background-color: #f9f9f9;
+}
+
+.faq_delete_button {
+    background-color: #e74c3c;
+    color: white;
+    border: none;
+    padding: 8px 10px;
+    border-radius: 5px;
+    cursor: pointer;
+    white-space: nowrap;
+    font-size: 14px;
+}
+
+.faq_delete_button:hover {
+    background-color: #c0392b;
+    transform: scale(1.05);
+}
+
+.faq_footer {
+    margin-top: 20px;
+    text-align: center;
+}
+
+.faq_pagination {
+    display: inline-block;
+}
+
+.faq_pagination span {
+    padding: 8px 12px;
+    margin: 0 5px;
+    background-color: #4e90e9;
+    color: white;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.faq_pagination span:hover {
+    background-color: #0056b3;
+    transform: scale(1.05);
+}

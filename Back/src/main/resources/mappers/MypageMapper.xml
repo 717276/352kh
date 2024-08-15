@@ -2,6 +2,19 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.kh.daeng.mapper.MypageMapper">
 	<!-- 유저 정보 불러오기 -->
+	<update id="updatePf" parameterType="Preference">
+        UPDATE Preference
+        SET 
+            pf_rest = #{pf_rest},
+            pf_sport = #{pf_sport},
+            pf_walk = #{pf_walk},
+            pf_cafe = #{pf_cafe},
+            pf_spot = #{pf_spot}
+        WHERE pf_no = #{pf_no}
+    </update>
+	<select id="getPfNo" resultType="Integer">
+		select pf_no from member where m_no = #{m_no}
+	</select>
 	<select id="getUserInfo"
 		resultMap="getUserInfoMap">
 		SELECT
@@ -41,10 +54,11 @@
 			COALESCE(i.i_order, 0) AS i_order
         FROM Tour t
         JOIN TourList utl ON t.t_no = utl.t_no
-        JOIN Img i ON t.t_no = i.i_ref_no AND i.i_category = 'tour'
+        left JOIN Img i ON t.t_no = i.i_ref_no AND i.i_category = 'tour'
         WHERE utl.m_no = #{userNo}
 	</select>
-	    <resultMap id="TourListResultMap" type="Tour">
+	
+	 <resultMap id="TourListResultMap" type="Tour">
 	    <id property="t_no" column="t_no"/>
 	    <result property="t_title" column="t_title"/>
 	    <result property="t_explain" column="t_explain"/>
@@ -61,10 +75,12 @@
 	
 	<!-- 멤버 투어 리스트 불러오기 -->
 	 <select id="getToursByUserNo" resultMap="TourResultMap">
-        SELECT t.*, i.*
+        SELECT t.*, coalesce (i.i_no, -1), COALESCE(i.i_ref_no, -1) AS i_ref_no,
+			COALESCE(i.i_category, 'default_category') AS i_category,
+			COALESCE(i.i_order, 0) AS i_order
         FROM Tour t
         JOIN OrderTour ot ON t.t_no = ot.t_no
-        JOIN Img i ON t.t_no = i.i_ref_no AND i.i_category = 'tour'
+        left join Img i ON t.t_no = i.i_ref_no AND i.i_category = 'tour'
         WHERE ot.m_no = #{userNo}
     </select>
     <resultMap id="TourResultMap" type="Tour">

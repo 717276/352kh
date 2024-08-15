@@ -28,8 +28,8 @@ const Management = () => {
 
         fetchMembers();
     }, []);
-    const handleMember = async (m_no)=>{
-        nav('/user/mypage', {state:{m_no}});
+    const handleMember = async (m_no)=>{    
+        nav('/user/mypage', {state:{userNo : m_no}});
     }
     const handleDelete = async (m_no) => {
         if (window.confirm('삭제할까요?')) {

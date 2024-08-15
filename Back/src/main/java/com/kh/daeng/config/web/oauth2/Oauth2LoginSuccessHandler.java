@@ -43,7 +43,7 @@ public class Oauth2LoginSuccessHandler extends SimpleUrlAuthenticationSuccessHan
 		response.addCookie(createCookie("refresh", refreshToken));		
 		response.setStatus(HttpStatus.OK.value());
 		
-	    response.sendRedirect("http://localhost:5173/");
+		response.sendRedirect("http://localhost:5173/?social=yes");
 	}
 	private Cookie createCookie(String key, String value) {
 		Cookie cookie = new Cookie(key, value);

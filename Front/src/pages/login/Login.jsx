@@ -14,12 +14,12 @@ const Login = () => {
     const [isAuthorized,setIsAuthorized] = useContext(AuthContext);
     useEffect(()=>{
         if(isAuthorized){            
-            alert("로그인")
+            alert("로그인")            
             navigate('/');
         }
     },[isAuthorized])
     function googleLoginHandler() {
-        window.location.href = 'http://localhost:8080/oauth2/authorization/google';
+        window.location.href = 'http://localhost:8080/oauth2/authorization/google';                
     }
     const loginHandler=(e)=>{
         if (e.key === 'Enter'){

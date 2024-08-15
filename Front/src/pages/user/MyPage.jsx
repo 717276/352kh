@@ -22,8 +22,7 @@ const MyPage = () => {
   const nav = useNavigate();
   const token = localStorage.getItem("accessToken");
   const decodedToken = jwtDecode(token);
-  const userNo = location.state ? location.state.userNo : decodedToken.userNo;
-
+  const userNo = location.state ? location.state.userNo : decodedToken.userNo;    
   useEffect(() => {        
     const url = `http://localhost:8080/api/mypage/${userNo}`;
     fetch(url)
@@ -55,8 +54,8 @@ const MyPage = () => {
   const getImageUrl = (img) => {    
     if (img === null) {
       return "product_default.jpg";
-    }
-    if (img.i_no === -1) {
+    }    
+    if (img.i_category === 'default_category') {
       const randomNum = Math.floor(Math.random() * (2 + 1));
       const imgUrl = "tour_default_" + randomNum + ".jpg";
       return imgUrl;
@@ -259,6 +258,9 @@ const MyPage = () => {
         break;
       case "DSIZE":
         endpoint = "/mypage/updateDsize";
+        break;
+      case "PF":
+        endpoint = "/register/preference";
         break;
       default:
         return;
@@ -569,6 +571,17 @@ const MyPage = () => {
                             </form>
                           </div>
                         )}
+                      </td>
+                    </tr>
+                    <tr>
+                      <td>선호도</td>
+                      <td>                        
+                              <button
+                                type="button"
+                                onClick={() => nav('/register/preference',{ state: { m_no: user.m_no } })}
+                              >
+                                변경
+                              </button>                            
                       </td>
                     </tr>
                     <tr>

@@ -7,6 +7,7 @@ import com.kh.daeng.domain.dto.shop.CartItem;
 import com.kh.daeng.domain.dto.user.Dog;
 import com.kh.daeng.domain.dto.user.Member;
 import com.kh.daeng.domain.dto.user.OrderItem;
+import com.kh.daeng.domain.dto.user.Preference;
 import com.kh.daeng.domain.dto.util.Img;
 import com.kh.daeng.domain.dto.tour.Tour;
 import com.kh.daeng.domain.dto.tour.TourList;
@@ -58,5 +59,8 @@ public interface MypageMapper {
 
 	// 프로필 이미지 저장
 	public void insertImg(int userNo) throws Exception;
+
+	public void updatePf(Preference pf);
+	public int getPfNo(int m_no);
 
 }

@@ -9,6 +9,7 @@ import com.kh.daeng.domain.dto.shop.CartItem;
 import com.kh.daeng.domain.dto.user.Dog;
 import com.kh.daeng.domain.dto.user.Member;
 import com.kh.daeng.domain.dto.user.OrderItem;
+import com.kh.daeng.domain.dto.user.Preference;
 import com.kh.daeng.domain.dto.util.Img;
 import com.kh.daeng.domain.dto.tour.Tour;
 import com.kh.daeng.domain.dto.tour.TourList;
@@ -18,8 +19,18 @@ import com.kh.daeng.service.iface.MypageService;
 @Service
 public class MypageServiceImpl implements MypageService {
 
+
+
 	@Autowired
 	private MypageMapper mapper;
+	@Override
+	public int getPfNo(int m_no) {
+		return mapper.getPfNo(m_no);		
+	}
+	@Override
+	public void updatePf(Preference pf) throws Exception{		
+		mapper.updatePf(pf);
+	}
 
 	// 유저 정보 불러오기
 	@Override
@@ -92,5 +103,6 @@ public class MypageServiceImpl implements MypageService {
 	public void insertImg(int userNo) throws Exception {
 		mapper.insertImg(userNo);		
 	}
+	
 
 }

@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import '../../components/css/csr/FAQContent.css';
+import { jwtDecode } from 'jwt-decode';
 
 const formatDate = (dateString) => {
     const date = new Date(dateString);
@@ -32,14 +33,27 @@ const getCategoryName = (category) => {
 };
 
 const FAQContent = () => {
+
     const { faqId } = useParams();
     const nav = useNavigate();
     const [faq, setFaq] = useState(null);
+    const [role, setRole] = useState();        
+
+    useEffect(()=>{                 
+        
+    },[])
 
     useEffect(() => {
-        fetchFAQDetail();
+        getUser();
+        fetchFAQDetail();        
     }, [faqId]);
-
+    const getUser=()=>{
+        const token = localStorage.getItem('accessToken');
+        if (token !== null){
+            const user = jwtDecode(token);
+            setRole(user.role);
+        }
+    }
     const fetchFAQDetail = async () => {
         try {
             const res = await fetch(`http://localhost:8080/api/notice/${faqId}`);
@@ -85,8 +99,8 @@ const FAQContent = () => {
                 </table>
             </div>
             <div className="faq-buttons">
-                <button onClick={() => nav('/csr/')}>목록으로</button>
-                <button onClick={() => nav(`/csr/faqedit/${faqId}`)}>수정하기</button>
+                <button onClick={() => nav('/csr/')}>목록으로</button>                
+                {role === 'ROLE_ADMIN' && <button onClick={() => nav(`/csr/faqedit/${faqId}`)}>수정하기</button>}
             </div>
         </>
     );

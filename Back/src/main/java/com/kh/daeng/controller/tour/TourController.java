@@ -74,6 +74,9 @@ public class TourController {
 			System.err.println("jaccard return null");
 			return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
 		}				
+		for (int i = 0; i<tours.size(); ++i) {
+			System.out.println(tours.get(i).getT_no());
+		}
 		return ResponseEntity.ok(tours);
 	}
 	// 전체 리스트 불러오기
@@ -91,14 +94,12 @@ public class TourController {
 	// t_no를 이용하여 해당 투어의 상세정보 불러오기
 	@GetMapping("/tripDetail/{no}")
 	public Tour getTourDetail(@PathVariable(name = "no") int t_no) throws Exception {
-		System.out.println(service.getTourDetail(t_no));
 		return service.getTourDetail(t_no);
 	}
 	
 	// m_no로 유저의 TourList 불러오기
 	@GetMapping("userTourList/{userNo}")
 	public List<Integer> getUserTourList(@PathVariable(name = "userNo") int userNo) throws Exception {
-		System.out.println(service.getUserTourList(userNo));
 		return service.getUserTourList(userNo);
 	}
 

@@ -163,11 +163,11 @@ public class MemberServiceImpl implements MemberService {
         String certificationNumber = generator.createCertificationNumber();
 
         String content = String.format("임시비밀번호: %s <br><br> 로그인 후 마이페이지에서 비밀번호를 수정해주세요.", certificationNumber);
-
         // DB에 비밀번호 저장
         Member member = findByEmail(email,basicProvider);
         if (member != null) {
-            member.setM_password(certificationNumber); // 임시 비밀번호 설정 (암호화는 다른 곳에서 처리)
+        	String newPw = bCryptPasswordEncoder.encode(certificationNumber);
+            member.setM_password(newPw); // 임시 비밀번호 설정 (암호화는 다른 곳에서 처리)
             updateMemberPassword(member); // 변경된 비밀번호를 DB에 저장
         }
 

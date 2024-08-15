@@ -54,7 +54,7 @@ export const AuthProvider = ({ children }) => {
         if (response.status === HTTP_STATUS.OK){        
             setAccessToken(response);    
             setIsAuthorized(true);
-            console.log("토큰저장");
+            console.log("토큰저장");            
             return HTTP_STATUS.OK; 
         //토큰 만료
         } else if (response.status === HTTP_STATUS.SC_GONE){
@@ -96,7 +96,6 @@ export const AuthProvider = ({ children }) => {
         }        
     }            
     const logoutHandler = async () =>{
-        console.log("logout");        
         const response = await fetch(baseURI + "/test",{
             method:"POST",
             credentials:'include'  

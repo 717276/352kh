@@ -1,6 +1,7 @@
 package com.kh.daeng.service.iface;
 
 import com.kh.daeng.domain.dto.user.Member;
+import com.kh.daeng.domain.dto.user.Preference;
 
 public interface MypageService {
 
@@ -30,5 +31,9 @@ public interface MypageService {
 
 	// 이미지 저장
 	public void insertImg(int userNo) throws Exception;
+
+	public void updatePf(Preference preference) throws Exception;
+
+	public int getPfNo(int mNo);
 
 }

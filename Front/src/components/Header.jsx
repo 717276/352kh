@@ -6,22 +6,29 @@ import {AuthContext} from './Auth.jsx';
 import { jwtDecode } from "jwt-decode";
 const Header=()=>{
     const [isAuthorized, setIsAuthorized, logoutHandler] = useContext(AuthContext);        
-    const [role,setRole] = useState();    
-    const nav = useNavigate();    
-    const rolePageHandler=()=>{
-        if(role === 'ROLE_USER'){
-            nav('/user/mypage');
-        }else if (role === 'ROLE_ADMIN'){
-            nav('/admin/');
-        }
-    }    
-    useEffect(()=>{        
+    const [role,setRole] = useState(); 
+    const [temp,setTemp] = useState();
+        const [loading, setLoading] = useState(true);
+    const nav = useNavigate();
+    // const rolePageHandler=()=>{
+        //     if(role === 'ROLE_USER'){
+            //         nav('/user/mypage');
+            //     }else if (role === 'ROLE_ADMIN'){
+                //         nav('/admin/');
+                //     }
+                // }    
+    useEffect(() => {        
+    }, [role, nav]);
+                
+    useEffect(()=>{                 
         const token = localStorage.getItem('accessToken');
         if (token !== null){
             const user = jwtDecode(token);
             setRole(user.role);
         }
+        console.log("role " + role);
     },[isAuthorized])
+
     return (
         <div className="Header">
             <nav className="navigation">
@@ -55,11 +62,11 @@ const Header=()=>{
                     <div className="header_info">
                         <div className="role_info">  
                             {role === 'ROLE_USER' ? (
-                                <div className="mypage" onClick={()=>rolePageHandler()}>
-                                    Mypage
-                                </div>
-                            ):(
-                                <div className="admin" onClick={()=>rolePageHandler()}>
+                                 <div className="mypage" onClick={() => nav('/user/mypage')}>
+                                 Mypage
+                             </div>
+                         ) : (
+                             <div className="admin" onClick={() => nav('/admin/')}>
                                     Admin
                                 </div>
                             )}

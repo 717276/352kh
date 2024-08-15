@@ -139,11 +139,14 @@
 .selected_res{
     overflow-y:scroll;
 }
+.place_img > img, .hotel_img > img, .res_img > img{
+    border-radius:10px;
+}
 
 .selected_place_img img, .selected_res_img img, .selected_hotel_img img {
     width: 120px;
     height: 80px;
-    border-radius: 10px; /* 둥근 모서리 */
+    border-radius: 10px;
 }
 .data_list::-webkit-scrollbar, 
 .selected_places::-webkit-scrollbar, 
