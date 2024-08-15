@@ -1,92 +1,132 @@
-.qna_container {
-    width: 100%;
+.faq_container {
+    width: 100%;        
     margin: 20px auto;
     background-color: #fff;
-    border-radius: 10px;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* 부드러운 그림자 */
     text-align: left;
+    min-height: 1100px;
+    padding: 20px;
+    box-sizing: border-box;
 }
 
-.qna_box {
+.faq_box {
     padding: 20px;
 }
 
-.qna_header {
+.ChatLogoImg {
+    width: 40px;
+    height: 40px;
+    object-fit: cover;                
+}
+
+.faq_header {
     display: flex;
     justify-content: space-between;
     align-items: center;
     margin-bottom: 20px;
-    border-bottom: 2px solid #007bff;
-    padding-bottom: 10px;
+    border-bottom: 2px solid #4e90e9;
+    padding-bottom: 10px;    
 }
 
-.qna_write_button {
-    background-color: #007bff;
+.faq_write_button {
+    background-color: #4e90e9;
     color: white;
-    padding: 10px 20px;
+    padding: 12px 24px;
     border: none;
-    border-radius: 5px;
+    border-radius: 20px;
     cursor: pointer;
-    font-size: 16px;
-    margin-left: 10px; /* 글쓰기 버튼과 셀렉트박스 사이의 간격 */
+    font-size: 14px;
+    margin-left: 10px;    
 }
 
-.qna_write_button:hover {
+.faq_write_button:hover {
     background-color: #0056b3;
+    transform: scale(1.05);    
 }
 
-.qna_posts_per_page {
-    padding: 10px;
+.faq_posts_per_page {
+    padding: 8px;
     border-radius: 5px;
     border: 1px solid #ddd;
-    font-size: 16px;
+    font-size: 14px;
     width: 80px;
     margin-right: 10px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
-.qna_posts_table {
+.faq_posts_table {
     width: 100%;
     border-collapse: collapse;
-    margin-top: 20px;
+    margin-top: 20px;    
 }
 
-.qna_posts_table th,
-.qna_posts_table td {
+.faq_posts_table th,
+.faq_posts_table td {
     border: 1px solid #ddd;
-    padding: 10px;
+    padding: 12px;
     text-align: center;
+    font-size:14px;
 }
 
-.qna_posts_table th {
-    background-color: #007bff;
+.faq_posts_table th {
+    background-color: #4e90e9;
     color: white;
     font-weight: bold;
 }
 
-.qna_posts_table tr:nth-child(even) {
+.faq_posts_table tr:nth-child(even) {
     background-color: #f9f9f9;
 }
 
-.qna_posts_table tr:hover {
+.faq_posts_table tr:hover {
     background-color: #f1f1f1;
 }
 
-.qna_footer {
+.faq_th_delete{
+    width:10%;
+}
+
+.faq_footer {
     margin-top: 20px;
     display: flex;
     justify-content: center;
     align-items: center;
 }
 
-.qna_pagination span {
+.faq_pagination span {
     padding: 10px 15px;
     margin: 0 5px;
-    background-color: #007bff;
+    background-color: #4e90e9;
     color: white;
-    border-radius: 5px;
+    border-radius: 10px;
+    font-size: 14px;
     cursor: pointer;
 }
 
-.qna_pagination span:hover {
+.faq_pagination span:hover {
     background-color: #0056b3;
 }
+
+.category-filter {
+    margin: 20px 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;    
+}
+
+.category-filter button {
+    background-color: #4e90e9;
+    color: white;
+    border: none;
+    border-radius: 20px;
+    padding: 10px 15px;
+    margin: 5px;
+    cursor: pointer;
+    font-size: 14px;
+}
+
+.category-filter button:hover {
+    background-color: #0056b3;
+}
+

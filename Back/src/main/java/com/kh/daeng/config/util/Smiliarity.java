@@ -1,21 +1,26 @@
 package com.kh.daeng.config.util;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import org.springframework.stereotype.Component;
+
 import com.kh.daeng.domain.dto.tour.Tour;
 import com.kh.daeng.domain.dto.user.Preference;
-
+@Component
 public class Smiliarity {
 	private static final JaccardSimilarityTransform jaccardSimilarity = new JaccardSimilarityTransform();
 
-	public static double calculate(Tour m1, Tour m2) {
-		double preferenceSimilarity = calculateJaccardSimilarity(m1.getPre(), m2.getPre());
-		
-//		double ratingSimilarity = 1.0 - Math.abs(m1.getRating() - m2.getRating()) / 10.0; 
-
-		double result = 0.7 * preferenceSimilarity;
-//		result = 0.3 * ratingSimilarity;
-		return result;
+	public static List<Tour> calculate(Preference m1, List<Tour> m2) {		
+		List<Tour> allowedTours = new ArrayList<>();
+		for (Tour t : m2) {
+			if(t.getT_status() == 1) {
+				allowedTours.add(t);
+			}
+		}
+		return calculateJaccardSimilarity(m1, allowedTours);
 	}
-	private static double calculateJaccardSimilarity(Preference list1, Preference list2) {			
+	private static List<Tour> calculateJaccardSimilarity(Preference list1, List<Tour> list2) {			
 		return jaccardSimilarity.apply(list1, list2);
 	}
 }

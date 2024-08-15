@@ -9,7 +9,7 @@
     display: flex;
     justify-content: space-around;
     padding: 20px;
-    background-color: #f8f8f8;
+    background-color: #ffffff;    
 }
 
 .shop-nav a {
@@ -26,7 +26,8 @@
 }
 
 .top_category_link {
-    text-decoration: none; /* 밑줄 제거 */
+    text-decoration: none;
+    color:inherit;
 }
 
 .top_category {
@@ -40,16 +41,20 @@
     border-radius: 5px;
     cursor: pointer;
     text-align: center;
+    font-size: 20px; 
+    font-weight: bold;
+    transition: background-color 0.3s ease;
 }
-
+.top_category:hover {
+    background-color: #e0e0e0;
+}
 .slider-container {
     width: 100%;
     display: flex;
     justify-content: center;
     align-items: center;
-    margin-bottom: 20px;
-    position: relative;
-    background-color: #f0f0f0; /* 슬라이드쇼 배경색 추가 */
+    margin: 20px 0;
+    position: relative;    
 }
 
 .slider {
@@ -69,13 +74,14 @@
     justify-content: space-around;
     flex-wrap: wrap;
     padding: 20px;
-    gap: 10px;
+    gap: 20px;
     height: 200px;
 }
 
 .product-item {
     position: relative;
     width: 220px;
+    height:220px;
     border: 1px solid #ddd;
     border-radius: 10px;
     overflow: hidden;
@@ -91,14 +97,16 @@
     color: black;
     font-size: 16px;
     border-radius: 5px;
-    z-index: 10;
+    z-index: 10;    
 }
-
+.product-item > a > span {
+    font-weight: bold;
+}
 .product-image {
     width: 100%;
     height: auto;
     max-height: 150px; /* 그리드 이미지의 최대 높이 */
-    object-fit: cover;
+    object-fit: inherit;
 }
 
 .prev,
@@ -107,7 +115,7 @@
     position: absolute;
     top: 50%;
     width: auto;
-    padding: 16px;
+    padding: 12px;
     margin-top: -22px;
     color: white;
     font-weight: bold;

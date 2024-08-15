@@ -23,6 +23,7 @@ export const AuthProvider = ({ children }) => {
             await sendAccess();
         };
         sync();
+        window.scrollTo({top:0});
     }, [location.pathname]);
 
     async function setAccessToken (response){        
@@ -41,7 +42,6 @@ export const AuthProvider = ({ children }) => {
         }                
     }    
     async function sendUri(accessToken){        
-        console.log("senduri: " + location.pathname);
         if (accessToken === null){            
             return HTTP_STATUS.SC_GONE;
         }
@@ -50,7 +50,6 @@ export const AuthProvider = ({ children }) => {
             headers:{'Authorization' : `${accessToken}`},
             credentials:'include'
         })
-        console.log("access response : " + response.status);
         //저장 
         if (response.status === HTTP_STATUS.OK){        
             setAccessToken(response);    
@@ -70,7 +69,7 @@ export const AuthProvider = ({ children }) => {
             alert("접근 권한 없음");
             navigator(-1);
             return HTTP_STATUS.FORBIDDEN;
-        } else if (response.status === HTTP_STATUS.NOeT_FOUND){
+        } else if (response.status === HTTP_STATUS.NOT_FOUND){
             alert("페이지를 찾을 수 없음");
             navigator(-1);
             return HTTP_STATUS.NOT_FOUND;
@@ -78,7 +77,6 @@ export const AuthProvider = ({ children }) => {
     }
     
     async function sendRefresh() {
-        console.log("send refresh");
         try {
             const response = await fetch(baseURI + '/reissue', {
                 method: 'POST',
@@ -90,16 +88,31 @@ export const AuthProvider = ({ children }) => {
                 sendAccess();                
             } else{                
                 localStorage.removeItem('accessToken');
-                document.cookie = "refresh=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";                
+                document.cookie = "refresh=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";              
             }
         } catch (error) {
             console.error('Error while refreshing token:', error);
             return null;
         }        
-    }
-
+    }            
+    const logoutHandler = async () =>{
+        console.log("logout");        
+        const response = await fetch(baseURI + "/test",{
+            method:"POST",
+            credentials:'include'  
+        }).catch((error)=>console.log(error));
+        console.log(response.status);
+        if (response.status === HTTP_STATUS.OK){
+            localStorage.removeItem('accessToken');
+            setIsAuthorized(false);
+            alert("로그아웃");
+        }else{
+            console.log("로그아웃 실패");
+        }        
+        navigator('/');
+    }        
     return (
-        <AuthContext.Provider value={[ isAuthorized, setIsAuthorized ]}>
+        <AuthContext.Provider value={[ isAuthorized, setIsAuthorized, logoutHandler]}>
             {children}
         </AuthContext.Provider>
     );

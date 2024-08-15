@@ -1,23 +1,16 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useMemo } from "react";
 import { useNavigate} from "react-router-dom";
 import "../../../components/css/tour/Trip.css";
 
-const MainTrip = ({tourImgs}) => {
-  //  const { userNo } = useParams();
-  const [tours, setTours] = useState(tourImgs);
+const MainTrip = ({tourData}) => {    
   const [visibleItems, setVisibleItems] = useState(6);
-  const navigate = useNavigate();
-
-  useEffect(() => {    
-    console.log(tourImgs);
-  }, [tourImgs]);
- 
+  const navigate = useNavigate();  
   const loadMore = () => {
     setVisibleItems((prev) => prev + 6);
   };
 
   const handleItemClick = (t_no) => {
-    navigate(`/tripDetail/${t_no}`);
+    navigate(`/tour/tripDetail/${t_no}`);
   };
 
   const truncateText = (text, maxLength) => {
@@ -27,16 +20,26 @@ const MainTrip = ({tourImgs}) => {
     return text.slice(0, maxLength) + "...";
   };
 
-  const groupedData = [];
-  if (tours.length>0){
-    for (let i = 0; i < tours.length; i += 3) {
-      groupedData.push(tours.slice(i, i + 3));
+  const tours = useMemo(() => tourData, [tourData]);
+  const groupedData = useMemo(() => {
+    const result = [];
+    if (tours.length > 0) {
+      for (let i = 0; i < tours.length; i += 3) {
+        result.push(tours.slice(i, i + 3));
+      }
     }
-  }
+    return result;
+  }, [tours]);
 
   const getImageUrl = (img) => {
-    return `/images/${img.i_category}/${img.i_ref_no}/${img.i_order}.png`;
-  };
+    if (img.i_no === -1) {
+      const randomNum = Math.floor(Math.random() * (2 + 1));
+      const newUrl = "tour_default_" + randomNum + ".jpg"; 
+      return newUrl;
+    } else{
+      return `${img.i_category}_${img.i_ref_no}_${img.i_order}.jpg`;
+    }    
+  };  
 
   const formatDateToYYYYMMDD = (dateString) => {
     const date = new Date(dateString);
@@ -60,7 +63,7 @@ const MainTrip = ({tourImgs}) => {
                 key={item.t_no}
                 onClick={() => handleItemClick(item.t_no)}
               >
-                <img src={getImageUrl(item.img)} alt={item.name} />
+                <img src={`/images/tour/${getImageUrl(item.img)}`} alt={item.name} />
                 <div className="placeDescription">
                   <div className="placeName">{item.t_title}</div>
                   <div className="placeLocation">

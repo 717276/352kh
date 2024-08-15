@@ -1,10 +1,6 @@
 import React from "react";
 import '../../../components/css/tour/Map.css';
-import {
-    GoogleMap,    
-    useJsApiLoader,
-    MarkerF,
-} from "@react-google-maps/api";
+import {GoogleMap,useJsApiLoader,MarkerF,} from "@react-google-maps/api";
 
 
 const containerStyle = {
@@ -19,7 +15,6 @@ const center = {
 const libraries = ["places"];
 
 function GoogleMapB({address}) {   
-    console.log(address);
     const { isLoaded } = useJsApiLoader({
         id: "google-map-script",
         googleMapsApiKey: "AIzaSyBRZQy7nY-LfiTF9w9GdgQE81CvnGAKp9I",

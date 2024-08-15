@@ -20,9 +20,8 @@ const Chart = () => {
       .then(response => response.json())
       .then(data => {
         const transformedData = data.map(item => ({
-          name: item.CATEGORY,
-          value: item.VALUE,
-          booking: item.BOOKING
+          name: item.THEME,
+          value: item.USAGE_PERCENTAGE
         }));
         setData(transformedData);
       })
@@ -46,11 +45,13 @@ const Chart = () => {
     fetch(url3)
       .then(response => response.json())
       .then(data => {
+        console.log(data);
         const transformedData3 = data.map(item => ({
-          tNo: item.T_NO,
-          cnt: item.CNT,
+          date: item.PAYT_DATE,
+          sum: item.TOTAL_SALES,
         }));
         setData3(transformedData3);
+        console.log(transformedData3);
       })
       .catch(error => {
         console.error('Error processing data:', error);
@@ -64,7 +65,7 @@ const Chart = () => {
         <div className='mg_box'>
           <div className='mg_mangeMenu'>
             <ul>
-              <li onClick={() => { nav('/admin/management') }}>회원관리</li>
+              <li onClick={() => { nav('/admin/') }}>회원관리</li>
               <li onClick={() => { nav('/admin/tripList') }}>여행관리</li>
               <li onClick={() => { nav('/admin/productList') }}>상품관리</li>
               <li onClick={() => { nav('/admin/chart') }}>분석</li>
@@ -95,14 +96,14 @@ const Chart = () => {
         </div>
 
         <div className='chart3'>
-          <h3>투어별 총 리뷰건</h3>
-          <BarChart width={730} height={250} data={data3} margin={{ top: 20, right: 20, bottom: 20, left: 20 }}>
+          <h3>월별 투어 매출액</h3>
+          <LineChart width={730} height={250} data={data3} margin={{ top: 5, right: 30, left: 20, bottom: 5 }}>
             <CartesianGrid strokeDasharray="3 3" />
-            <XAxis dataKey="tNo" />
-            <YAxis />
+            <XAxis dataKey="date" />
             <Tooltip />
-            <Bar dataKey="cnt" fill="#8884d8" />
-          </BarChart>
+            <Legend />
+            <Line type="monotone" dataKey="sum" stroke="#8884d8" />
+          </LineChart>
         </div>
 
       </div>

@@ -13,7 +13,6 @@ const Login = () => {
     const inputRef = useRef();
     const [isAuthorized,setIsAuthorized] = useContext(AuthContext);
     useEffect(()=>{
-        console.log("Login: " + isAuthorized);
         if(isAuthorized){            
             alert("로그인")
             navigate('/');

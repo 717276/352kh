@@ -38,6 +38,8 @@ const Order = () => {
     fetch(url)
       .then((response) => response.json())
       .then((data) => {
+        data.filter((d)=>{console.log(d.img)});
+        
         setProducts(Array.isArray(data) ? data : []);
       })
       .catch((error) => console.error("Error fetching order items:", error));
@@ -170,8 +172,17 @@ const Order = () => {
   };
 
   const getImageUrl = (img) => {
-    return `/images/${img.i_category}/${img.i_category}_${img.i_ref_no}_${img.i_order}.png`;
+    if (img === null) {
+      return "product_default.jpg";
+    }
+    if (img.i_no === -1) {
+      const randomNum = Math.floor(Math.random() * (2 + 1));
+      const imgUrl = "tour_default_" + randomNum + ".jpg";
+      return imgUrl;
+    }
+    return `${img.i_category}_${img.i_ref_no}_${img.i_order}.jpg`;
   };
+
 
   const isOrderInfoComplete = () => {
     return (
@@ -226,7 +237,7 @@ const Order = () => {
       .then((data) => {
         console.log("Order saved successfully:", data);
         alert("결제에 성공하였습니다.");
-        navigate(`/mypage`);
+        navigate(`/user/mypage`);
       })
       .catch((error) => {
         console.error("Error saving order:", error);
@@ -249,8 +260,8 @@ const Order = () => {
                       onChange={() => handleProductSelection(product.ci_no)}
                     />
                     <img
-                      src={getImageUrl(product.product.img)}
-                      alt={product.product.pd_name}
+                    src={`/images/shop/${getImageUrl(product.product.img)}`}
+                    alt={product.product.pd_name}
                     />
                     <div className="product-info-order">
                       <span>{product.product.pd_name}</span>

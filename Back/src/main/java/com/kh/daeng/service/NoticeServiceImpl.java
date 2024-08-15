@@ -10,6 +10,17 @@ import com.kh.daeng.service.iface.NoticeService;
 
 @Service
 public class NoticeServiceImpl implements NoticeService {
+	@Override
+	public void deleteFaq(String pNo) {
+		try {
+			int p = Integer.parseInt(pNo);
+			System.err.println("p = " + p);
+			noticeMapper.deleteFaq(p);
+		}catch(Exception e) {
+			e.printStackTrace();
+		}
+	}
+
 	@Autowired
 	private NoticeMapper noticeMapper;
 
@@ -18,7 +29,6 @@ public class NoticeServiceImpl implements NoticeService {
 		try {
 			noticeMapper.insertNotice(notice);
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}

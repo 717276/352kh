@@ -5,74 +5,105 @@
     font-style: normal;
 }
 
-.product_list_container {
+.shop_list_container {
     width: 100%;
     min-height: 80%;
     padding: 0;
     box-sizing: border-box;
 }
 
-.category_buttons {
+.shop_list_title {
+    text-align: center;
+    margin-bottom: 20px;
+    font-family: 'HSGaeulSenggak20', sans-serif;        
+}
+
+.shop_category_buttons {
     display: flex;
     flex-wrap: wrap;
     justify-content: center;
-    margin-bottom: 20px;
-    font-family: 'HSGaeulSenggak20', sans-serif;
+    padding: 10px 20px;
+    margin: 5px;
+    cursor: pointer;       
+    transition: background-color 0.3s ease, color 0.3s ease;   
 }
-
-.category_button {
+.shop_category_button:hover {
+    background-color: #f0f0f0;
+    color: #4e90e9;
+}
+.shop_category_button {
+    border-radius: 20px;
+    font-size:18px;
+    font-weight: bold;
     background-color: #fff;
     border: 1px solid #ddd;
     padding: 10px 20px;
     margin: 5px;
     cursor: pointer;
-    font-size: 16px;
+    font-size: 20px;
 }
 
-.category_button:hover {
+.shop_category_button:hover {
     background-color: #f0f0f0;
 }
 
-.product_grid {
+.shop_product_grid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
     gap: 20px;
 }
 
-.product_card {
+.shop_product_card {
     background-color: #fff;
     border: 1px solid #ddd;
     padding: 10px;
     text-align: center;
+    border-radius: 10px;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
-.product_image {
-    width: 100%;
+.shop_product_image {
+    width: 100%;    
     height: auto;
+    border-radius: 10px;
+    object-fit: cover;
 }
 
-.product_info {
-    margin-top: 10px;
+.shop_product_info {
+    margin-top: 10px;    
 }
 
-.product_name {
-    font-size: 16px;
+.shop_product_name {
+    font-size: 18px;
     margin: 10px 0;
+    text-decoration: none;
+    font-weight: bold;
+    color: #333;
 }
 
-.product_price {
+.shop_product_link {
+    text-decoration: none;
+    color: inherit;
+}
+  
+.shop_product_price {
     color: red;
     font-weight: bold;
     margin-bottom: 10px;
 }
 
-.product_availability {
-    font-size: 14px;
-    color: #555;
+.shop_loading {
+    text-align: center;
+    font-size: 18px;
+    margin: 20px;
 }
 
-.product_release_date {
-    font-size: 12px;
-    color: #888;
+.shop_error {
+    text-align: center;
+    font-size: 18px;
+    color: red;
+    margin: 20px;
+}
+a {
+    text-decoration: none;
 }

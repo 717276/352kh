@@ -10,5 +10,6 @@ public interface NoticeService {
     List<Notice> findAllNotices();
     Notice findNoticeById(int faqId);
 	void updateNotice(Notice notice);
+	void deleteFaq(String pNo);
 	
 }

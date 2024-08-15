@@ -21,7 +21,7 @@ const PaymentResult = () => {
       ) : (
         <p>결제 결과를 불러오지 못했습니다.</p>
       )}
-      <button onClick={() => navigate("/mypage")} className="navigate-button">
+      <button onClick={() => navigate("/user/mypage")} className="navigate-button">
         마이페이지로 이동
       </button>
     </div>

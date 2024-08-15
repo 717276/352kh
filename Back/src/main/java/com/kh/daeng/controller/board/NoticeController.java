@@ -6,11 +6,14 @@ import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.kh.daeng.domain.dto.board.Notice;
@@ -55,5 +58,22 @@ public class NoticeController {
     public ResponseEntity<Notice> getNoticeById(@PathVariable("faqId") int faqId) {
         Notice notice = noticeService.findNoticeById(faqId);
         return ResponseEntity.ok(notice);
+    }
+    
+//    @GetMapping("/delete")
+//    public void deleteFaq(@RequestBody Map<String, String> postNo){
+//    	System.err.println(postNo);
+//    	String pNo = postNo.get("post_no");    	
+//    	noticeService.deleteFaq(pNo);
+//    }
+    @DeleteMapping("/delete/{post_no}")
+    public ResponseEntity<?> deleteFaq(@PathVariable("post_no") String postNo) {
+        System.err.println("Deleting FAQ with post_no: " + postNo);
+        try {
+        	noticeService.deleteFaq(postNo);   
+        	return ResponseEntity.ok("deleted");
+        }catch(Exception e) {
+        	return ResponseEntity.badRequest().body("not deleted");
+        }
     }
 }

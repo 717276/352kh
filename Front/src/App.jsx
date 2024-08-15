@@ -41,7 +41,7 @@ function App() {
             
           </Routes>          
         {!pop && <Footer></Footer>}
-        </div>        
+        </div>                
       </DataProvider>
       </AuthProvider>
     </>

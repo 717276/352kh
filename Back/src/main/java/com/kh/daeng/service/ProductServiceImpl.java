@@ -24,9 +24,9 @@ public class ProductServiceImpl implements ProductService {
 	}
 	
 	@Override
-	public Product selectProductDetail(int pdNo) throws Exception {
+	public List<Product> selectProductDetail(int pdNo) throws Exception {
 		System.out.println(mapper.selectProductDetail(pdNo));
-		Product product = mapper.selectProductDetail(pdNo);
+		List<Product> product = mapper.selectProductDetail(pdNo);
 		return product;
 	}
 
@@ -52,7 +52,7 @@ public class ProductServiceImpl implements ProductService {
             deleteFilesByPdNo(product.getPd_no());
     		mapper.deleteImg(product.getPd_no());
             String filename = "product_" + product.getPd_no() + "_1.jpg";
-            String path = "D:/reactTest/test/Front/public/images/shop/";
+            String path = "C:/DaengTrip/Front/public/images/shop/";
             File directory = new File(path);
             if (!directory.exists()) {
                 directory.mkdirs();
@@ -63,7 +63,7 @@ public class ProductServiceImpl implements ProductService {
         }
 
         if (detailImages != null && detailImages.length > 0) {
-            String path = "D:/reactTest/test/Front/public/images/shop/";
+            String path = "C:/DaengTrip/Front/public/images/shop/";
             File directory = new File(path);
             if (!directory.exists()) {
                 directory.mkdirs();

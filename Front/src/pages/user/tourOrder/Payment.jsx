@@ -73,7 +73,7 @@ const Payment = ({
       if (response.success) {
         onPaymentSuccess(response);
         alert("결제에 성공하였습니다.");
-        navigate(`/mypage`);
+        navigate(`/user/mypage`);
       } else {
         onPaymentFailure(response.error_msg);
       }

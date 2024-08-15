@@ -1,11 +1,12 @@
 import React, { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import '../../components/css/admin/Management.css';
 
 const Management = () => {
     const [members, setMembers] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
-
+    const nav = useNavigate();
     useEffect(() => {
         const fetchMembers = async () => {
             try {
@@ -27,7 +28,9 @@ const Management = () => {
 
         fetchMembers();
     }, []);
-
+    const handleMember = async (m_no)=>{
+        nav('/user/mypage', {state:{m_no}});
+    }
     const handleDelete = async (m_no) => {
         if (window.confirm('삭제할까요?')) {
             try {
@@ -54,10 +57,11 @@ const Management = () => {
             <div className="mg_box">
                 <div className="mg_manageMenu">
                     <ul>
-                        <li>회원관리</li>
-                        <li>여행관리</li>
-                        <li>상품관리</li>
-                        <li>분석</li>
+                    <li onClick={() => { nav('/admin/') }}>회원관리</li>
+                    <li onClick={() => { nav('tripList') }}>여행관리</li>
+                    <li onClick={() => { nav('productList') }}>상품관리</li>
+                    <li onClick={() => { nav('chart') }}>분석</li>
+                    {/* <li onClick={()=>{nav('/faq/')}}></li> */}
                     </ul>
                 </div>
                 <div className="mg_userList">
@@ -82,8 +86,8 @@ const Management = () => {
                                     <td>0{member.m_phone}</td>
                                     <td>{member.m_basicAddress}</td>
                                     <td>{member.m_detailAddress}</td>
-                                    <td>
-                                        <button>보기</button>
+                                    <td className="mg_user_detail_td">
+                                        <button onClick={()=>handleMember(member.m_no)}>보기</button>
                                     </td>
                                     <td>
                                         <button onClick={() => handleDelete(member.m_no)}>삭제</button>

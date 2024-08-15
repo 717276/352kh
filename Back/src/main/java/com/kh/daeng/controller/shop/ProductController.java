@@ -32,26 +32,22 @@ public class ProductController {
 	private static final Logger logger = LoggerFactory.getLogger(MemberController.class);
 
 	@GetMapping("/api/product/{pd_no}")
-	public Product selectProductByID(@PathVariable(name = "pd_no") int pdNo) throws Exception {
-		Product product = service.selectProductDetail(pdNo);
+	public List<Product> selectProductByID(@PathVariable(name = "pd_no") int pdNo) throws Exception {
+		List<Product> product = service.selectProductDetail(pdNo);
 		return product;
 	}
 
-// request mapping 이름 수정
 	@RequestMapping("/api/admin/productList")
 	//public List<Product> selectProductList() throws Exception {
 	public List<Product> selectProductList(HttpServletResponse response) throws Exception {
-//		logger.info("컨트롤러 selectProductList 진입");
-//		List<Product> list = service.selectProductList();
-//		return list;
         logger.info("Response status: " + response.getStatus());
 		List<Product> list = service.selectProductList();		
 		return list;		
 	}
 	
 	@RequestMapping("/api/admin/productModify/{pd_no}")
-	public Product selectProductDetail(@PathVariable(name = "pd_no") String pdNo) throws Exception {
-		Product product = service.selectProductDetail(Integer.parseInt(pdNo));
+	public List<Product> selectProductDetail(@PathVariable(name = "pd_no") String pdNo) throws Exception {
+		List<Product> product = service.selectProductDetail(Integer.parseInt(pdNo));
 		return product;
 	}
 
@@ -65,7 +61,7 @@ public class ProductController {
 			// 대표이미지
 			if (image != null && !image.isEmpty()) {
 				String filename = "product_" + pdNo + "_1.jpg";
-				String path = "D:/reactTest/test/Front/public/images/shop/"; // 로컬 파일 시스템 경로
+				String path = "C:/DaengTrip/Front/public/images/shop/"; // 로컬 파일 시스템 경로
 				File directory = new File(path);
 				if (!directory.exists()) {
 					directory.mkdirs(); // 디렉토리 생성
@@ -77,7 +73,7 @@ public class ProductController {
 
 			// 상세 이미지 처리
 			if (detailImages != null && detailImages.length > 0) {
-	            String path = "D:/reactTest/test/Front/public/images/shop/"; // 로컬 파일 시스템 경로
+	            String path = "C:/DaengTrip/Front/public/images/shop/"; // 로컬 파일 시스템 경로
 	            File directory = new File(path);
 	            if (!directory.exists()) {
 	                directory.mkdirs(); // 디렉토리 생성

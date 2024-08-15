@@ -34,7 +34,11 @@
 	
 	<!-- 신청한 카트 목록 불러오기 -->
 	<select id="getTourListByUserNo" resultMap="TourListResultMap">
-        SELECT t.*, i.*
+        SELECT t.*, 
+        	COALESCE(i.i_no, -1) AS i_no,
+			COALESCE(i.i_ref_no, -1) AS i_ref_no,
+			COALESCE(i.i_category, 'default_category') AS i_category,
+			COALESCE(i.i_order, 0) AS i_order
         FROM Tour t
         JOIN TourList utl ON t.t_no = utl.t_no
         JOIN Img i ON t.t_no = i.i_ref_no AND i.i_category = 'tour'

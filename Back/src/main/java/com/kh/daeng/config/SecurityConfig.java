@@ -60,10 +60,6 @@ public class SecurityConfig {
 	public AuthenticationManager authenticationManager(AuthenticationConfiguration config) throws Exception {
 		return config.getAuthenticationManager();
 	}
-//	@Bean
-//    public AuthenticationManager authenticationManager2() throws Exception {
-//        return authenticationConfiguration.getAuthenticationManager();
-//    }
 	@Bean
 	public AuthenticationProvider customAuthenticationProvider() {
 		return new FormAuthenticationProvider();
@@ -85,10 +81,6 @@ public class SecurityConfig {
         // OAuth2 요청을 매칭하기 위한 RequestMatcher를 설정합니다.
         return new AntPathRequestMatcher("/oauth2/authorization/**");
     }
-//    @Bean
-//    public Oauth2Filter oauth2Filter() throws Exception {
-//        return new Oauth2Filter(oauth2RequestMatcher(), authenticationManager2());
-//    }
 
 	@Bean
 	public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {		
@@ -114,8 +106,8 @@ public class SecurityConfig {
 //		http.formLogin((login) -> login.loginPage("http://localhost:5173/login").defaultSuccessUrl(("http://localhost:5173/"),true));
 
 		http.authorizeHttpRequests((auth) -> auth
-				.requestMatchers("/tour/**", "/chat/**").hasAnyRole("USER")
-				.requestMatchers("/admin/**").hasRole("ADMIN")				
+				.requestMatchers("/tour/**", "/chat/**","/mypage", "/user/**").hasAnyRole("USER")
+				.requestMatchers("/admin/**" , "/csr/faq/faqwrite").hasRole("ADMIN")				
 				.anyRequest().permitAll())	
 			.exceptionHandling()				
         		.accessDeniedHandler(customAccessDeniedHandler);

@@ -7,13 +7,13 @@ const TripCreate = () => {
   const location = useLocation();
   const [currentIndex, setCurrentIndex] = useState({ places: 0, foods: 0 });
   const [selectedDay, setSelectedDay] = useState(1);
-  const { tours, startDate } = location.state || {};
+  const { data: tours, startDate } = location.state || {};
   const [endDate, setEndDate] = useState(null);
   const tourNameRef = useRef(null);
   const tourDescriptionRef = useRef(null);
   const tourPriceRef = useRef(null);
   const tourImageRef = useRef(null);
-  
+
   const [tourDetail, setTourDetail] = useState({
     hotels: [],
     places: [],
@@ -28,7 +28,7 @@ const TripCreate = () => {
     setSelectedCategories((prevCategories) => {
       if (prevCategories.includes(value)) {
         return prevCategories.filter((category) => category !== value);
-      } else if (prevCategories.length < 2) {
+      } else if (prevCategories.length < 6) {
         return [...prevCategories, value];
       } else {
         return prevCategories;
@@ -36,7 +36,7 @@ const TripCreate = () => {
     });
   };
 
-  useEffect(() => {    
+  useEffect(() => {
     if (tours && startDate) {
       const mappedPlaces = tours
         .map((tour, index) =>
@@ -61,7 +61,7 @@ const TripCreate = () => {
 
       // tours 배열의 길이만큼 startDate에 일수를 더해 endDate를 계산합니다.
       const calculatedEndDate = new Date(
-        startDateObj.setDate(startDateObj.getDate() + tours.length - 1)
+        startDateObj.setDate(startDateObj.getDate() + tours.length)
       );
 
       // 계산된 endDate를 "YYYY-MM-DD" 형식의 문자열로 변환하여 상태로 설정합니다.
@@ -101,14 +101,27 @@ const TripCreate = () => {
   const filteredRestaurantes = tourDetail.restaurantes.filter(
     (res) => res.day === selectedDay
   );
-
+  const setDefaultImg = () => {
+    const randomNum = Math.floor(Math.random() * (2 + 1));
+    const imgUrl = "tour_default_" + randomNum + ".jpg";
+    setPreviewImage(imgUrl);
+  };
   const handleRegister = () => {
     const tourName = tourNameRef.current.value;
     const tourDescription = tourDescriptionRef.current.value;
     const tourPrice = tourPriceRef.current.value;
     const tourImageFile = tourImageRef.current.files[0];
-
     const formData = new FormData();
+
+    if (!tourName || !tourDescription || !tourPrice || !selectedCategories) {
+      alert("데이터를 입력해주세요.");
+      return;
+    }
+
+    if (!tourImageFile) {
+      setDefaultImg();
+    }
+
     formData.append("tourName", tourName);
     formData.append("tourDescription", tourDescription);
     formData.append("tourPrice", tourPrice);
@@ -117,8 +130,6 @@ const TripCreate = () => {
     formData.append("tourImageFile", tourImageFile);
     formData.append("categories", selectedCategories);
     formData.append("tours", JSON.stringify(tours));
-
-    console.log(tours);
 
     fetch("http://localhost:8080/api/tourCreate", {
       method: "POST",
@@ -133,7 +144,7 @@ const TripCreate = () => {
       .then((data) => {
         console.log("투어 등록 성공:", data);
         alert("투어 등록이 완료되었습니다.");
-        navigate("/mypage"); // 등록 성공 후 MyPage로 이동
+        navigate("/"); // 등록 성공 후 MyPage로 이동
       })
       .catch((error) => {
         console.error("투어 등록 실패:", error);
@@ -153,6 +164,23 @@ const TripCreate = () => {
       setPreviewImage(null);
     }
   };
+  const cleanPrice = (price) => {
+    return parseFloat(price.replace(/[^0-9.-]+/g, ""));
+  };
+  useEffect(() => {
+    const calculateTotalTourPrice = () => {
+      const totalHotelPrice = tourDetail.hotels.reduce((sum, hotel) => {
+        const cleanedPrice = cleanPrice(hotel.price);
+        return sum + cleanedPrice;
+      }, 0);
+      const finalPrice = Math.round(totalHotelPrice * 1.05);
+      tourPriceRef.current.value = finalPrice;
+    };
+
+    if (tourDetail.hotels.length > 0) {
+      calculateTotalTourPrice();
+    }
+  }, [tourDetail.hotels]);
 
   return (
     <div className="tc-TripDetail">
@@ -192,9 +220,8 @@ const TripCreate = () => {
             </span>
           )}
           <div
-            className={`tc-spots ${
-              filteredPlaces.length > 4 ? "tc-carousel" : ""
-            }`}
+            className={`tc-spots ${filteredPlaces.length > 4 ? "tc-carousel" : ""
+              }`}
           >
             {filteredPlaces
               .slice(currentIndex.places, currentIndex.places + 4)
@@ -228,9 +255,8 @@ const TripCreate = () => {
             </span>
           )}
           <div
-            className={`tc-spots ${
-              filteredRestaurantes.length > 4 ? "tc-carousel" : ""
-            }`}
+            className={`tc-spots ${filteredRestaurantes.length > 4 ? "tc-carousel" : ""
+              }`}
           >
             {filteredRestaurantes
               .slice(currentIndex.foods, currentIndex.foods + 4)
@@ -265,7 +291,7 @@ const TripCreate = () => {
             </div>
             <div>
               <label>투어 가격:</label>
-              <input type="text" ref={tourPriceRef} />
+              <input type="text" ref={tourPriceRef} readOnly />
             </div>
             <p>
               투어 시작 날짜 - 종료 날짜: {startDate} ~ {endDate}
@@ -274,11 +300,7 @@ const TripCreate = () => {
           <div>
             <label>투어 대표 이미지:</label>
             {previewImage && (
-              <img
-                src={previewImage}
-                alt="Preview"
-                className="tc-preview-image"
-              />
+              <img src={`/images/tour/${previewImage}`} alt="Preview" className="tc-preview-image" />
             )}
             <br></br>
             <input
@@ -289,7 +311,7 @@ const TripCreate = () => {
           </div>
         </div>
         <div className="tc-category-selection">
-          <label>카테고리 선택 (최소 1개, 최대 2개):</label>
+          <label>카테고리 선택 (최소 1개):</label>
           <div className="tc-category-container">
             <div>
               <input

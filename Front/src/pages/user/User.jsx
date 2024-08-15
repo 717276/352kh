@@ -9,11 +9,11 @@ const User=()=>{
     return(
         <Routes>
             <Route path="mypage" element={<MyPage />} /> 
-            <Route path="order" element={<Order/>}/>
+            <Route path="mypage/order" element={<Order/>}/>
             <Route path="payment" element={<Payment/>}/>
             <Route path="payment/result" element={<PaymentResult/>}/>
-            <Route path="tour/order" element={<TourOrder/>}/>
-            <Route path="tour/payemnt" element={<TourPayment/>}/>
+            <Route path="mypage/tour/order" element={<TourOrder/>}/>
+            <Route path="tour/payment" element={<TourPayment/>}/>
         </Routes>
     );
 }

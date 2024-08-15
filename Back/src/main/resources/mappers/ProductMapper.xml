@@ -17,6 +17,13 @@
                 <result property="i_category" column="i_category"/>
                 <result property="i_order" column="i_order"/>
             </association>
+            
+            <collection  property="img_list" ofType="Img">
+	         <id property="i_no" column="i_no"/>
+	         <result property="i_ref_no" column="i_ref_no"/>
+	         <result property="i_category" column="i_category"/>
+	         <result property="i_order" column="i_order"/>
+	     	 </collection >
     </resultMap>
 	<select id="selectProductList" resultMap="ItemResultMap">
 		 SELECT 
@@ -29,11 +36,12 @@
 	</select>
 	
 	<select id="selectProductDetail" parameterType="int" resultMap="ItemResultMap">
-		 SELECT pd_no, pd_name, pd_explain, pd_mount, pd_price, pd_discount, pd_registrationDate, pd_category, i.i_ref_no as i_ref_no
+		 SELECT pd_no, pd_name, pd_explain, pd_mount, pd_price, pd_discount, pd_registrationDate, pd_category
+		 	  , i.i_ref_no as i_ref_no, i.i_category as i_category, i.i_order as i_order
 		 FROM product p left outer join img i
 			 on p.pd_no = i.i_ref_no
 			 and i.I_CATEGORY = 'product'
-			 and i.i_order = 1
+			 and i.i_order > 1
 		 where pd_no = #{pd_no}
 	</select>
 	

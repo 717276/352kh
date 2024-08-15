@@ -6,7 +6,7 @@ const TripList = () => {
   const [tours, setTours] = useState([]);
   const [visibleItems, setVisibleItems] = useState(5); // 처음에 5개 항목을 표시
   const [filter, setFilter] = useState("all"); // 필터 상태 추가
-  const navigate = useNavigate();
+  const nav = useNavigate();
   const url = "http://localhost:8080/api/trip";
 
   const getTourList = (url) => {
@@ -38,7 +38,7 @@ const TripList = () => {
   }, []);
 
   const handleTripClick = (t_no) => {
-    navigate(`/admin/tripApproval/${t_no}`);
+    nav(`/admin/tripApproval/${t_no}`);
   };
 
   const formatDateToYYYYMMDD = (dateString) => {
@@ -74,9 +74,13 @@ const TripList = () => {
 
   // 이미지 url
   const getImageUrl = (img) => {
-    return `/images/${img.i_category}/${img.i_category}_${img.i_ref_no}_${img.i_order}.jpg`;
-  };
-
+    if(img.i_no === -1) {
+      const randomNum = Math.floor(Math.random() * (2 + 1));
+      const imgUrl = "tour_default_" + randomNum + ".jpg";      
+      return imgUrl;
+    }    
+    return `${img.i_category}_${img.i_ref_no}_${img.i_order}.jpg`;
+  };  
   return (
     <div className="TripList">
       <h1>투어 리스트</h1>
@@ -85,6 +89,40 @@ const TripList = () => {
         <li onClick={() => setFilter("waiting")}>승인대기</li>
         <li onClick={() => setFilter("approved")}>승인확인</li>
       </ul>
+      <div className="mg_box">
+        <div className="mg_mangeMenu">
+          <ul>
+            <li
+              onClick={() => {
+                nav("/admin/");
+              }}
+            >
+              회원관리
+            </li>
+            <li
+              onClick={() => {
+                nav("/admin/tripList");
+              }}
+            >
+              여행관리
+            </li>
+            <li
+              onClick={() => {
+                nav("/admin/productList");
+              }}
+            >
+              상품관리
+            </li>
+            <li
+              onClick={() => {
+                nav("/admin/chart");
+              }}
+            >
+              분석
+            </li>
+          </ul>
+        </div>
+      </div>
       <div className="trip-items">
         {filteredTours.slice(0, visibleItems).map((trip) => (
           <div
@@ -92,7 +130,7 @@ const TripList = () => {
             className="trip-item"
             onClick={() => handleTripClick(trip.t_no)}
           >
-            <img src={getImageUrl(trip.img)} alt={trip.t_title} />
+            <img src={`/images/tour/${getImageUrl(trip.img)}`} alt={trip.t_title} />
             <div className="trip-info">
               <h2>{trip.t_title}</h2>
               <p>{truncateText(trip.t_explain, 20)}</p>

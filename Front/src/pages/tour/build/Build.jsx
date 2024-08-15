@@ -86,14 +86,15 @@ const initialState = {
     res: [],
 };
 
-const Build = () => {    
-    const navigator = useNavigate();    
+const Build = () => {
+    const navigator = useNavigate();
     const [save, setSave] = useState(false);
     // 카테고리, 검색어 설정
     const [category, setCategory] = useState(0);
     const [search, setSearch] = useState("");
     const [resultSearch, setResultSearch] = useState("");
     const [resultCategory, setResultCategory] = useState(category);
+    const [toggle,setToggle] = useState(false);
 
     const [selectedCategory, setSelectedCategory] = useState(null);
     // 검색된 데이터
@@ -120,54 +121,62 @@ const Build = () => {
         setSelectedCategory(type);
     };
     // 검색
-    const getSearch = (category, search) => {
+    const hotelSearch = async () =>{
+        const response = await fetch("http://localhost:8080/api/hotel", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/x-www-form-urlencoded", // 쿼리 문자열 형식
+            },
+            body: new URLSearchParams({
+                strDate: startDate,
+                endDate: endDate,
+                region: search,
+            }),
+        });
+        if (response.status === 200) {
+            const hotelData = await response.json();
+            setHotels(hotelData);
+        } else {
+            alert("검색 지역 반려견 동반 숙박 업소 없음");
+            setSearch("");
+            inputRef.current.focus();
+        }
+    }
+    useEffect(()=>{
+    },[toggle])
+    const getSearch = (category, search) => {                
+        setToggle(!toggle);
         if (search === "") {
             inputRef.current.focus();
             return;
         }
-        const renderingSearch = async () => {
-            if (category === 0) {
-                const response = await fetch("http://localhost:8080/api/hotel", {
-                    method: "POST",
-                    headers: {
-                        "Content-Type": "application/x-www-form-urlencoded", // 쿼리 문자열 형식
-                    },
-                    body: new URLSearchParams({
-                        strDate: startDate,
-                        endDate: endDate,
-                        region: search,
-                    }),
-                });
-                if (response.status === 200) {
-                    const hotelData = await response.json();
-                    console.log(hotelData);
-                    setHotels(hotelData);
-                } else {
-                    console.log("search bad request : ", response.status);
-                    alert("검색 지역 반려견 동반 숙박 업소 없음");
-                    setSearch("");
-                    inputRef.current.focus();
-                }
-            } else {
-                setResultSearch(search);
-                setResultCategory(category);
-            }
-        };
-        renderingSearch();
+        if (startDate === null){
+            alert("여행 시작일 선택");
+            inputRef.current.focus();
+            return;
+        }
+        if (category !== 0) {
+            console.log("test");
+            setResultSearch(search);
+            setResultCategory(category);                
+        } else {
+            hotelSearch();
+        }
     };
 
     function resultHandler(results) {
         if (category === 1) {
             setPlaces(results);
+            hotelSearch();
         } else {
             setRes(results);
         }
     }
-    const searchEnter=(e)=>{
-        if(e.key === "Enter"){
+    const searchEnter = (e) => {
+        if (e.key === "Enter") {
             getSearch(category, search);
         }
-    }
+    };
     // npm install react-datepicker 달력 라이브러리
     const today = new Date();
     const tomorrow = new Date();
@@ -175,15 +184,12 @@ const Build = () => {
 
     // 다음 일정
     const nextTour = () => {
-        // 현재 데이터
-        if (state.places.length > 0 && state.res.length > 0) {
+        // 현재 데이터        
+        if (state.hotel !== null) {
             strIdxRef.current++;
             if (strIdxRef.current === endIdxRef.current + 1) {
                 endIdxRef.current = strIdxRef.current;
                 setTours([...tours, new Tour(state.hotel, state.places, state.res)]);
-                console.log("save tour");
-                console.log(tours);
-
                 state.hotel = "";
                 state.places = [];
                 state.res = [];
@@ -205,7 +211,7 @@ const Build = () => {
                 }
             }
         } else {
-            console.log("빈 데이터");
+            alert("숙소");
         }
     };
     // 이전 일정
@@ -220,19 +226,16 @@ const Build = () => {
             state.res = tours[strIdxRef.current].res;
         }
     };
-    function setAddressHandler(data){
-        if (data.address !== null){
-            console.log("setAddressHandler with address");
+    function setAddressHandler(data) {
+        if (data.address !== null) {
             setAddress(resultSearch + " " + data.name);
-            // setAddress(resultSearch + " " + data.address + " " + data.name);
-        }else {
-            console.log("setAddressHandler without address");
+        } else {
             setAddress(resultSearch + " " + data.name);
         }
     }
     // 개별 Tour 등록
     function createdHotel(data) {
-        setAddress(resultSearch +" "+data.name);
+        setAddress(resultSearch + " " + data.name);
         dispatch({
             type: SELECT_TYPES.SET_HOTEL,
             payload: new Hotel(data.name, data.price, data.photo),
@@ -293,18 +296,21 @@ const Build = () => {
     };
     // 데이터 전송
     const handleNav = async () => {
-        if (state.hotel !== null && state.places.length > 0 && state.res.length > 0) {
-            console.log("async ");
+        if (
+            state.hotel !== null &&
+            state.places.length > 0 &&
+            state.res.length > 0
+        ) {
             await nextTour();
             setSave(true);
         }
         setSave(true);
     };
-    useEffect(()=>{
-        if(save){
-            navigator("/tour/tripCreate",{state:{data:tours, startDate:startDate}});
+    useEffect(() => {
+        if (save) {
+            navigator("tripCreate", { state: { data: tours, startDate: startDate } });
         }
-    },[save])
+    }, [save]);
     return (
         <div className="Build">
             <div className="build build_list_box">
@@ -316,19 +322,19 @@ const Build = () => {
                         selectsStart
                         startDate={startDate ? new Date(startDate) : null}
                         minDate={tomorrow}
-                        placeholderText="여행시작일"
+                        placeholderText="     여행시작일"                        
                         dateFormat="yyyy-MM-dd"
                     />
                     {/* <DatePicker className='endDay'                    
-                        selected={endDate}
-                        onChange={(date) => setEndDate(date)}
-                        selectsEnd
-                        startDate={startDate}
-                        endDate={endDate}
-                        minDate={startDate}
-                        placeholderText="돌아오는날"
-                        dateFormat="yyyy-MM-dd"
-                    /> */}
+                            selected={endDate}
+                            onChange={(date) => setEndDate(date)}
+                            selectsEnd
+                            startDate={startDate}
+                            endDate={endDate}
+                            minDate={startDate}
+                            placeholderText="돌아오는날"
+                            dateFormat="yyyy-MM-dd"
+                        /> */}
                 </div>
                 <ul className="build_category_list">
                     <li
@@ -358,7 +364,7 @@ const Build = () => {
                         placeholder="지역 입력"
                         value={search}
                         onChange={(e) => setSearch(e.target.value)}
-                        onKeyDown={(e)=> searchEnter(e)}                        
+                        onKeyDown={(e) => searchEnter(e)}
                     />
 
                     <img
@@ -432,8 +438,8 @@ const Build = () => {
                                 </div>
                                 {/* 고민 */}
                                 {/* <div className='selected_place_address'>
-                                    <span>{place.address}</span>
-                                </div> */}
+                                        <span>{place.address}</span>
+                                    </div> */}
                             </div>
                         ))
                     ) : (
@@ -455,8 +461,8 @@ const Build = () => {
                                     <span>{restaurante.name}</span>
                                 </div>
                                 {/* <div className='selected_res_address'>
-                                        <span>{restaurante.address}</span>
-                                    </div> */}
+                                            <span>{restaurante.address}</span>
+                                        </div> */}
                             </div>
                         ))
                     ) : (
@@ -474,32 +480,29 @@ const Build = () => {
                 </div>
             </div>
             {/* npm install '@vis.gl/react-google-maps' */}
-            <div className="build google_map">                
-                    <div className="goolge_map_a">
-                        <GoogleMapA
-                            className="g_map_a"
-                            search={resultSearch}
-                            category={resultCategory}                        
-                            filteredData={resultHandler}
-                        />
-                    </div>                
-                <div className="google_map_b">
-                    {address?(
-                        <GoogleMapB
-                        className="g_map_b"                        
-                        address={address}                        
+            <div className="build google_map">
+                <div className="goolge_map_a">
+                    <GoogleMapA
+                        className="g_map_a"
+                        search={resultSearch}
+                        category={resultCategory}
+                        filteredData={resultHandler}
                     />
-                    ):(
+                </div>
+                <div className="google_map_b">
+                    {address ? (
+                        <GoogleMapB className="g_map_b" address={address} />
+                    ) : (
                         <div className="google_default_box">
                             <img src="/public/images/tour/google_default.jpg"></img>
                         </div>
                     )}
-                    
                 </div>
             </div>
-
-            <div>
-                <button onClick={handleNav}>완료</button>
+            <div className="tour_save_btn">
+                <span className="tour_save_span" onClick={() => handleNav()}>
+                    다음
+                </span>
             </div>
         </div>
     );

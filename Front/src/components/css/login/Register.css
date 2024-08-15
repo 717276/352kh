@@ -1,148 +1,107 @@
-/* Container for entire form */
+/* 전체 컨테이너 스타일 */
 .container {
-    width: 100%;
-    max-width: 800px;
+    width: 80%;
+    max-width: 1200px;
     margin: 0 auto;
     padding: 20px;
-    border: 2px solid #ccc;
-    border-radius: 10px;
-    text-align: center;
 }
 
-/* Shared input field styles */
+/* 폼 스타일 */
+.form-container {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+/* 입력 필드와 버튼 그룹 스타일 */
+.input-group {
+    display: flex;
+    align-items: center;
+    margin-bottom: 10px; /* 입력 필드와 버튼 사이의 간격 */
+}
+
 .input-field {
-    width: 80%;
+    flex: 1;
     padding: 10px;
-    margin: 10px 0;
     border: 1px solid #ccc;
-    border-radius: 5px;
+    border-radius: 4px;
     font-size: 16px;
+    box-sizing: border-box; /* 패딩과 테두리가 전체 너비에 포함되도록 */
 }
 
-/* Shared button styles */
-.register-button,
-.addressSelect,
-.idCheck {
-    width: 35%;
-    padding: 10px;
-    margin: 10px 0;
+.input-field:focus {
+    border-color: #007bff;
+    outline: none;
+}
+
+/* 오류 메시지 스타일 */
+.error-text {
+    color: red;
+    margin: 5px 0;
+}
+
+/* 버튼 스타일 */
+.idCheck,
+.emailCheck,
+.pNumCheck,
+.addressSelect {
+    padding: 10px 15px;
+    cursor: pointer;
+    border: 1px solid #007bff;
+    background-color: #007bff;
+    color: white;
+    border-radius: 4px;
+    margin-left: 10px; /* 버튼과 입력 필드 사이의 간격 */
+}
+
+.idCheck:hover,
+.emailCheck:hover,
+.pNumCheck:hover,
+.addressSelect:hover {
+    background-color: #0056b3;
+}
+
+/* 등록 버튼 스타일 */
+.register-button {
+    padding: 10px 20px;
+    cursor: pointer;
     background-color: #007bff;
     color: white;
     border: none;
     border-radius: 5px;
-    font-size: 16px;
-    cursor: pointer;
+    font-size: 18px;
 }
 
-/* Specific styles for the address detail section */
-.addressDetailSelect {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    width: 83.3%;
-    margin-left: 8.2%;
+.register-button:hover {
+    background-color: #0056b3;
 }
 
-.userIdInsert {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    width: 82.5%;
-    margin: 0 69px 0px 69px;
+/* 섹션 스타일 */
+.register-section,
+.Regdog-section {
+    margin-bottom: 20px;
 }
 
-.userIdInsert .input-field {
-    flex: 1;
-    margin-right: 10px;
-}
-
-.addressDetailSelect .input-field {
-    width: 60%;
-    margin: 0;
-}
-
-.addressSelect,
-.idCheck {
-    padding: 10px;
-    margin: 0;
-    background-color: #28a745;
-    color: white;
-    border: none;
-    border-radius: 5px;
-    font-size: 16px;
-    cursor: pointer;
-}
-
-.idCheck {
-    padding: 10px;
-    margin: 0;
-    background-color: #28a745;
-    color: white;
-    border: none;
-    border-radius: 5px;
-    font-size: 16px;
-    cursor: pointer;
-}
-
-/* Specific styles for the radio button section */
+/* 라디오 버튼 그룹 스타일 */
 .radio_button {
     display: flex;
-    justify-content: center;
-    border: none;
-    margin: 0;
-    padding: 40px 20px;
-}
-
-label {
-    font-size: 18px;
-    line-height: 2rem;
-    padding: 0.2em 0.4em;
-}
-
-[type='radio'],
-span {
-    vertical-align: middle;
-}
-
-[type='radio'] {
-    appearance: none;
-    border: max(2px, 0.1em) solid gray;
-    border-radius: 50%;
-    width: 1.25em;
-    height: 1.25em;
-    transition: border 0.5s ease-in-out;
-}
-
-[type='radio']:checked {
-    border: 0.4em solid tomato;
-}
-
-[type='radio']:focus-visible {
-    outline-offset: max(2px, 0.1em);
-    outline: max(2px, 0.1em) dotted tomato;
-}
-
-[type='radio']:hover {
-    box-shadow: 0 0 0 max(4px, 0.2em) lightgray;
-    cursor: pointer;
-}
-
-[type='radio']:hover + span {
-    cursor: pointer;
-}
-
-[type='radio']:disabled {
-    background-color: lightgray;
-    box-shadow: none;
-    opacity: 0.7;
-    cursor: not-allowed;
-}
-
-[type='radio']:disabled + span {
-    opacity: 0.7;
-    cursor: not-allowed;
-}
-
-span {
+    gap: 15px;
     margin-top: 10px;
+}
+
+.radio_button label {
+    display: flex;
+    align-items: center;
+}
+
+.radio_button input[type='radio'] {
+    margin-right: 5px;
+}
+
+/* 헤더 스타일 */
+h2 {
+    font-size: 24px;
+    margin-bottom: 15px;
+    border-bottom: 2px solid #007bff;
+    padding-bottom: 10px;
 }

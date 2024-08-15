@@ -1,28 +1,39 @@
 .ReviewList {
   width: 100%;
   margin: 20px auto;
+  
 }
 
 .ReviewList select {
-  margin-left: 70%;
-  width: 30%;
+  margin-left: 85%;
+  width: 15%;    
+  padding: 5px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
 }
 
 .ReviewListTable {
   width: 100%;
   border-collapse: collapse;
   border: 1px solid #ddd;
+  border-radius: 10px;
+  font-family: 'Helvetica Neue', sans-serif;  
+  font-size:small;
   cursor: pointer;
+  
 }
 
 .ReviewListTable th {
   padding: 8px;
   text-align: center;
-  border: 1px solid #ddd;
-  width: 10%;
+  border: 1px solid #ddd;  
+  width: 10%;  
+  background-color: #4e90e9;
+  color: #ffffff;
+  font-weight: 600;
 }
 
-.ReviewListTable th:nth-child(2) {
+.ReviewListTable th:nth-child(2) {    
   width: 20%;
 }
 
@@ -39,11 +50,11 @@
 }
 
 .ReviewListTable td {
-  padding: 8px;
+  padding: 10px;
   text-align: left;
   border: 1px solid #ddd;
 }
 
-.ReviewListTable th {
-  background-color: #f2f2f2;
+.ReviewListTable tr:hover td {
+  background-color: #f9f9f9;
 }

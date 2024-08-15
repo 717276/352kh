@@ -49,5 +49,21 @@ public class OrderItemServiceImpl implements OrderItemService{
 			mapper.insertOrderItem(data);
 		}
 	}
+	@Override
+    public void insertCart(CartItem item) throws Exception {
+        mapper.insertCart(item);        
+    }
+
+    @Override
+    public CartItem findCartItemByPdNoAndMNo(int pd_no, int m_no) {
+
+        return mapper.findCartItemByPdNoAndMNo(pd_no, m_no);
+    }
+
+    @Override
+    public void modifyCart(int pd_no, int ci_quantity, int m_no) throws Exception {
+        mapper.modifyCart(pd_no,m_no,ci_quantity);
+
+    }
 
 }

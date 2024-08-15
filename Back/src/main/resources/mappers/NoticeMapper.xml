@@ -17,11 +17,14 @@
         WHERE n_no = #{faqId}
     </select>
     <update id="updateNotice" parameterType="com.kh.daeng.domain.dto.board.Notice">
-    UPDATE Notice
-    SET n_title = #{n_title},
-        n_content = #{n_content},
-        n_category = #{n_category}
-    WHERE n_no = #{n_no}
-</update>
+	    UPDATE Notice
+	    SET n_title = #{n_title},
+	        n_content = #{n_content},
+	        n_category = #{n_category}
+	    WHERE n_no = #{n_no}
+	</update>
+	<delete id="deleteFaq" parameterType="Integer">
+		delete from notice where n_no = #{p}
+	</delete>
 
 </mapper>

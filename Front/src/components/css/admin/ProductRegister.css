@@ -141,9 +141,8 @@ input[type="file"] {
   width: 200px;
   width: 200px;
   object-fit: cover; 
-  display: flex; 
-  flex-wrap: wrap; 
   gap: 10px;
+  display: inline-block;
 }
 
 .ProductRegisterTable .imgcontainer {
@@ -151,5 +150,13 @@ input[type="file"] {
 }
 
 .ProductRegisterTable tr:last-child td {
+  text-align: center;
+}
+
+.ProductRegisterTable tr:nth-child(2) td:nth-child(1) {
+  text-align: center;
+}
+
+.ProductRegisterTable #imgtd {
   text-align: center;
 }

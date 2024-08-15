@@ -1,17 +1,41 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.kh.daeng.mapper.TourMapper">
+	<select id="getSearchTourData" parameterType="String" resultMap="MainTourMap">
+			SELECT *
+			FROM (
+			    SELECT 
+			        t.t_no, 
+			        t.t_title, 
+			        t.t_explain, 
+			        t.t_strDate, 
+			        t.t_endDate,
+			        COALESCE(i.i_no, -1) AS i_no,
+			        COALESCE(i.i_ref_no, -1) AS i_ref_no,
+			        COALESCE(i.i_category, 'default_category') AS i_category,
+			        COALESCE(i.i_order, 0) AS i_order,
+			        (SELECT COUNT(a.ar_no) 
+			         FROM article a 
+			         WHERE a.t_no = t.t_no) AS ar_cnt
+			    FROM tour t
+			    LEFT JOIN img i ON t.t_no = i.i_ref_no AND i.i_category = 'tour'
+			    WHERE 
+			      (t.t_explain LIKE '%' || #{search} || '%' 
+			           OR t.t_title LIKE '%' || #{search} || '%')
+			)
+		
+	</select>
 	<!-- 투어리스트 불러오기 -->
 	<select id="getMainTour" resultMap="MainTourMap">
 		<![CDATA[
-		select * from (
-			select t.t_no, t.t_title, t.t_explain, t.t_strDate, t.t_endDate, i.i_no, i.i_ref_no, i.i_category, i.i_order
-			,(select count(a.ar_no) from article a where a.t_no = t.t_no) as ar_cnt
-			from Tour t
-			LEFT JOIN Img i ON t.t_no = i.i_ref_no			
-			WHERE i.i_category = 'tour'
-			order by ar_cnt desc 
-		)		
+		SELECT t.*, 
+		        COALESCE(i.i_no, -1) as i_no,
+		        COALESCE(i.i_ref_no, -1) as i_ref_no,
+		        COALESCE(i.i_category, 'default_category') as i_category,
+		        COALESCE(i.i_order, 0) as i_order		       
+		    FROM Tour t
+		    LEFT JOIN Img i ON t.t_no = i.i_ref_no AND i.i_category = 'tour'
+		    LEFT JOIN Preference p ON t.pf_no = p.pf_no
 		where rownum <= 10	
 		]]>
 	</select>
@@ -30,12 +54,17 @@
 		</association>
 	</resultMap>
 	
-<select id="getAllTours" resultMap="TourResultMap">
-		SELECT t.*, i.*, p.*
-		FROM Tour t
-		LEFT JOIN Img i ON t.t_no = i.i_ref_no
-		LEFT JOIN Preference p ON t.pf_no = p.pf_no
-		WHERE i.i_category = 'tour'
+	<select id="getAllTours" resultMap="TourResultMap">
+	    SELECT 
+	        t.*, 
+	        COALESCE(i.i_no, -1) as i_no,
+	        COALESCE(i.i_ref_no, -1) as i_ref_no,
+	        COALESCE(i.i_category, 'default_category') as i_category,
+	        COALESCE(i.i_order, 0) as i_order,
+	        p.*
+	    FROM Tour t
+	    LEFT JOIN Img i ON t.t_no = i.i_ref_no AND i.i_category = 'tour'
+	    LEFT JOIN Preference p ON t.pf_no = p.pf_no
 	</select>
 	
 	<resultMap id="TourResultMap" type="Tour">
@@ -151,12 +180,12 @@
 	        <result property="ar_createdDate" column="ar_createdDate"/>
 	        <result property="ar_like" column="ar_like"/>
 	        <result property="ar_view" column="ar_view"/>
-	        <association property="img_list" javaType="Img">
-	            <id property="i_no" column="i_i_no"/>
-	            <result property="i_category" column="i_i_category"/>
-	            <result property="i_order" column="i_i_order"/>
-	            <result property="i_ref_no" column="i_i_ref_no"/>
-	        </association>
+	        <collection property="img_list" ofType="Img">
+                <id property="i_no" column="i_i_no"/>
+                <result property="i_category" column="i_i_category"/>
+                <result property="i_order" column="i_i_order"/>
+                <result property="i_ref_no" column="i_i_ref_no"/>
+            </collection>
 	    </collection>
 	</resultMap>
 	

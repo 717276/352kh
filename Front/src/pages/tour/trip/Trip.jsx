@@ -3,79 +3,40 @@ import { useNavigate, useParams } from "react-router-dom";
 import "../../../components/css/tour/Trip.css";
 import { jwtDecode } from "jwt-decode";
 
-const Trip = () => {
-  //  const { userNo } = useParams();
-  const [tours, setTours] = useState([]);
-  const [filteredTours, setFilteredTours] = useState([]);
-  const [visibleItems, setVisibleItems] = useState(6);
-  const [userPre, setUserPre] = useState({});
+const Trip = () => {  
+  const [tours, setTours] = useState([]);  
+  const [visibleItems, setVisibleItems] = useState(6);  
   const navigate = useNavigate();
 
-  const getUserInfo = async (userNo) => {
-    const accessToken = localStorage.getItem("accessToken");
-    const response = await fetch(`http://localhost:8080/api/getPre/${userNo}`, {
-      headers: {
-        authorization: accessToken,
+  const similarity = async(userNo)=>{
+    const response =  await fetch('http://localhost:8080/api/trip/similarity',{
+      method:"POST",
+      headers:{
+        'Content-Type':'application/json',
       },
-      credentials: "include",
-      method: "GET",
-    }).catch((error) => {
-      console.log(error);
+      body:JSON.stringify({
+        userNo : userNo, 
+      })
     });
-    const data = await response.json();
-    console.log("Preference: " + data);
-    setUserPre(data);
-    return data;
-  };
-
-  const fetchTours = async () => {
-    const response = await fetch("http://localhost:8080/api/trip", {
-      method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-      },
-    });
-    const data = await response.json();
-    console.log("Tours:", data);
-    setTours(data);
-    return data;
-  };
-
-  const filterTours = (preferences, tours) => {
-    if (!preferences || tours.length === 0) return [];
-
-    console.log("Filtering tours based on user preference...");
-    return tours.filter((tour) => {
-      let count = 0;
-      if (preferences.pf_rest === 1 && tour.pre.pf_rest === 1) count++;
-      if (preferences.pf_sport === 1 && tour.pre.pf_sport === 1) count++;
-      if (preferences.pf_walk === 1 && tour.pre.pf_walk === 1) count++;
-      if (preferences.pf_cafe === 1 && tour.pre.pf_cafe === 1) count++;
-      if (preferences.pf_spot === 1 && tour.pre.pf_spot === 1) count++;
-
-      tour.matchCount = count; // matchCount 필드를 추가하여 count 값 저장
-      return count >= 1 && tour.t_status === 1; // 1 이상인 경우 필터링
-    });
-  };
-
+    if (response.status === 200){
+      const data = await response.json();
+      console.log(data);
+      return data;
+    }else{
+      alert("추천 투어 목록 가져오기 오류");
+    }
+    return;
+  }
   useEffect(() => {
     const fetchData = async () => {
-      const token = localStorage.getItem("accessToken");
-
-      if (!token) {
-        console.error("No access token found");
-        navigate("/login");
-        return;
-      }
-
+      const token = localStorage.getItem("accessToken");      
       const decodedToken = jwtDecode(token);
       const userNo = decodedToken.userNo; // JWT에서 userNo 추출
 
-      try {
-        const preferences = await getUserInfo(userNo);
-        const toursData = await fetchTours();
-        const filtered = filterTours(preferences, toursData);
-        setFilteredTours(filtered);
+      try {        
+        const toursData = await similarity(userNo);
+        console.log(toursData);
+        setTours(toursData);        
       } catch (error) {
         console.error("Error fetching data:", error);
       }
@@ -100,12 +61,19 @@ const Trip = () => {
   };
 
   const groupedData = [];
-  for (let i = 0; i < filteredTours.length; i += 3) {
-    groupedData.push(filteredTours.slice(i, i + 3));
+  if (tours){
+    for (let i = 0; i < tours.length; i += 3) {
+      groupedData.push(tours.slice(i, i + 3));
+    }
   }
 
   const getImageUrl = (img) => {
-    return `/images/${img.i_category}/${img.i_category}_${img.i_ref_no}_${img.i_order}.jpg`;
+    if(img.i_no === -1) {
+      const randomNum = Math.floor(Math.random() * (2 + 1));
+      const imgUrl = "tour_default_" + randomNum + ".jpg";      
+      return imgUrl;
+    }    
+    return `${img.i_category}_${img.i_ref_no}_${img.i_order}.jpg`;
   };
 
   const formatDateToYYYYMMDD = (dateString) => {
@@ -122,7 +90,7 @@ const Trip = () => {
         <div className="title">
           <h1>투어 추천 리스트</h1>
         </div>
-        {groupedData.slice(0, visibleItems / 3).map((group, groupIndex) => (
+        {tours && groupedData.slice(0, visibleItems / 3).map((group, groupIndex) => (
           <div className="TourList" key={groupIndex}>
             {group.map((item) => (
               <div
@@ -133,7 +101,7 @@ const Trip = () => {
                 {item.matchCount >= 2 && (
                   <div className="recommendation-badge">추천</div>
                 )}
-                <img src={getImageUrl(item.img)} alt={item.name} />
+                <img src={`/images/tour/${getImageUrl(item.img)}`} alt={item.name} />
                 <div className="placeDescription">
                   <div className="placeName">{item.t_title}</div>
                   <div className="placeLocation">
@@ -148,7 +116,7 @@ const Trip = () => {
             ))}
           </div>
         ))}
-        {visibleItems < filteredTours.length && (
+        {tours && visibleItems < tours.length && (
           <div className="loadMore">
             <button onClick={loadMore}>+ 더보기</button>
           </div>

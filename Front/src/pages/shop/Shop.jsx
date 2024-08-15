@@ -4,16 +4,16 @@ import '../../components/css/shop/Shop.css';
 
 const Shop = () => {
     const productImages = [
-        '/src/images/shop/doggoods00.png',
-        '/src/images/shop/doggoods01.png',
-        '/src/images/shop/doggoods02.png',
-        '/src/images/shop/doggoods00.png',
+        '/public/images/shop/doggoods00.png',
+        '/public/images/shop/doggoods01.jpg',
+        '/public/images/shop/doggoods02.png',
+        '/public/images/shop/doggoods03.png',
     ];
     const categories = [
-        { category: '0', name: '위생용품', image: '/src/images/shop/doggoods00.png' },
-        { category: '1', name: '간식 및 사료', image: '/src/images/shop/doggoods01.png' },
-        { category: '2', name: '강아지 옷', image: '/src/images/shop/doggoods02.png' },
-        { category: '3', name: '악세사리', image: '/src/images/shop/doggoods03.png' },
+        { category: '0', name: '위생용품', image: '/public/images/shop/doggoods00.png' },
+        { category: '1', name: '간식 및 사료', image: '/public/images/shop/doggoods01.jpg' },
+        { category: '2', name: '강아지 옷', image: '/public/images/shop/doggoods02.png' },
+        { category: '3', name: '악세사리', image: '/public/images/shop/doggoods03.png' },
     ];
 
     useEffect(() => {
@@ -75,7 +75,7 @@ const Shop = () => {
                 {categories.map((category, index) => (
                     <Link
                         key={index}
-                        to={`/shoplist/${category.category}`}
+                        to={`/shop/list/${category.category}`}
                         state={{ selectedCategory: category.name }}
                         className="top_category_link"
                     >

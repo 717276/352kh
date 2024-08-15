@@ -6,10 +6,11 @@ import TripCreate from "./trip/TripCreate";
 const Tour = () => {
   return (
     <Routes>
+      <Route path="build/tripCreate" element={<TripCreate />} />
+      <Route path="build" element={<Build></Build>} />
+
       <Route path="trip" element={<Trip></Trip>} />
       <Route path="tripDetail/:t_no" element={<TripDetail />} />
-      <Route path="tripCreate" element={<TripCreate />} />
-      <Route path="build" element={<Build></Build>} />
     </Routes>
   );
 };

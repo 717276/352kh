@@ -1,13 +1,34 @@
 package com.kh.daeng.config.util;
 
-import com.kh.daeng.domain.dto.user.Preference;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+import java.util.TreeMap;
 
-public class JaccardSimilarityTransform {		
-	public Double apply(final Preference left, Preference right) {
+import org.springframework.stereotype.Component;
+
+import com.kh.daeng.domain.dto.tour.Tour;
+import com.kh.daeng.domain.dto.user.Preference;
+@Component
+public class JaccardSimilarityTransform { 		
+	private TreeMap<Double, Tour> array = new TreeMap<>(Collections.reverseOrder());
+	
+	public List<Tour> apply(final Preference left, List<Tour> right) {
+		List<Tour> result = new ArrayList<>();
 		if (left == null || right == null) {
 			throw new IllegalArgumentException("Input cannot be null");
 		}
-		return calculateJaccardSimilarity(left, right);
+		for (int i = 0; i < right.size(); ++i) {
+			 
+			 double score = calculateJaccardSimilarity(left, right.get(i).getPre());
+			 array.put(score, right.get(i));
+		}
+		for (Map.Entry<Double, Tour> entry : array.entrySet()) {
+            result.add(entry.getValue());
+        }
+
+		return result;
 	}
 
 	private Double calculateJaccardSimilarity(final Preference left, final Preference right) {		

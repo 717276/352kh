@@ -11,7 +11,8 @@
 
 .QnAWrite table td {
     padding: 10px;
-    border: 1px solid #ccc;
+    border: 1px solid #e0e0e0;
+    font-size: 14px;
 }
 
 .QnAWrite td:nth-child(2) {
@@ -20,9 +21,14 @@
 
 .QnAWrite input,
 select {
-    width: 400px;
-    border: none;
-    border-bottom: 1px solid #ccc;
+    width: 100%; 
+    max-width: 400px;
+    border: 1px solid #e0e0e0;
+    border-radius: 5px; 
+    padding: 10px; 
+    font-size: 14px;
+    box-sizing: border-box;
+    margin-bottom: 10px;
 }
 
 .QnAWrite textarea {
@@ -34,6 +40,7 @@ select {
     margin-bottom: 10px;
     resize: none;
     height: 400px;
+    box-sizing: border-box;
 }
 
 .QnAWrite .subButton {
@@ -51,4 +58,10 @@ select {
     border: none;
     border-radius: 5px;
     margin-bottom: 10px;
+    cursor: pointer;    
+    transition: background-color 0.3s ease, transform 0.3s ease;    
+}
+.QnAWrite button:hover {
+    background-color: #3b7fc4; 
+    transform: scale(1.05);
 }

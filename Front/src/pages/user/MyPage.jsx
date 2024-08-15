@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { useNavigate, useParams } from "react-router-dom";
+import { useNavigate, useParams , useLocation} from "react-router-dom";
 import { jwtDecode } from "jwt-decode";
 import "../../components/css/mypage/MyPage.css";
 
@@ -22,14 +22,9 @@ const MyPage = () => {
   const nav = useNavigate();
   const token = localStorage.getItem("accessToken");
   const decodedToken = jwtDecode(token);
-  const userNo = decodedToken.userNo;
-  useEffect(() => {
-    if (!token) {
-      console.error("No access token found");
-      nav("/login");
-      return;
-    }
+  const userNo = location.state ? location.state.userNo : decodedToken.userNo;
 
+  useEffect(() => {        
     const url = `http://localhost:8080/api/mypage/${userNo}`;
     fetch(url)
       .then((response) => response.json())
@@ -39,6 +34,7 @@ const MyPage = () => {
         setSortedProductData(data.orderItems);
         serCartProductData(data.cartItems);
         setTourListData(data.tourList);
+        console.log(data.tourList);
       })
       .catch((error) => {
         console.error("Error fetching user data:", error);
@@ -56,15 +52,23 @@ const MyPage = () => {
     setSortedData(sorted);
   }, [sortType, user]);
 
-  const getImageUrl = (img) => {
-    if (!img || !img.i_category) {
-      return "/images/default.png"; // 기본 이미지 경로 또는 빈 문자열 반환
+  const getImageUrl = (img) => {    
+    if (img === null) {
+      return "product_default.jpg";
     }
-    return `/images/${img.i_category}/${img.i_category}_${img.i_ref_no}_${img.i_order}.jpg`;
+    if (img.i_no === -1) {
+      const randomNum = Math.floor(Math.random() * (2 + 1));
+      const imgUrl = "tour_default_" + randomNum + ".jpg";
+      return imgUrl;
+    }
+    return `${img.i_category}_${img.i_ref_no}_${img.i_order}.jpg`;
   };
-  const getProImageUrl = (img) => {
-    return `/images/${img.i_category}/${img.i_category}_${img.i_ref_no}_${img.i_order}.png`;
-  };
+  const getProImageUrl = (img)=>{
+    if (img === null) {
+      return "default.jpg";
+    }
+    return `${img.i_category}_${img.i_ref_no}_${img.i_order}.jpg`;
+  }
 
   const formatDateToYYYYMMDD = (dateString) => {
     const date = new Date(dateString);
@@ -282,6 +286,24 @@ const MyPage = () => {
       });
   };
 
+  const handleDelete = async () => {
+    const m_no = userNo;
+    if (window.confirm("회원 탈퇴를 진행하시겠습니까?")) {
+      try {
+        const response = await fetch(`http://localhost:8080/api/members/delete/${m_no}`,{
+            method: "DELETE",
+          }
+        );
+
+        if (response.ok) {
+          alert("회원탈퇴 성공");
+          nav("/");
+        }
+      } catch (error) {
+        console.error("Error deleting member:", error);
+      }
+    }
+  };
   const handleFileChange = (e) => {
     const file = e.target.files[0];
     if (file) {
@@ -295,7 +317,6 @@ const MyPage = () => {
       })
         .then((response) => {
           if (response.ok) {
-            console.log("Profile image uploaded successfully");
             window.location.reload(); // 성공 시 페이지 새로고침
             // 추가적인 성공 처리 코드 (예: 알림 표시 등)
           } else {
@@ -309,7 +330,7 @@ const MyPage = () => {
   };
 
   const handleItemClick = (t_no) => {
-    nav(`/tripDetail/${t_no}`);
+    nav(`/tour/tripDetail/${t_no}`);
   };
 
   const removeProduct = (ciNo) => {
@@ -331,7 +352,6 @@ const MyPage = () => {
 
   const cancleTour = async (t_no) => {
     const token = localStorage.getItem("accessToken");
-    console.log(token, "왜 안찍히니");
     if (!token) {
       console.error("No access token found");
       return;
@@ -766,7 +786,7 @@ const MyPage = () => {
               </div>
               <div className="image-section">
                 <div className="image-box">
-                  <img src={getImageUrl(user.img)} alt="프로필 이미지" />
+                  <img src={`/images/user/${getProImageUrl(user.img)}`} alt="프로필 이미지" />
                 </div>
                 <input
                   type="file"
@@ -780,12 +800,17 @@ const MyPage = () => {
               </div>
             </div>
           </div>
+          <div className="userdelete">
+            <button className="myuserdelete-button" onClick={handleDelete}>
+              회원 탈퇴
+            </button>
+          </div>
         </div>
 
         <div className="section">
-          <h1 className="section-title">투어 신청 목록</h1>
+          <h1 className="section-title">투어 신청</h1>
           <div className="move-order">
-            <button onClick={() => nav("/tourOrder")}>구매하러 가기</button>
+            <button onClick={() => nav("/user/mypage/tour/order")}>구매하러 가기</button>
           </div>
           <div className="mytrip-list">
             {selectedTourListItems.map((item) => (
@@ -795,7 +820,7 @@ const MyPage = () => {
                 onClick={() => handleItemClick(item.t_no)}
               >
                 <div className="mytriplist-details">
-                  <img src={getImageUrl(item.img)} alt={item.t_title} />
+                  <img src={`/images/tour/${getImageUrl(item.img)}`} alt={item.t_title} />
                   <div className="mytrip-details">
                     <div className="mytrip-name">{item.t_title}</div>
                     <div className="mytrip-description">{item.t_explain}</div>
@@ -849,7 +874,7 @@ const MyPage = () => {
                 onClick={() => handleItemClick(item.t_no)}
               >
                 <div className="mytriplist-details">
-                  <img src={getImageUrl(item.img)} alt={item.t_title} />
+                  <img src={`/images/tour/${getImageUrl(item.img)}`} alt={item.t_title} />
                   <div className="mytrip-details">
                     <div className="mytrip-name">{item.t_title}</div>
                     <div className="mytrip-description">{item.t_explain}</div>
@@ -881,14 +906,14 @@ const MyPage = () => {
         <div className="section">
           <h1 className="section-title">장바구니</h1>
           <div className="move-order">
-            <button onClick={() => nav("/order")}>구매하러 가기</button>
+            <button onClick={() => nav("order")}>구매하러 가기</button>
           </div>
           <div className="myproduct-list">
             {selectedcartItems.map((item) => (
               <div key={item.ci_no} className="myproduct-item-mypage">
                 <div className="myproduct-info">
                   <img
-                    src={getProImageUrl(item.product.img)}
+                    src={`/images/shop/${getImageUrl(item.product.img)}`}
                     alt={item.product.pd_name}
                   />
                   <div className="myproduct-details">
@@ -948,7 +973,7 @@ const MyPage = () => {
                 </div>
                 <div className="myproduct-info">
                   <img
-                    src={getProImageUrl(item.product.img)}
+                    src={`/images/shop/${getImageUrl(item.product.img)}`}
                     alt={item.product.pd_name}
                   />
                   <div className="myproduct-details">

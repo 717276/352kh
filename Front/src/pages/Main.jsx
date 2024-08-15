@@ -1,62 +1,83 @@
 import '../components/css/Main.css'
-import React, { useState, useEffect, useContext } from 'react';
+import React, { useState, useEffect, useMemo , useRef} from 'react';
 import MainTrip from '../pages/tour/build/MainTrip.jsx';
+import Slide from '../components/Slide.jsx';
+import { HTTP_STATUS } from '../components/Auth.jsx';
 
 const Main=()=>{                    
     const [tourSlideImgs, setSlideImgs] = useState([]);
-    const [tourIconImgs, setIconImgs] = useState([]);
-    const [curIdx, setIdx] = useState(0);
-    const [searchTerm, setSearchTerm] = useState('');
-    // const { uri, setUri, data } = useContext(DataContext);
-    useEffect(()=>{        
+    const [tourData, setTourData] = useState([]);    
+    const [url, setUrl] = useState([]);               
+    const [searchTerm, setSearchTerm] = useState('');    
+
+    useEffect(()=>{                
         const mtour = async ()=>{
             const response = await fetch('http://localhost:8080/api/main/tour');
-            const imgs = await response.json();
-            const slideImg = imgs.slice(0, 5);
-            setSlideImgs(slideImg);
-            const iconImg = imgs.slice(5, 10);
-            setIconImgs(iconImg);
+            const tours = await response.json();      
+            if (tours.length > 10) {
+                const slideImg = tours.slice(0, 5);                                   
+                const iconImg = tours.slice(5, 10);          
+                setSlideImgs(slideImg);                            
+                setTourData(iconImg);                 
+                getUrl(slideImg);                                                               
+            }else {          
+                setSlideImgs(tours);
+                setTourData(tours);
+                getUrl(tours);                     
+            }
         }        
         mtour();
-        const intervalId = setInterval(nextSlide, 3000);
-        return () => clearInterval(intervalId);
-    },[])
-    
-    const nextSlide = () => {        
-        setIdx((prevIndex) => (prevIndex + 1) % tourSlideImgs.length);
-    };
-    const prevSlide = () => {
-        setIdx((prevIndex) => (prevIndex - 1 + tourSlideImgs.length) % tourSlideImgs.length);
-    };
+    },[])           
+    const getUrl = (slideImg) =>{                 
+        if (slideImg !== null) {
+            slideImg.forEach((t)=>{                
+                if (t.img.i_no === -1) {
+                    const randomNum = Math.floor(Math.random() * (2 + 1));
+                    const newUrl = "tour_default_" + randomNum + ".jpg"; 
+                    setUrl(prevUrl => [...prevUrl, newUrl]);                 
+                } else{
+                    const newUrl = `${t.img.i_category}_${t.img.i_ref_no}_${t.img.i_order}.jpg`;                
+                    setUrl(prevUrl => [...prevUrl, newUrl]);
+                }
+            })
+        }           
+    }            
     // 검색
     const searchHandler=(e)=>{
         if (e.key === 'Enter'){
+            console.log("search handler");
             search()
         }
-    }
-    const search = () =>{
-        console.log(searchTerm);
     }    
-    return(
+    const search = async () =>{            
+        const response = await fetch(`http://localhost:8080/api/main/search`,{
+            method:'POST',
+            headers:{
+                'Content-Type':'application/json'
+            },
+            body: JSON.stringify({ search: searchTerm })
+        });
+        console.log("response search " + response.status);
+        if (response.status === HTTP_STATUS.OK){            
+            const t = await response.json();
+            setTourData(t);                        
+        }else{
+            console.log("main search : not found");
+        }        
+    }        
+    
+    return(        
         <div className="Main">
             <div className="main_search">                
                 <input className="main_search_box" type="text" placeholder="검색어 입력" value={searchTerm} onChange={(e)=>setSearchTerm(e.target.value)} onKeyDown={searchHandler}></input>
                 <img className="main_serach_btn_img" src="/images/util/search.png" alt="" onClick={()=>search()}/>
             </div>
-            <div className='wrapper'>
-                <div className="main_slide">
-                    <div className="img_box">
-                        {
-                            tourSlideImgs.length > 0 ? (<img src={tourSlideImgs[curIdx]}/>) : (<p>Loading...</p>)
-                        }
-                    </div>
-                </div>
-                <span className="slide_btn prev_btn" onClick={prevSlide}>Prev</span>
-                <span className="slide_btn next_btn" onClick={nextSlide}>Next</span>
+            <div className='wrapper'>                             
+                <Slide url={url}></Slide>                    
             </div>
             <div className="tourList">                
                 <div className='tour_wrapper'>                                            
-                    {tourIconImgs.length > 0 && <MainTrip tourImgs={tourIconImgs}></MainTrip>}
+                    {tourData.length > 0 && <MainTrip tourData={tourData}></MainTrip>}
                 </div>
             </div>
         </div>

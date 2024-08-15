@@ -94,4 +94,6 @@ public interface TourMapper {
 
 	public List<Tour> getMainTour();
 
+	public List<Tour> getSearchTourData(String search);
+
 }

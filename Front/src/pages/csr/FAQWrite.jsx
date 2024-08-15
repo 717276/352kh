@@ -35,7 +35,7 @@ const FAQWrite = () => {
             .then((response) => response.json())
             .then((data) => {
                 if (data.success) {
-                    nav('/faq');
+                    nav('/csr/');
                 } else {
                     setErrorMessage('FAQ 제출에 실패했습니다.');
                 }

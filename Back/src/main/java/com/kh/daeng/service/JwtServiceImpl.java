@@ -27,13 +27,15 @@ public class JwtServiceImpl {
 	public ResponseEntity<?> work(HttpServletRequest request, HttpServletResponse response){
 		System.out.println("in refresh service");		
         String refresh = null;
+        
         Cookie[] cookies = request.getCookies();
-        for (Cookie cookie : cookies) {
-            if (cookie.getName().equals("refresh")) {
-                refresh = cookie.getValue();
-            }
+        if (cookies != null) {        	
+        	for (Cookie cookie : cookies) {
+        		if (cookie.getName().equals("refresh")) {
+        			refresh = cookie.getValue();
+        		}
+        	}
         }
-
         if (refresh == null) {
         	System.out.println("refersh is null");
         	response.setStatus(400);
@@ -76,7 +78,6 @@ public class JwtServiceImpl {
 	    //cookie.setSecure(true);
 	    //cookie.setPath("/");
 	    cookie.setHttpOnly(true);
-
 	    return cookie;
 	}
 	private void addRefreshEntity(int userNo, String refresh, Long expiredMs) {
@@ -89,5 +90,21 @@ public class JwtServiceImpl {
 	    refreshEntity.setExpiration(date.toString());
 
 	    refreshMapper.save(refreshEntity);
+	}
+	public ResponseEntity<?> logout(HttpServletRequest request, HttpServletResponse response) {
+		Cookie[] cookies = request.getCookies();		
+        if (cookies != null) {        	
+        	for (Cookie cookie : cookies) {
+        		if (cookie.getName().equals("refresh")) {
+        			 Cookie refreshCookie = new Cookie("refresh", null);
+        			 refreshCookie.setPath("/");
+                     refreshCookie.setMaxAge(0);
+                     refreshCookie.setHttpOnly(true);
+                     response.addCookie(refreshCookie);
+        		}
+        	}
+        	return ResponseEntity.ok().build();
+        }
+        return ResponseEntity.badRequest().body("no cookies");
 	}
 }

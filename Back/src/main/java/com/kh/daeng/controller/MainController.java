@@ -2,6 +2,7 @@ package com.kh.daeng.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -22,7 +23,11 @@ public class MainController {
 	public String main() {
         return "index";
 	}
-	
+	@PostMapping("/test")
+	public ResponseEntity<?> logout(HttpServletRequest request,HttpServletResponse response){
+		System.err.println("logout");
+		return jwtService.logout(request,response);		
+	}	
     @PostMapping("/reissue")
     public ResponseEntity<?> reissue(HttpServletRequest request, HttpServletResponse response) {
     	return jwtService.work(request, response);
@@ -42,7 +47,9 @@ public class MainController {
     @RequestMapping("/admin/**")
     public void admin(HttpServletRequest request) {    	    
     }
-    @RequestMapping("/ws/**")
-    public void connect() {  
-    }    
+    
+    @RequestMapping("/user/**")
+    public void user(HttpServletRequest request) {
+    	log.info("user " + request.getRequestURI());
+    }
 }

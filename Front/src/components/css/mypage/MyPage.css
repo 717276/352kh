@@ -46,7 +46,7 @@ form {
   display: flex;
   align-items: stretch; /* 섹션의 높이를 동일하게 설정 */
   justify-content: center;
-  gap: 30px;
+  gap: 100px;
   padding: 10px 20px;
 }
 
@@ -94,9 +94,9 @@ form {
 .mypage-table td button {
   padding: 5px 10px;
   margin-right: 5px;
-  border: 1px solid #1E90FF;
+  border: 1px solid #4e90e9;
   border-radius: 5px;
-  background-color: #1E90FF;
+  background-color: #4e90e9;
   color: white;
   cursor: pointer;
   transition: background-color 0.3s ease; /* 부드러운 전환 효과 추가 */
@@ -201,8 +201,8 @@ form {
 }
 
 .image-box img {
-  width: 100%;
-  height: 100%;
+  width: 350px;
+  height: 350px;
   object-fit: cover; /* 이미지를 컨테이너에 맞게 자르기 */
   border-radius: 10px;
 }
@@ -493,4 +493,23 @@ div.mydeletecart> button {
 
 .move-order > button:hover {
   background-color: #7ed0ff;
+}
+.userdelete {
+  text-align: center;
+}
+
+.myuserdelete-button{
+  padding: 7px 10px;
+  border: none;
+  border-radius: 5px;
+  background-color: #ff4d4d;
+  color: white;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+.my-infodesc{
+  width:300px;
+}
+.my-info > button{
+  width:50px;  
 }

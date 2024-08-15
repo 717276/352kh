@@ -37,6 +37,7 @@ public class MypageServiceImpl implements MypageService {
 		member.setCartItems(cartItems);
 		
 		List<TourList> tourList = mapper.getTourListByUserNo(userNo);		// 신청한 투어 정보 불러오기
+		System.err.println("tour List user no " + tourList);
 		member.setTourList(tourList);
 		
 		Img img = mapper.getProImg(userNo);									// 프로필이미지 물러오기

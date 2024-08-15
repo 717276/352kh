@@ -7,10 +7,11 @@
 .build{
     width:25%;
     height:80%;    
-    margin-top:5%;    
-    border: 1px solid black;
+    margin-top:5%;        
     margin-right:20px;
-    border-radius: 40px;    
+    border: 1px solid #e0e0e0;
+    border-radius: 20px; 
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /       
 }
 /* 검색창 */
 .build_search{
@@ -19,11 +20,18 @@
     display:flex;    
     margin-left:22%;    
     text-align: center;
-    position:relative;    
+    position:relative;  
+    margin-bottom: 20px;  
+    
 }
 .build_input{
     width:50%;
     height:70%;
+    border: 1px solid #e0e0e0;
+    border-radius: 10px;
+    font-size: 0.8em;
+    font-family: 'Helvetica Neue', sans-serif;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
 }
 .search_btn_img{
     width:20px;
@@ -32,6 +40,9 @@
     top: 10px;
     left: 140px;
     cursor: pointer;
+}
+.search_btn_img:hover{
+    transform: scale(1.1);
 }
 /* 카테고리 버튼 */
 .build_category_list{
@@ -42,9 +53,13 @@
     padding:0;
     gap:10%;    
     margin:0;
+    
 }
 .build_category_list li {
     cursor: pointer;    
+    font-weight: bold;
+    color: #333;
+    transition: color 0.3s ease;
 }
 .build_category_list li:hover {
     color: #007bff;
@@ -57,8 +72,9 @@
 .build_calendar{    
     width:100%;
     height:5%;
-    padding-top:10%;
     text-align: center;    
+    padding-top:10%;
+    margin-bottom:20px;
 }
 .strDay:hover::placeholder,
 .endDay:hover::placeholder {
@@ -72,9 +88,9 @@
 }
 .react-datepicker__input-container > input{
     width:80%;
-    border:none;
-    font-weight: bold;    
-    font-family: 'HSGaeulSenggak20', sans-serif;
+    border: 1px solid #e0e0e0;
+    border-radius: 20px;
+    font-weight: bold;        
 }
 
 /* 검색된 데이터 출력 */
@@ -84,16 +100,13 @@
     display: flex;    
     justify-content: center;
     align-items: center;    
-    overflow-y:scroll;
+    overflow-y: auto;
 }
 .data_list_wrapper{
     width:100%;
     height:100%;
 }
-.test{
-    width:100%;
-    height:100%;
-}
+
 /* 출력된 데이터 목록 */
 .ress{
     margin-top:20%;
@@ -106,11 +119,16 @@
     flex-direction: column;
     justify-content:space-evenly;
     align-items:center;
+    gap: 10px;
 }
 .selected_item{
     width:200px;
     height:130px;
-    text-align: center;    
+    text-align: center; 
+    border: 1px solid #e0e0e0;
+    border-radius: 10px;
+    padding: 10px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);   
 }
 .selected_places{
     overflow-y: scroll;
@@ -118,22 +136,19 @@
 .selected_hotel{
     overflow-y:scroll;
 }
-.selected_place_img img {
-    width: 120px;
-    height: 80px;
-}
 .selected_res{
     overflow-y:scroll;
 }
-.selected_res_img img{
+
+.selected_place_img img, .selected_res_img img, .selected_hotel_img img {
     width: 120px;
     height: 80px;
+    border-radius: 10px; /* 둥근 모서리 */
 }
-.selected_hotel_img img{
-    width: 120px;
-    height: 80px;
-}
-.data_list::-webkit-scrollbar, .selected_places::-webkit-scrollbar, .selected_res::-webkit-scrollbar, .selected_hotel::-webkit-scrollbar {
+.data_list::-webkit-scrollbar, 
+.selected_places::-webkit-scrollbar, 
+.selected_res::-webkit-scrollbar, 
+.selected_hotel::-webkit-scrollbar {
     display: none;
 }
 
@@ -143,14 +158,22 @@
     display:flex;
     justify-content: space-evenly;
     cursor:pointer;
+    font-weight: bold;
+}
+.saveTour_prev_btn:hover{
+    transform: scale(1.1);
+}
+.saveTour_next_btn:hover{
+    transform: scale(1.1);
 }
 /* 지도 */
 .build_map{
     width:50%;
     height:80%;    
     margin-top:5%;
-    border:1px solid black;
-    border-radius: 40px;
+    border: 1px solid #e0e0e0;
+    border-radius: 20px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 .google_map{
     display:flex;
@@ -175,4 +198,20 @@
     height:100%;
     display:flex;
     justify-content: center;
+    align-items: center;
+}
+.tour_save_btn{
+    padding-top:3%;
+    width:5%;    
+}
+.tour_save_span{
+    display: block;
+    cursor: pointer;
+    font-size: 1em;
+    font-weight: bold;
+    color: black;
+    transition: transform 0.3s ease, color 0.3s ease;
+}
+.tour_save_span:hover{
+    transform: scale(1.3);
 }

@@ -2,6 +2,7 @@ package com.kh.daeng.service.iface;
 
 import java.util.List;
 
+import org.springframework.web.multipart.MultipartFile;
 
 import com.kh.daeng.domain.dto.user.OrderTour;
 import com.kh.daeng.domain.dto.user.PaymentTour;
@@ -44,9 +45,13 @@ public interface TourService {
 	public void saveTourOrder(int userNo, List<OrderTour> ordertours, PaymentTour pt) throws Exception;
 
 	// 투어 생성하기
-	public int createTour(Tour tour, List<String> categories, String toursJson) throws Exception;
+	public int createTour(Tour tour, List<String> categories, String toursJson, MultipartFile tourImageFile) throws Exception;
 
 	public List<Tour> getMainTour();
+
+	public List<Tour> getSearchTourData(String search);
+
+	public List<Tour> getJaccard(int userNo) throws Exception;
 
 
 }

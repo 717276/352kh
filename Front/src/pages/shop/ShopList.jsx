@@ -60,45 +60,44 @@ const ShopList = () => {
             : products.filter((product) => categoryMap[product.pd_category] === selectedCategory);
 
     return (
-        <div className="product_list_container">
-            <h1>카테고리</h1>
-            <div className="category_buttons">
-                <button className="category_button" onClick={() => handleCategoryClick('위생용품')}>
+        <div className="shop_list_container">
+            <h1 className="shop_list_title">카테고리</h1>
+            <div className="shop_category_buttons">
+                <button className="shop_category_button" onClick={() => handleCategoryClick('위생용품')}>
                     위생용품
                 </button>
-                <button className="category_button" onClick={() => handleCategoryClick('사료 및 간식')}>
+                <button className="shop_category_button" onClick={() => handleCategoryClick('사료 및 간식')}>
                     사료 및 간식
                 </button>
-                <button className="category_button" onClick={() => handleCategoryClick('강아지 옷')}>
+                <button className="shop_category_button" onClick={() => handleCategoryClick('강아지 옷')}>
                     강아지 옷
                 </button>
-                <button className="category_button" onClick={() => handleCategoryClick('악세서리')}>
+                <button className="shop_category_button" onClick={() => handleCategoryClick('악세서리')}>
                     악세서리
                 </button>
-                <button className="category_button" onClick={() => handleCategoryClick('전체')}>
+                <button className="shop_category_button" onClick={() => handleCategoryClick('전체')}>
                     전체
                 </button>
             </div>
             {loading ? (
-                <p>Loading...</p>
+                <p className="shop_loading">Loading...</p>
             ) : error ? (
-                <p>Error loading products: {error.message}</p>
+                <p className="shop_error">Error loading products: {error.message}</p>
             ) : (
-                <div className="product_grid">
+                <div className="shop_product_grid">
                     {filteredProducts.map((product) => (
-                        <Link to={`/shop/product/${product.pd_no}`} key={product.pd_no}>
-                            <div className="product_card">
+                        <Link to={`/shop/product/${product.pd_category}/${product.pd_no}`} className="shop_product_link" key={product.pd_no}>
+                            <div className="shop_product_card">
                                 <img
-                                    className="product_image"
-                                    src={`/public/iamges/${product.pd_category}_${product.pd_no}_0.png`}
+                                    className="shop_product_image"
+                                    src={`/images/shop/product_${product.pd_no}_1.jpg`}
                                     alt={product.pd_name}
                                 />
-                                <div className="product_info">
-                                    <h2 className="product_name">{product.pd_name}</h2>
-                                    <p className="product_price">{product.pd_price}원</p>
-                                    <p className="product_discount">{product.pd_discount}%</p>
-                                    <p className="product_explain">{product.pd_explain}</p>
-                                    <p className="product_mount">{product.pd_mount} 개</p>
+                                <div className="shop_product_info">
+                                    <h2 className="shop_product_name">{product.pd_name}</h2>
+                                    <p className="shop_product_mount">재고 : {product.pd_mount} 개</p>
+                                    <p className="shop_product_discount">세일 : {product.pd_discount}%</p>
+                                    <p className="shop_product_price">가격 : {product.pd_price}원</p>
                                 </div>
                             </div>
                         </Link>

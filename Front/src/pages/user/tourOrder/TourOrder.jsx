@@ -148,7 +148,12 @@ const TourOrder = () => {
   };
 
   const getImageUrl = (img) => {
-    return `/images/${img.i_category}/${img.i_category}_${img.i_ref_no}_${img.i_order}.jpg`;
+    if(img === null || img.i_no === -1) {
+      const randomNum = Math.floor(Math.random() * (2 + 1));
+      const imgUrl = "tour_default_" + randomNum + ".jpg";      
+      return imgUrl;
+    }    
+    return `${img.i_category}_${img.i_ref_no}_${img.i_order}.jpg`;
   };
 
   const isOrderInfoComplete = () => {
@@ -204,7 +209,7 @@ const TourOrder = () => {
       .then((data) => {
         console.log("Order saved successfully:", data);
         alert("결제에 성공하였습니다.");
-        navigate(`/mypage`);
+        navigate(`/user/mypage`);
       })
       .catch((error) => {
         console.error("Error saving order:", error);
@@ -235,7 +240,7 @@ const TourOrder = () => {
                       onChange={() => handleSelectTour(tour.utl_no)}
                     />
                     <img
-                      src={getImageUrl(tour.tour.img)}
+                      src={`/images/tour/${getImageUrl(tour.tour.img)}`}                      
                       alt={tour.tour.t_title}
                     />
                     <div className="product-info-order">

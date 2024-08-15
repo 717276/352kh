@@ -20,4 +20,10 @@ public interface OrderItemService {
 	
 	// 결제 정보 저장하기
 	public void saveOrderData(int userNo, List<OrderItem> orderItems, PaymentItem paymentItem) throws Exception;
+	
+	public void insertCart(CartItem item) throws Exception;
+
+    public CartItem findCartItemByPdNoAndMNo(int pd_no, int m_no);
+
+    public void modifyCart(int pd_no, int ci_quantity, int m_no) throws Exception;
 }

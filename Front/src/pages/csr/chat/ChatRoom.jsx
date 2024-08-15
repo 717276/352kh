@@ -2,7 +2,6 @@ import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import '../../../components/css/chat/ChatRoom.css';
 import { jwtDecode } from 'jwt-decode'; // 여기를 수정
-
 const ChatRoom = () => {
     const { roomId } = useParams();
     const [messages, setMessages] = useState([]);
@@ -10,18 +9,26 @@ const ChatRoom = () => {
     const [ws, setWs] = useState(null);
     const [accessToken, setAccessToken] = useState(localStorage.getItem('accessToken')); // accessToken 상태 추가
     const [role, setRole] = useState('');
+    const [userName, setUserName] = useState('');
     window.onload = function () {
         // 스크롤 위치를 중앙으로 이동
         window.scrollTo((document.body.scrollWidth - window.innerWidth) / 2);
     };
 
     useEffect(() => {
+        // Token decoding to get userName
+        try {
+            const decodedToken = jwtDecode(accessToken);
+            setUserName(decodedToken.userName);
+        } catch (err) {
+            console.error('Failed to decode token:', err);
+        }
         const fetchMessages = async () => {
             try {
-                const response = await fetch(`http://localhost:8080/api/chat/messages/${roomId}`,{
-                    headers:{
-                        Authorization:`${accessToken}`,
-                        'Content-Type':'application/json',
+                const response = await fetch(`http://localhost:8080/api/chat/messages/${roomId}`, {
+                    headers: {
+                        Authorization: `${accessToken}`,
+                        'Content-Type': 'application/json',
                     },
                 });
                 if (!response.ok) {
@@ -37,6 +44,7 @@ const ChatRoom = () => {
                 console.error('Error fetching chat messages:', error);
             }
         };
+
         fetchMessages();
 
         // Initialize WebSocket connection
@@ -53,7 +61,6 @@ const ChatRoom = () => {
         };
 
         socket.onclose = (event) => {
-            console.log(event);
             if (event.wasClean) {
                 console.log(`Connection closed cleanly, code=${event.code}, reason=${event.reason}`);
             } else {
@@ -94,7 +101,7 @@ const ChatRoom = () => {
     };
 
     return (
-        <div className="test">
+        <div className="chat-wrapper">
             <div className="chat-room">
                 <h2 className="chat-room-current-title">1:1 채팅방</h2>
                 <div className="chat-room-messages">
@@ -103,7 +110,7 @@ const ChatRoom = () => {
                             <div
                                 key={index}
                                 className={`chat-room-message ${
-                                    msg.sender === '댕트립' ? 'chat-room-message-other' : 'chat-room-message-user'
+                                    msg.sender === userName ? 'chat-room-message-user' : 'chat-room-message-other'
                                 }`}
                             >
                                 <span className="chat-room-message-sender">{msg.sender}:</span> {msg.message}

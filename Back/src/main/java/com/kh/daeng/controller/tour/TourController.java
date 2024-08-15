@@ -8,6 +8,7 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -17,12 +18,14 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.kh.daeng.domain.dto.user.OrderTour;
 import com.kh.daeng.domain.dto.user.PaymentTour;
 import com.kh.daeng.domain.dto.user.Preference;
+import com.kh.daeng.config.util.JaccardSimilarityTransform;
 import com.kh.daeng.domain.dto.tour.Tour;
 import com.kh.daeng.service.iface.TourService;
 
@@ -34,18 +37,48 @@ import lombok.extern.java.Log;
 public class TourController {
 
 	@Autowired
-	private TourService service;
-
+	private TourService service;	
 	// 메인 리스트
 	@GetMapping("/main/tour")
-	public List<Tour>getMainTour(){
-		return service.getMainTour();
+	public List<Tour>getMainTour() throws Exception{		
+		List<Tour>result = service.getMainTour();
+		if (result == null) {
+			System.err.println("get main tour result null");
+			return null;
+		}						
+		return service.getMainTour(); 
 	}
-	
-	
+    @PostMapping("/main/search")
+    public ResponseEntity<List<Tour>> getSearchTourData(@RequestBody Map<String, String> search) {    	
+    	String s = search.get("search");    	
+    	if (s == null) {
+    		return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+    	}
+        List<Tour> tours = service.getSearchTourData(s);        
+        if (tours == null || tours.isEmpty()) {        	
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+        }               
+        return ResponseEntity.ok(tours);
+    }	
+	@PostMapping("/trip/similarity")
+	public ResponseEntity<List<Tour>> similarity(@RequestBody Map<String, Integer> userData){
+		int userNo = userData.get("userNo");
+		List<Tour> tours = null;
+		try {
+			tours = service.getJaccard(userNo);
+			System.err.println("tours " + tours);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		if (tours == null || tours.isEmpty()) {
+			System.err.println("jaccard return null");
+			return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+		}				
+		return ResponseEntity.ok(tours);
+	}
 	// 전체 리스트 불러오기
 	@GetMapping("/trip")
-	public List<Tour> getAllTours() throws Exception {		
+	public List<Tour> getAllTours() throws Exception {			
 		return service.getAllTours();
 	}
 
@@ -58,14 +91,14 @@ public class TourController {
 	// t_no를 이용하여 해당 투어의 상세정보 불러오기
 	@GetMapping("/tripDetail/{no}")
 	public Tour getTourDetail(@PathVariable(name = "no") int t_no) throws Exception {
-		System.out.println("들어와지나");
-		System.out.println(service.getTourDetail(t_no));		
+		System.out.println(service.getTourDetail(t_no));
 		return service.getTourDetail(t_no);
 	}
 	
 	// m_no로 유저의 TourList 불러오기
 	@GetMapping("userTourList/{userNo}")
 	public List<Integer> getUserTourList(@PathVariable(name = "userNo") int userNo) throws Exception {
+		System.out.println(service.getUserTourList(userNo));
 		return service.getUserTourList(userNo);
 	}
 
@@ -78,10 +111,10 @@ public class TourController {
 	}
 	
 	// m_no와 t_no로 투어 신청 취소하기
-	@DeleteMapping("/cancelTour")
+	@DeleteMapping("/cancle/tour")
 	public void cancelTour(@RequestBody Map<String, Object> request) throws Exception {
 		int userNo = Integer.parseInt(request.get("userNo").toString());
-		int t_no = Integer.parseInt(request.get("t_no").toString());
+		int t_no = Integer.parseInt(request.get("t_no").toString());		
 		service.deleteTourList(userNo, t_no);
 	}
 
@@ -134,7 +167,7 @@ public class TourController {
 	public ResponseEntity<?> createTour(@RequestParam("tourName") String tourName,
 			@RequestParam("tourDescription") String tourDescription, @RequestParam("tourPrice") int tourPrice,
 			@RequestParam("startDate") String startDate, @RequestParam("endDate") String endDate,
-			@RequestParam("tourImageFile") MultipartFile tourImageFile,
+			@RequestParam(value = "tourImageFile", required = false) MultipartFile tourImageFile,
 			@RequestParam("categories") List<String> categories, @RequestParam("tours") String toursJson)
 			throws Exception {
 
@@ -153,11 +186,14 @@ public class TourController {
 		tour.setT_endDate(end);
 
 		// 투어 데이터 저장
-		int t_no = service.createTour(tour, categories, toursJson);
+		int t_no = service.createTour(tour, categories, toursJson, tourImageFile);
 
+		if (tourImageFile == null) {
+			System.err.println("tour image is null");
+		}
 		// 투어 이미지 저장
-		if (!tourImageFile.isEmpty()) {
-			String folderPath = "D:/reactTest/daengTrip2/Front/public/images/tour/";
+		if (tourImageFile != null) {			
+			String folderPath = "C:/DaengTrip/Front/public/images/tour/";
 			String imagePath = folderPath + "tour_" + t_no + "_1.jpg";
 			File folder = new File(folderPath);
 			if (!folder.exists()) {
@@ -165,8 +201,7 @@ public class TourController {
 			}
 			File dest = new File(imagePath);
 			tourImageFile.transferTo(dest);
-		}
-
+		}		
 		return ResponseEntity.ok("투어 등록 성공");
 	}
 	

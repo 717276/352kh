@@ -5,27 +5,20 @@ import logo from '/images/logo.png';
 import {AuthContext} from './Auth.jsx';
 import { jwtDecode } from "jwt-decode";
 const Header=()=>{
-    const [isAuthorized, setIsAuthorized] = useContext(AuthContext);        
+    const [isAuthorized, setIsAuthorized, logoutHandler] = useContext(AuthContext);        
     const [role,setRole] = useState();    
-    const nav = useNavigate();
-    const logoutHandler=()=>{
-        localStorage.removeItem('accessToken');
-        document.cookie = "refresh=123; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;"; 
-        setIsAuthorized(false);
-        nav('/');
-    }    
+    const nav = useNavigate();    
     const rolePageHandler=()=>{
         if(role === 'ROLE_USER'){
-            nav('/mypage');
+            nav('/user/mypage');
         }else if (role === 'ROLE_ADMIN'){
-            nav('/admin/management');
+            nav('/admin/');
         }
-    }
+    }    
     useEffect(()=>{        
         const token = localStorage.getItem('accessToken');
         if (token !== null){
             const user = jwtDecode(token);
-            console.log(user.role);
             setRole(user.role);
         }
     },[isAuthorized])
@@ -41,8 +34,7 @@ const Header=()=>{
                     </li>
                     <li>Post
                         <ul className="sub_list">
-                            <li><Link to="/board/review">여행후기</Link></li>
-                            <li><Link to="/board/notices">공지사항</Link></li>
+                            <li><Link to="/board/review">여행후기</Link></li>                            
                         </ul>
                     </li>
                     <li>Shop
@@ -52,13 +44,13 @@ const Header=()=>{
                     </li>
                     <li>FAQ
                         <ul className="sub_list">
-                            <li><Link to="/csr/faq">&nbsp;FAQ</Link></li>
+                            <li><Link to="/csr/">&nbsp;FAQ</Link></li>
                         </ul>
                     </li>
                 </ul>                
                 <div className="logo">
                     <Link to="/"><img src={logo}></img></Link>
-                </div>         
+                </div>                         
                 {isAuthorized ? (
                     <div className="header_info">
                         <div className="role_info">  

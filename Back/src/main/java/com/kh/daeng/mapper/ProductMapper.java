@@ -9,7 +9,7 @@ import com.kh.daeng.domain.dto.shop.Product;
 public interface ProductMapper {
 	public List<Product> selectProductList() throws Exception;
 	
-	public Product selectProductDetail(int pdNo) throws Exception;
+	public List<Product> selectProductDetail(int pdNo) throws Exception;
 	
 	public void insertProduct(Product product) throws Exception;
 	

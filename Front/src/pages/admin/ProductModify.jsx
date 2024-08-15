@@ -12,25 +12,44 @@ const ProductModify = () => {
   const pdCategory = useRef();
   const [price, setPrice] = useState('');
   const [discountRate, setDiscountRate] = useState(0);
-  const [items, setItems] = useState({});
+  const [items, setItems] = useState([]);
   const { pd_no } = useParams();
   const imgRef = useRef();
   const detailImagesRef = useRef();
   const [showImages, setShowImages] = useState([]);
   const [showImages2, setShowImages2] = useState([]);
+  const [imageList, setImageList] = useState([]);
+  const [finalPrice, setFinalPrice] = useState(0);
 
   useEffect(() => {
     const url = `http://localhost:8080/api/admin/productModify/${pd_no}`;
     fetch(url)
       .then(response => response.json())
       .then(data => {
-        setItems(data);
-        // 기본 이미지 미리보기 (처음 로드 시)
-        if (data.img) {
-          setShowImages2([`/images/shop/product_${data.img.i_ref_no}_1.jpg`]);
+        if (data.length > 0) {
+          setItems(data[0]);
+          setImageList(data[0].img_list);
+
+          if (data[0].img_list && data[0].img_list.length > 0) {
+            const firstImageRefNo = data[0].img_list[0].i_ref_no;
+            setShowImages2([`/images/shop/product_${firstImageRefNo}_1.jpg`]);
+          } else {
+            setShowImages2(['/images/shop/product_default.jpg']);
+          }
+          setPrice(data[0].pd_price);
+          setDiscountRate(data[0].pd_discount);
+        } else {
+          setShowImages2(['/images/shop/product_default.jpg']);
         }
       });
   }, [pd_no]);
+
+  useEffect(() => {
+    const numericPrice = parseFloat(price) || 0;
+    const numericDiscountRate = parseFloat(discountRate) || 0;
+    const calculatedFinalPrice = numericPrice * (1 - numericDiscountRate / 100);
+    setFinalPrice(Math.floor(calculatedFinalPrice));
+  }, [price, discountRate]);
 
   const handleAddImages = (event) => {
     const imageLists = event.target.files;
@@ -64,17 +83,10 @@ const ProductModify = () => {
 
   const handlePriceChange = (e) => {
     setPrice(e.target.value);
-    updateFinalPrice(e.target.value, discountRate);
   };
 
   const handleDiscountRateChange = (e) => {
     setDiscountRate(e.target.value);
-    updateFinalPrice(price, e.target.value);
-  };
-
-  const updateFinalPrice = (price, discountRate) => {
-    const finalPrice = price * (1 - discountRate / 100);
-    document.getElementById('price').value = finalPrice;
   };
 
   return (
@@ -84,7 +96,7 @@ const ProductModify = () => {
         <div className='mg_box'>
           <div className='mg_mangeMenu'>
             <ul>
-              <li onClick={() => { nav('/admin/management') }}>회원관리</li>
+              <li onClick={() => { nav('/admin') }}>회원관리</li>
               <li onClick={() => { nav('/admin/tripList') }}>여행관리</li>
               <li onClick={() => { nav('/admin/productList') }}>상품관리</li>
               <li onClick={() => { nav('/admin/chart') }}>분석</li>
@@ -98,7 +110,7 @@ const ProductModify = () => {
             <tbody>
               <tr>
                 <td colSpan={5}>
-                  <select ref={pdCategory} value={items.pd_category || ''} onChange={(e) => setItems(prevItems => ({ ...prevItems, pdCategory: e.target.value }))}>
+                  <select ref={pdCategory} value={items.pd_category || ''} onChange={(e) => setItems(prevItems => ({ ...prevItems, pd_category: e.target.value }))}>
                     <option value="0">위생용품</option>
                     <option value="1">간식 및 사료</option>
                     <option value="2">강아지옷</option>
@@ -115,7 +127,7 @@ const ProductModify = () => {
                       </div>
                     ))
                   ) : (
-                    <img src='/images/shop/default.jpg' alt="default" />
+                    <img src='/images/shop/product_default.jpg' alt="default" />
                   )}
                 </td>
                 <td>상품명</td>
@@ -136,16 +148,16 @@ const ProductModify = () => {
               <tr>
                 <td>가격</td>
                 <td colSpan={2}>
-                  <input type="text" ref={pdPrice} onChange={handlePriceChange} defaultValue={items.pd_price} />
+                  <input type="text" ref={pdPrice} value={price} onChange={handlePriceChange} />
                 </td>
               </tr>
               <tr>
                 <td>할인율(%)/판매가</td>
                 <td>
-                  <input type="number" ref={pdDiscount} min={0} onChange={handleDiscountRateChange} defaultValue={items.pd_discount} />
+                  <input type="number" ref={pdDiscount} min={0} value={discountRate} onChange={handleDiscountRateChange} />
                 </td>
                 <td>
-                  <input type="text" id="price" name='price' value={items.pd_price * (1 - items.pd_discount / 100)} readOnly />
+                  <input type="text" id="price" name='price' value={finalPrice} readOnly />
                 </td>
               </tr>
               <tr>
@@ -153,6 +165,17 @@ const ProductModify = () => {
                 <td>상세이미지</td>
                 <td colSpan={2}>
                   <input type="file" ref={detailImagesRef} multiple onChange={handleAddImages} />
+                </td>
+              </tr>
+              <tr>
+                <td id='imgtd' colSpan={4}>
+                  {imageList.length > 0 ? (
+                    imageList.map((image, index) => (
+                      <img key={index} src={`/images/shop/${image.i_category}_${image.i_ref_no}_${image.i_order}.jpg`} />
+                    ))
+                  ) : (
+                    <p>등록된 이미지가 없습니다.</p>
+                  )}
                 </td>
               </tr>
               <tr>
@@ -199,15 +222,25 @@ const ProductModify = () => {
             if (window.confirm('삭제할까요?')) {
               const form = new FormData();
               form.append('pd_no', items.pd_no);
+
               fetch('http://localhost:8080/api/admin/product/delete', {
-                method: 'post',
+                method: 'POST',
                 body: form
-              }).then(() => {
-                nav('/admin/productList');
-                window.location.reload();
               })
+                .then(response => {
+                  if (!response.ok) {
+                    throw new Error('삭제에 실패했습니다. 주문건이 있는지 확인바랍니다.');
+                  }
+                  alert('삭제가 완료되었습니다.');
+                  nav('/admin/productList');
+                  window.location.reload();
+                })
+                .catch(error => {
+                  alert(error.message);
+                });
             }
           }}>삭제</button>
+
           <button id='normalButton' onClick={() => { nav('/admin/productList') }}>취소</button>
         </div>
       </div>

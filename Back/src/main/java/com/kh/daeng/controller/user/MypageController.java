@@ -29,7 +29,10 @@ public class MypageController {
 	// 유저 정보 불러오기
 	@GetMapping("/{userNo}")
 	public Member getUser(@PathVariable(name = "userNo") int userNo) throws Exception {
-		return service.getUser(userNo);
+		Member m = service.getUser(userNo);
+		System.err.println("member " + m.getTours());
+		System.err.println("member 2" + m.getTourList());
+		return m;
 	}
 
 	// m_userId 업데이트
@@ -103,7 +106,7 @@ public class MypageController {
 	    
 	    // 프로필 이미지 변경
 	    if (!file.isEmpty()) {
-	        String folderPath = "D:/reactTest/daengTrip2/Front/public/images/user/";
+	        String folderPath = "C:/DaengTrip/Front/public/images/user/";
 	        String imagePath = folderPath + "user_" + userNo + "_1.jpg";
 	        File folder = new File(folderPath);
 	        System.out.println(folderPath);

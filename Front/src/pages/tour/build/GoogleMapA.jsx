@@ -1,24 +1,16 @@
 import React from "react";
 import {useState,useEffect, useRef} from 'react';
 import '../../../components/css/tour/Map.css';
-import {
-    GoogleMap,    
-    useJsApiLoader,
-    MarkerF,
-} from "@react-google-maps/api";
-
+import {GoogleMap,useJsApiLoader,MarkerF,} from "@react-google-maps/api";
 
 const containerStyle = {
     width: "100%",
     height: "100%",
 };
-
 const center = {
     lat: 37.5665,
     lng: 126.9780,
 };
-
-const radius = 5000;
 
 const libraries = ["places"];
 

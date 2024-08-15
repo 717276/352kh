@@ -29,6 +29,7 @@ const TripDetail = () => {
       const tourNos = await response.json();
 
       const isTourApplied = tourNos.includes(parseInt(t_no, 10));
+      console.log("i t a " + isTourApplied + " " + tourNos);
       setIsApplied(isTourApplied);
     };
 
@@ -101,13 +102,16 @@ const TripDetail = () => {
     if (!img || !img.ti_category) {
       return "/images/default.png"; // 기본 이미지 경로 또는 빈 문자열 반환
     }
-    return `/images/tourimg/${img.ti_category}/${img.ti_category}_${img.ti_ref_no}_${img.ti_day}_${img.ti_order}.jpg`;
+    return `/images/${img.ti_category}/${img.ti_category}_${img.ti_ref_no}_${img.ti_day}_${img.ti_order}.jpg`;
   };
 
   const getArtiImageUrl = (img) => {
-    return `/images/${img.i_category}/${img.i_category}_${img.i_ref_no}_${img.i_order}.png`;
+    console.log(img);
+    if (!img || !img.icategory) {
+      return "/images/default.jpg"; // 기본 이미지 경로 또는 빈 문자열 반환
+    }
+    return `/images/${img.i_category}/${img.i_category}${img.iref_no}${img.i_order}.png`;
   };
-
   const formatDateToYYYYMMDD = (dateString) => {
     const date = new Date(dateString);
     const year = date.getFullYear();
@@ -166,7 +170,7 @@ const TripDetail = () => {
     const userNo = decodedToken.userNo;
 
     try {
-      const response = await fetch(`http://localhost:8080/api/cancleTour`, {
+      const response = await fetch(`http://localhost:8080/api/cancle/tour`, {
         method: "DELETE",
         headers: {
           "Content-Type": "application/json",
@@ -179,7 +183,7 @@ const TripDetail = () => {
       }
 
       alert("투어 신청이 취소되었습니다.");
-      window.location.reload();
+      navigate(-1);
     } catch (error) {
       console.error("Error cancelling tour:", error);
       alert("투어 취소 중 오류가 발생했습니다.");
@@ -306,12 +310,17 @@ const TripDetail = () => {
               className="review"
               onClick={() => handleReviewClick(review.ar_no)}
             >
-              {
-                // <img
-                //   src={getArtiImageUrl(review.img)}
-                //   alt={`Review ${review.ar_no}`}
-                // />
-              }
+              <div className="review-images">
+                {review.img_list && review.img_list.length > 0 ? (
+                  <img
+                    src={getArtiImageUrl(review.img_list[0])}
+                    alt={`Review ${review.ar_no} Image`}
+                    className="review-image"
+                  />
+                ) : (
+                  <p>No images available</p> // 이미지가 없을 경우 표시할 내용
+                )}
+              </div>
               <div className="review-text">
                 <h3>{review.ar_title}</h3>
                 <p>{truncateText(review.ar_content, 30)}</p>

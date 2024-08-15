@@ -6,7 +6,7 @@ import TripApproval from './TripApproval';
 import TripList from './TripList';
 import Chart from './Chart';
 import ProductModify from './ProductModify';
-
+import ChatRoomList from '../csr/chat/ChatRoomList';
 const Admin=()=>{
     return(
         <Routes>
@@ -14,9 +14,10 @@ const Admin=()=>{
             <Route path="productRegister" element={<ProductRegister />} /> 
             <Route path="productModify/:pd_no" element={<ProductModify />} />
             <Route path="chart" element={<Chart />} />
-            <Route path="management" element={<Management/>}/>   
+            <Route path="/" element={<Management/>}/>   
             <Route path="tripApproval/:t_no" element={<TripApproval/>}></Route>         
             <Route path="tripList" element={<TripList />}></Route>              
+            <Route path="admin/chat/" element={<ChatRoomList />}/>
         </Routes>
     );
 }

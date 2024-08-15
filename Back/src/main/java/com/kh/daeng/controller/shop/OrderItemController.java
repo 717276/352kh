@@ -5,6 +5,7 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -46,7 +47,29 @@ public class OrderItemController {
 	public Member getUserInfo(@PathVariable(name = "userNo") int userNo) throws Exception {
 		return service.getUserInfo(userNo);
 	}
-	
+	@PostMapping("/order/insert")
+    public ResponseEntity<Map<String,Object>> insertCart (@RequestBody Map<String, Object> productInfo) throws Exception{
+        log.info("상품 주문 진입함");
+        CartItem item = new CartItem();
+        String s_pd_no = (String) productInfo.get("pd_no");
+        log.info("s_pd_no : "+s_pd_no);
+        int pd_no = Integer.parseInt(s_pd_no);
+        item = service.findCartItemByPdNoAndMNo(pd_no,(Integer)productInfo.get("m_no"));
+
+        log.info("상품 번호 : "+pd_no);
+        if(item!=null) {
+            item.setCi_quantity(item.getCi_quantity()+(Integer)productInfo.get("ci_quantity"));
+            service.modifyCart(pd_no,item.getCi_quantity(),(Integer)productInfo.get("m_no"));
+        }else {
+            item = new CartItem();
+            item.setCi_quantity((Integer)productInfo.get("ci_quantity"));
+            item.setM_no((Integer)productInfo.get("m_no"));
+            item.setPd_no(pd_no);
+            service.insertCart(item);
+        }
+
+        return ResponseEntity.ok(Map.of("success", true));
+    }
 	// 결제 정보 저장하기
 	@PostMapping("/order/save")
 	public void saveOrderData(@RequestBody Map<String, Object> orderData) throws Exception {

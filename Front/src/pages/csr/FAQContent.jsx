@@ -85,8 +85,8 @@ const FAQContent = () => {
                 </table>
             </div>
             <div className="faq-buttons">
-                <button onClick={() => nav('/faq')}>목록으로</button>
-                <button onClick={() => nav(`/faqedit/${faqId}`)}>수정하기</button>
+                <button onClick={() => nav('/csr/')}>목록으로</button>
+                <button onClick={() => nav(`/csr/faqedit/${faqId}`)}>수정하기</button>
             </div>
         </>
     );

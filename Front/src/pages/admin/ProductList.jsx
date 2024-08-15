@@ -37,8 +37,8 @@ const ProductList = () => {
   // 페이징
   const [page, setPage] = useState(1);
   const totalItems = sortedData.length;
-  const totalPage = Math.ceil(totalItems / 10);
-  const currentPageData = sortedData.slice((page - 1) * 10, page * 10);
+  const totalPage = Math.ceil(totalItems / 5);
+  const currentPageData = sortedData.slice((page - 1) * 5, page * 5);
 
   return (
     <>
@@ -57,7 +57,7 @@ const ProductList = () => {
         <div className='mg_box'>
           <div className='mg_mangeMenu'>
             <ul>
-              <li onClick={() => { nav('/admin/management') }}>회원관리</li>
+              <li onClick={() => { nav('/admin/') }}>회원관리</li>
               <li onClick={() => { nav('/admin/tripList') }}>여행관리</li>
               <li onClick={() => { nav('/admin/productList') }}>상품관리</li>
               <li onClick={() => { nav('/admin/chart') }}>분석</li>
@@ -79,7 +79,7 @@ const ProductList = () => {
           <tbody>
             {currentPageData.length === 0 ? (
               <tr>
-                <td colSpan="7" style={{ textAlign: 'center' }}>작성한 게시글이 없습니다.</td>
+                <td colSpan="7" style={{ textAlign: 'center' }}>등록된 상품이 없습니다.</td>
               </tr>
             ) : (
               currentPageData.map((row) => (
@@ -96,7 +96,7 @@ const ProductList = () => {
                   <td>{row.pd_mount}</td>
                   <td hidden>{row.pd_price}</td>
                   <td hidden>{row.pd_discount}</td>
-                  <td>{row.pd_price - (row.pd_price * row.pd_discount) / 100}</td>
+                  <td>{Math.floor(row.pd_price - (row.pd_price * row.pd_discount) / 100)}</td>
                   <td hidden>{row.pd_category}</td>
                 </tr>
               ))

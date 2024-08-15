@@ -3,6 +3,7 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import '../../components/css/login/Register.css';
 
 const Register = () => {
+    // State definitions
     const [dogName, setDogName] = useState('');
     const [breed, setBreed] = useState('');
     const [size, setSize] = useState('');
@@ -14,15 +15,14 @@ const Register = () => {
     const [username, setUsername] = useState('');
     const [userId, setUserId] = useState('');
     const [password, setPassword] = useState('');
-    const [confirmPassword, setConfirmPassword] = useState(''); // 패스워드 확인란 상태 추가
+    const [confirmPassword, setConfirmPassword] = useState('');
     const [email, setEmail] = useState('');
     const [phoneNumber, setPhoneNumber] = useState('');
     const [passwordError, setPasswordError] = useState('');
-    const [confirmPasswordError, setConfirmPasswordError] = useState(''); // 패스워드 일치 오류 상태 추가
+    const [confirmPasswordError, setConfirmPasswordError] = useState('');
     const [emailError, setEmailError] = useState('');
     const [usernameError, setUsernameError] = useState('');
     const [phoneNumberError, setPhoneNumberError] = useState('');
-
     const [isPhoneNumberChecked, setIsPhoneNumberChecked] = useState(false);
     const [isEmailChecked, setIsEmailChecked] = useState(false);
     const navigate = useNavigate();
@@ -30,10 +30,9 @@ const Register = () => {
 
     const emailRegEx = /^[A-Za-z0-9]([-_.]?[A-Za-z0-9])*@[A-Za-z0-9]([-_.]?[A-Za-z0-9])*\.[A-Za-z]{2,3}$/i;
     const passwordRegEx = /^(?=.*[!@#$%^&*])[A-Za-z0-9!@#$%^&*]{8,20}$/;
-    const usernameRegEx = /^[가-힣]{2,6}$/; // 한글 2글자에서 6글자
-    const phoneNumberRegEx = /^[0-9]*$/; // 숫자만
+    const usernameRegEx = /^[가-힣]{2,6}$/;
+    const phoneNumberRegEx = /^[0-9]*$/;
 
-    // provider 추가
     const [provider, setProvider] = useState('Daeng');
 
     const handleEmailDuplicateCheck = async () => {
@@ -84,6 +83,7 @@ const Register = () => {
             setPasswordError('');
         }
     };
+
     const confirmPasswordCheck = (value) => {
         if (value === '') {
             setConfirmPasswordError('');
@@ -130,7 +130,6 @@ const Register = () => {
         script.async = true;
         document.body.appendChild(script);
 
-        // location.state에서 이름과 이메일 값 가져오기
         const params = new URLSearchParams(location.search);
         const name = decodeURIComponent(params.get('name'));
         const email = decodeURIComponent(params.get('email'));
@@ -138,7 +137,6 @@ const Register = () => {
         if (name !== 'null') setUsername(name);
         if (email !== 'null') setEmail(email);
         if (provider !== 'null') {
-            console.log(provider);
             setProvider(provider);
         }
     }, [location.search]);
@@ -183,14 +181,12 @@ const Register = () => {
     const handleAddressFocus = () => {
         if (!address) {
             alert('우편번호란의 주소찾기를 먼저 진행해주세요.');
-            handleClick(); // 주소 찾기 버튼과 같은 동작 수행
+            handleClick();
         }
     };
 
     const handleSubmit = (event) => {
         event.preventDefault();
-        console.log('handleSubmit');
-        // 입력값 검증 로직
         if (usernameError || !username) {
             alert('이름을 올바르게 입력해주세요.');
             return;
@@ -199,13 +195,15 @@ const Register = () => {
             alert('ID를 입력해주세요.');
             return;
         }
-        if (passwordError || !password) {
-            alert('유효한 비밀번호를 입력해주세요.');
-            return;
-        }
-        if (confirmPasswordError || !confirmPassword) {
-            alert('비밀번호 확인란을 올바르게 입력해주세요.');
-            return;
+        if (provider === 'Daeng'){
+            if (passwordError || !password) {
+                alert('유효한 비밀번호를 입력해주세요.');
+                return;
+            }
+            if (confirmPasswordError || !confirmPassword) {
+                alert('비밀번호 확인란을 올바르게 입력해주세요.');
+                return;
+            }
         }
         if (emailError || !email) {
             alert('유효한 이메일을 입력해주세요.');
@@ -265,7 +263,6 @@ const Register = () => {
             size,
         };
 
-        // 세션에 저장하고 다음 페이지로 이동
         sessionStorage.setItem('user', JSON.stringify(user));
         sessionStorage.setItem('dog', JSON.stringify(dog));
         navigate('/register/preference');
@@ -276,20 +273,23 @@ const Register = () => {
             <h2>회원가입</h2>
             <form onSubmit={handleSubmit} className="form-container">
                 <div className="register-section">
-                    <input
-                        type="text"
-                        name="userName"
-                        id="userName"
-                        placeholder="이름"
-                        className="input-field"
-                        value={username}
-                        onChange={(e) => {
-                            setUsername(e.target.value);
-                            usernameCheck(e.target.value);
-                        }}
-                    />
-                    {usernameError && <p style={{ color: 'red' }}>{usernameError}</p>}
-                    <div className="userIdInsert">
+                    <div className="input-group">
+                        <input
+                            type="text"
+                            name="userName"
+                            id="userName"
+                            placeholder="이름"
+                            className="input-field"
+                            value={username}
+                            onChange={(e) => {
+                                setUsername(e.target.value);
+                                usernameCheck(e.target.value);
+                            }}
+                        />
+                        {usernameError && <p className="error-text">{usernameError}</p>}
+                    </div>
+
+                    <div className="input-group">
                         <input
                             type="text"
                             name="userId"
@@ -303,35 +303,43 @@ const Register = () => {
                             중복 체크
                         </button>
                     </div>
+
                     {provider === 'Daeng' && (
-                        <input
-                            type="password"
-                            name="userPW"
-                            id="userPW"
-                            placeholder="PASSWORD : 대문자 특수문자 포함"
-                            className="input-field"
-                            value={password}
-                            onChange={(e) => {
-                                setPassword(e.target.value);
-                                passwordCheck(e.target.value);
-                            }}
-                        />
+                        <div className="input-group">
+                            <input
+                                type="password"
+                                name="userPW"
+                                id="userPW"
+                                placeholder="PASSWORD : 대문자 특수문자 포함"
+                                className="input-field"
+                                value={password}
+                                onChange={(e) => {
+                                    setPassword(e.target.value);
+                                    passwordCheck(e.target.value);
+                                }}
+                            />
+                            {passwordError && <p className="error-text">{passwordError}</p>}
+                        </div>
                     )}
-                    {passwordError && <p style={{ color: 'red' }}>{passwordError}</p>}
-                    <input
-                        type="password"
-                        name="confirmPW"
-                        id="confirmPW"
-                        placeholder="PASSWORD 확인"
-                        className="input-field"
-                        value={confirmPassword}
-                        onChange={(e) => {
-                            setConfirmPassword(e.target.value);
-                            confirmPasswordCheck(e.target.value);
-                        }}
-                    />
-                    {confirmPasswordError && <p style={{ color: 'red' }}>{confirmPasswordError}</p>}
-                    <div className="userEmailInsert">
+                    {provider === 'Daeng' && (
+                        <div className="input-group">
+                            <input
+                                type="password"
+                                name="confirmPW"
+                                id="confirmPW"
+                                placeholder="PASSWORD 확인"
+                                className="input-field"
+                                value={confirmPassword}
+                                onChange={(e) => {
+                                    setConfirmPassword(e.target.value);
+                                    confirmPasswordCheck(e.target.value);
+                                }}
+                            />
+                            {confirmPasswordError && <p className="error-text">{confirmPasswordError}</p>}
+                        </div>
+                    )}
+
+                    <div className="input-group">
                         <input
                             type="email"
                             name="email"
@@ -350,9 +358,10 @@ const Register = () => {
                         </button>
                     </div>
 
-                    {emailError && <p style={{ color: 'red' }}>{emailError}</p>}
-                    {emailDuplicateError && <p style={{ color: 'red' }}>{emailDuplicateError}</p>}
-                    <div className="phoneNumberInsert">
+                    {emailError && <p className="error-text">{emailError}</p>}
+                    {emailDuplicateError && <p className="error-text">{emailDuplicateError}</p>}
+
+                    <div className="input-group">
                         <input
                             type="tel"
                             name="pNum"
@@ -371,46 +380,55 @@ const Register = () => {
                         </button>
                     </div>
 
-                    {phoneNumberError && <p style={{ color: 'red' }}>{phoneNumberError}</p>}
-                    {phoneNumberDuplicateError && <p style={{ color: 'red' }}>{phoneNumberDuplicateError}</p>}
+                    {phoneNumberError && <p className="error-text">{phoneNumberError}</p>}
+                    {phoneNumberDuplicateError && <p className="error-text">{phoneNumberDuplicateError}</p>}
 
-                    <div className="addressDetailSelect">
+                    <div className="input-group">
                         <input type="text" value={zonecode} readOnly placeholder="우편번호" className="input-field" />
                         <button type="button" onClick={handleClick} className="addressSelect">
                             주소 찾기
                         </button>
                     </div>
-                    <input type="text" value={address} readOnly placeholder="주소" className="input-field" />
-                    <input
-                        value={detailedAddress}
-                        onChange={inputChangeHandler}
-                        placeholder="상세 주소"
-                        className="input-field"
-                        onFocus={handleAddressFocus}
-                    />
+                    <div className="input-group">
+                        <input type="text" value={address} readOnly placeholder="주소" className="input-field" />
+                    </div>
+                    <div className="input-group">
+                        <input
+                            value={detailedAddress}
+                            onChange={inputChangeHandler}
+                            placeholder="상세 주소"
+                            className="input-field"
+                            onFocus={handleAddressFocus}
+                        />
+                    </div>
                 </div>
 
                 <hr />
                 <h2>개 정보</h2>
                 <div className="Regdog-section">
-                    <input
-                        type="text"
-                        name="dogName"
-                        id="dogName"
-                        placeholder="이름"
-                        className="input-field"
-                        value={dogName}
-                        onChange={(e) => setDogName(e.target.value)}
-                    />
-                    <input
-                        type="text"
-                        name="breed"
-                        id="breed"
-                        placeholder="견종"
-                        className="input-field"
-                        value={breed}
-                        onChange={(e) => setBreed(e.target.value)}
-                    />
+                    <div className="input-group">
+                        <input
+                            type="text"
+                            name="dogName"
+                            id="dogName"
+                            placeholder="이름"
+                            className="input-field"
+                            value={dogName}
+                            onChange={(e) => setDogName(e.target.value)}
+                        />
+                    </div>
+                    <div className="input-group">
+                        <input
+                            type="text"
+                            name="breed"
+                            id="breed"
+                            placeholder="견종"
+                            className="input-field"
+                            value={breed}
+                            onChange={(e) => setBreed(e.target.value)}
+                        />
+                    </div>
+
                     <br />
                     <div className="radio_button">
                         <label>

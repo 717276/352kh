@@ -69,5 +69,20 @@
         (OI_SEQ.NEXTVAL, #{pd_no}, #{m_no}, #{oi_price}, #{oi_quantity}, SYSDATE, 
             #{oi_basicAddress}, #{oi_detailAddress}, #{oi_postNo}, 0, #{pay_no})
     </insert>
-    
+     <insert id="insertCart" parameterType="CartItem">
+        INSERT INTO CartItem (ci_no, pd_no, m_no, ci_quantity)
+        VALUES (cart_seq.NEXTVAL, #{pd_no}, #{m_no}, #{ci_quantity})
+    </insert>
+    <!-- 장바구니 검색 -->
+    <select id="findCartItemByPdNoAndMNo" parameterType="int" resultType="CartItem">
+        SELECT *
+        FROM CartItem
+        WHERE pd_no = #{pd_no} AND m_no = #{m_no}
+    </select><!--장바구니 수정-->
+    <update id="modifyCart">
+        UPDATE CartItem
+        SET ci_quantity = #{ci_quantity}
+        WHERE pd_no = #{pd_no} AND m_no = #{m_no}
+
+    </update>
 </mapper>

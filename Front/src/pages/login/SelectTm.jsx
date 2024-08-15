@@ -7,31 +7,31 @@ const themes = [
         id: 'pf_rest',
         name: '힐링',
         description: '각종 신경쓸거 다 치우고 호텔에서 반려견과 함께 편히 쉬어봐요.',
-        image: '/src/images/theme/hotel.png',
+        image: '/public/images/util/hotel.png',
     },
     {
         id: 'pf_sport',
         name: '스포츠',
         description: '반려견과 함께 할수있는 스포츠를 즐겨요!',
-        image: '/src/images/theme/sports.png',
+        image: '/public/images/util/sports.png',
     },
     {
         id: 'pf_cafe',
         name: '여유',
         description: '분위기 좋은 카페에서 반려견과 시간을 보내는건 어떠세요?',
-        image: '/src/images/theme/cafe.png',
+        image: '/public/images/util/cafe.png',
     },
     {
         id: 'pf_walk',
         name: '산책',
         description: '반려견과 함께 걸어봐요! 산책위주로 짜여진 코스입니다.',
-        image: '/src/images/theme/walking.png',
+        image: '/public/images/util/walking.png',
     },
     {
         id: 'pf_spot',
         name: '명소',
         description: '반려견과 함께 역사와 유적지를 탐방해봐요.',
-        image: '/src/images/theme/spot.png',
+        image: '/public/images/util/spot.png',
     },
 ];
 
